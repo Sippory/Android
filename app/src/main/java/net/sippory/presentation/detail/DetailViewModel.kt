@@ -63,6 +63,35 @@ class DetailViewModel(private val repository: BottleRepository) : ViewModel() {
         }
     }
 
+    fun toggleWishlist() {
+        viewModelScope.launch {
+            val currentBottle = _uiState.value.bottle ?: return@launch
+            try {
+                val newWishlistStatus = !currentBottle.isWishlist
+                repository.updateWishlistStatus(currentBottle.id, newWishlistStatus)
+                _uiState.update {
+                    it.copy(bottle = currentBottle.copy(isWishlist = newWishlistStatus))
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
+    fun recordDrink() {
+        viewModelScope.launch {
+            val currentBottle = _uiState.value.bottle ?: return@launch
+            try {
+                repository.incrementDrinkCount(currentBottle.id)
+                _uiState.update {
+                    it.copy(bottle = currentBottle.copy(drinkCount = currentBottle.drinkCount + 1))
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
     fun toggleEditMode() {
         _uiState.update { it.copy(isEditing = !it.isEditing) }
     }

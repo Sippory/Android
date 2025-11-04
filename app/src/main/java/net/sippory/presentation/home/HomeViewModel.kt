@@ -19,6 +19,8 @@ sealed class BottleFilter {
     object All : BottleFilter()
     data class ByType(val type: String) : BottleFilter()
     data class ByRating(val minRating: Float) : BottleFilter()
+    object Wishlist : BottleFilter()
+    object Owned : BottleFilter()
 }
 
 class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
@@ -72,6 +74,8 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
                     is BottleFilter.All -> repository.getAllBottles()
                     is BottleFilter.ByType -> repository.getBottlesByType(filter.type)
                     is BottleFilter.ByRating -> repository.getBottlesByRating(filter.minRating)
+                    is BottleFilter.Wishlist -> repository.getWishlistBottles()
+                    is BottleFilter.Owned -> repository.getOwnedBottles()
                 }
                 flow.collect { bottles ->
                     _uiState.update {
@@ -102,6 +106,26 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
         }
     }
 
+    fun toggleWishlist(bottleId: Int, isWishlist: Boolean) {
+        viewModelScope.launch {
+            try {
+                repository.updateWishlistStatus(bottleId, isWishlist)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
+    fun recordDrink(bottleId: Int) {
+        viewModelScope.launch {
+            try {
+                repository.incrementDrinkCount(bottleId)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
     private fun filterBottles(
         bottles: List<BottleEntity>,
         filter: BottleFilter,
@@ -114,6 +138,8 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
             is BottleFilter.All -> filtered
             is BottleFilter.ByType -> filtered.filter { it.type == filter.type }
             is BottleFilter.ByRating -> filtered.filter { it.rating >= filter.minRating }
+            is BottleFilter.Wishlist -> filtered.filter { it.isWishlist }
+            is BottleFilter.Owned -> filtered.filter { !it.isWishlist }
         }
 
         // Apply search

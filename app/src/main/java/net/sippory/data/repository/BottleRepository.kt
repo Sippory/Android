@@ -16,6 +16,15 @@ class BottleRepository(private val bottleDao: BottleDao) {
 
     fun searchBottles(query: String): Flow<List<BottleEntity>> = bottleDao.searchBottles(query)
 
+    // 위시리스트 관련 메서드
+    fun getWishlistBottles(): Flow<List<BottleEntity>> = bottleDao.getWishlistBottles()
+
+    fun getOwnedBottles(): Flow<List<BottleEntity>> = bottleDao.getOwnedBottles()
+
+    suspend fun updateWishlistStatus(id: Int, isWishlist: Boolean) = bottleDao.updateWishlistStatus(id, isWishlist)
+
+    suspend fun incrementDrinkCount(id: Int) = bottleDao.incrementDrinkCount(id)
+
     suspend fun insertBottle(bottle: BottleEntity): Long = bottleDao.insertBottle(bottle)
 
     suspend fun updateBottle(bottle: BottleEntity) = bottleDao.updateBottle(bottle)

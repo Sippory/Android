@@ -47,6 +47,20 @@ fun DetailScreen(
                     }
                 },
                 actions = {
+                    // 위시리스트 토글 버튼
+                    IconButton(onClick = viewModel::toggleWishlist) {
+                        Icon(
+                            if (uiState.bottle?.isWishlist == true)
+                                Icons.Default.Favorite
+                            else
+                                Icons.Default.FavoriteBorder,
+                            contentDescription = "위시리스트",
+                            tint = if (uiState.bottle?.isWishlist == true)
+                                MaterialTheme.colorScheme.error
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                     IconButton(onClick = viewModel::toggleEditMode) {
                         Icon(
                             if (uiState.isEditing) Icons.Default.Close else Icons.Default.Edit,
@@ -89,6 +103,7 @@ fun DetailScreen(
                     bottle = uiState.bottle!!,
                     isEditing = uiState.isEditing,
                     onUpdate = viewModel::updateBottle,
+                    onRecordDrink = viewModel::recordDrink,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding)
@@ -128,6 +143,7 @@ fun BottleDetailContent(
     bottle: BottleEntity,
     isEditing: Boolean,
     onUpdate: (BottleEntity) -> Unit,
+    onRecordDrink: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var editedBottle by remember(bottle) { mutableStateOf(bottle) }
@@ -238,6 +254,52 @@ fun BottleDetailContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         HorizontalDivider()
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 마신 횟수 표시
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "마신 횟수",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${bottle.drinkCount}회",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                if (!isEditing) {
+                    Button(
+                        onClick = onRecordDrink,
+                        modifier = Modifier.height(48.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("기록하기")
+                    }
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

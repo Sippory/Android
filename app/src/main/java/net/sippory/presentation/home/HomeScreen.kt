@@ -146,6 +146,18 @@ fun FilterChips(
             label = { Text("전체") }
         )
 
+        FilterChip(
+            selected = selectedFilter is BottleFilter.Wishlist,
+            onClick = { onFilterChange(BottleFilter.Wishlist) },
+            label = { Text("💝 위시리스트") }
+        )
+
+        FilterChip(
+            selected = selectedFilter is BottleFilter.Owned,
+            onClick = { onFilterChange(BottleFilter.Owned) },
+            label = { Text("🍾 소유") }
+        )
+
         BottleTypes.ALL_TYPES.take(5).forEach { (type, emoji) ->
             FilterChip(
                 selected = selectedFilter is BottleFilter.ByType && selectedFilter.type == type,

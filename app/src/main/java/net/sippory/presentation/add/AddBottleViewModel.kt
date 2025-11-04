@@ -17,7 +17,8 @@ data class AddBottleUiState(
     val note: String = "",
     val isSaving: Boolean = false,
     val error: String? = null,
-    val saveSuccess: Boolean = false
+    val saveSuccess: Boolean = false,
+    val isWishlist: Boolean = false
 )
 
 class AddBottleViewModel(private val repository: BottleRepository) : ViewModel() {
@@ -53,6 +54,10 @@ class AddBottleViewModel(private val repository: BottleRepository) : ViewModel()
         _uiState.update { it.copy(note = note) }
     }
 
+    fun toggleWishlist() {
+        _uiState.update { it.copy(isWishlist = !it.isWishlist) }
+    }
+
     fun saveBottle() {
         viewModelScope.launch {
             val state = _uiState.value
@@ -72,7 +77,8 @@ class AddBottleViewModel(private val repository: BottleRepository) : ViewModel()
                     country = state.country.ifBlank { null },
                     photoUri = state.photoUri,
                     rating = state.rating,
-                    note = state.note
+                    note = state.note,
+                    isWishlist = state.isWishlist
                 )
 
                 repository.insertBottle(bottle)

@@ -216,6 +216,26 @@ fun AddBottleSheet(
                 maxLines = 5
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 위시리스트 체크박스
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { viewModel.toggleWishlist() },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = uiState.isWishlist,
+                    onCheckedChange = { viewModel.toggleWishlist() }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "위시리스트에 추가 (아직 구매하지 않은 술)",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             // 에러 메시지
