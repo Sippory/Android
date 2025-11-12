@@ -49,11 +49,12 @@ fun SignUpScreen(navController: NavController) {
     val confirmedPasswordFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = { Text("Sippory") }
-        )
-    }) { padding ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Sippory") })
+        }
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
