@@ -1,8 +1,8 @@
 package net.sippory.presentation.signin
 
+import android.widget.Toast
 import net.sippory.R
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +38,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,17 +49,32 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import kotlinx.coroutines.launch
+import kotlin.math.sign
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreen(navController: NavController) {
-    var userId by remember { mutableStateOf("") }
+    var userEmailId by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
+    val isFormValid by remember (userEmailId, userPassword) {
+        derivedStateOf {
+            userEmailId.isNotBlank() && userPassword.isNotBlank()
+        }
+    }
+
     val passwordFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+
+    val auth: FirebaseAuth = Firebase.auth
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -92,9 +108,9 @@ fun SignInScreen(navController: NavController) {
                     .height(24.dp)
             )
 
-            UserIdTextField(
-                userId = userId,
-                onUserIdChange = { newId -> userId = newId },
+            UserEmailIdTextField(
+                userEmailId = userEmailId,
+                onUserEmailIdChange = { newId -> userEmailId = newId },
                 onNext = { passwordFocusRequester.requestFocus() })
             UserPasswordTextField(
                 userPassword = userPassword,
@@ -104,7 +120,22 @@ fun SignInScreen(navController: NavController) {
                 passwordFocusRequester = passwordFocusRequester,
                 focusManager = focusManager
             )
-            SignInButton(onClick = { navController.navigate("home") })
+            SignInButton(isEnable = isFormValid, onClick = {
+                coroutineScope.launch {
+                    signIn(
+                        auth = auth,
+                        userEmailId = userEmailId,
+                        userPassword = userPassword,
+                        onSuccess = {
+                            Toast.makeText(context, "Sign In Successful", Toast.LENGTH_SHORT).show()
+                            navController.navigate("home")
+                        },
+                        onFailure = {
+                            Toast.makeText(context, "Sign In Failed", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+            })
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -118,11 +149,15 @@ fun SignInScreen(navController: NavController) {
 }
 
 @Composable
-fun UserIdTextField(userId: String, onUserIdChange: (String) -> Unit, onNext: () -> Unit) {
+fun UserEmailIdTextField(
+    userEmailId: String,
+    onUserEmailIdChange: (String) -> Unit,
+    onNext: () -> Unit
+) {
     OutlinedTextField(
-        value = userId,
-        onValueChange = { onUserIdChange(it) },
-        label = { Text("Enter your ID") },
+        value = userEmailId,
+        onValueChange = { onUserEmailIdChange(it) },
+        label = { Text("Enter your Email ID") },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next,
@@ -138,10 +173,10 @@ fun UserIdTextField(userId: String, onUserIdChange: (String) -> Unit, onNext: ()
             )
         },
         trailingIcon = {
-            if (userId.isNotEmpty()) {
+            if (userEmailId.isNotEmpty()) {
                 IconButton(
                     onClick = {
-                        onUserIdChange("")
+                        onUserEmailIdChange("")
                     }) {
                     Icon(
                         imageVector = Icons.Filled.HighlightOff, contentDescription = "Clear ID"
@@ -205,11 +240,12 @@ fun UserPasswordTextField(
 }
 
 @Composable
-fun SignInButton(onClick: () -> Unit) {
+fun SignInButton(isEnable: Boolean, onClick: () -> Unit) {
     Button(
         onClick = {
             onClick()
         },
+        enabled = isEnable,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(Color.Black),
         modifier = Modifier
@@ -227,4 +263,15 @@ fun SignUpButton(navController: NavController) {
     ) {
         Text("Sign Up", color = Color.Black)
     }
+}
+
+private fun signIn(auth: FirebaseAuth, userEmailId: String, userPassword: String, onSuccess : () -> Unit, onFailure: () -> Unit) {
+    auth.signInWithEmailAndPassword(userEmailId, userPassword)
+        .addOnCompleteListener { task ->
+            if(task.isSuccessful) {
+                onSuccess()
+            } else {
+                onFailure()
+            }
+        }
 }
