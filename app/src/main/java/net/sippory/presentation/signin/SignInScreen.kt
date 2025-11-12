@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,7 +57,6 @@ fun SignInScreen(navController: NavController) {
     var userPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-
     val passwordFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -81,7 +81,10 @@ fun SignInScreen(navController: NavController) {
             )
             Image(
                 painter = painterResource(id = R.drawable.sippory_logo),
-                contentDescription = "sippory logo"
+                contentDescription = "sippory logo",
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(156.dp)
             )
             Spacer(
                 modifier = Modifier
@@ -108,11 +111,7 @@ fun SignInScreen(navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Don't have an account?")
-                TextButton(
-                    onClick = { navController.navigate("sign-up") }
-                ) {
-                    Text("Sign Up")
-                }
+                SignUpButton(navController = navController)
             }
         }
     }
@@ -218,5 +217,14 @@ fun SignInButton(onClick: () -> Unit) {
             .padding(16.dp)
     ) {
         Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+    }
+}
+
+@Composable
+fun SignUpButton(navController: NavController) {
+    TextButton(
+        onClick = { navController.navigate("sign-up") }
+    ) {
+        Text("Sign Up", color = Color.Black)
     }
 }
