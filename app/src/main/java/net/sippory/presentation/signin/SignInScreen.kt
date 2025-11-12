@@ -63,7 +63,7 @@ fun SignInScreen(navController: NavController) {
     var userPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    val isFormValid by remember (userEmailId, userPassword) {
+    val isFormValid by remember(userEmailId, userPassword) {
         derivedStateOf {
             userEmailId.isNotBlank() && userPassword.isNotBlank()
         }
@@ -128,7 +128,9 @@ fun SignInScreen(navController: NavController) {
                         userPassword = userPassword,
                         onSuccess = {
                             Toast.makeText(context, "Sign In Successful", Toast.LENGTH_SHORT).show()
-                            navController.navigate("home")
+                            navController.navigate("home") {
+                                popUpTo("sign-in") { inclusive = true }
+                            }
                         },
                         onFailure = {
                             Toast.makeText(context, "Sign In Failed", Toast.LENGTH_SHORT).show()
@@ -265,10 +267,16 @@ fun SignUpButton(navController: NavController) {
     }
 }
 
-private fun signIn(auth: FirebaseAuth, userEmailId: String, userPassword: String, onSuccess : () -> Unit, onFailure: () -> Unit) {
+private fun signIn(
+    auth: FirebaseAuth,
+    userEmailId: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: () -> Unit
+) {
     auth.signInWithEmailAndPassword(userEmailId, userPassword)
         .addOnCompleteListener { task ->
-            if(task.isSuccessful) {
+            if (task.isSuccessful) {
                 onSuccess()
             } else {
                 onFailure()
