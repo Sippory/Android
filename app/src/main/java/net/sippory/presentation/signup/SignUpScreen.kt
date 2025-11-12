@@ -1,5 +1,7 @@
 package net.sippory.presentation.signup
 
+import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +36,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -43,19 +46,35 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(navController: NavController) {
-
-    var userId by remember { mutableStateOf("") }
+    var userEmailId by remember { mutableStateOf("") }
     var userPassword by remember { mutableStateOf("") }
     var confirmedPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    var isUserIdError by remember { mutableStateOf(false) }
+    var isUserEmailIdError by remember { mutableStateOf(false) }
     var isUserPasswordError by remember { mutableStateOf(false) }
     var isConfirmedPasswordError by remember { mutableStateOf(false) }
+
+    val isEmailValid by remember(userEmailId) {
+        derivedStateOf {
+            Patterns.EMAIL_ADDRESS.matcher(userEmailId).matches()
+        }
+    }
+
+    val isPasswordValid by remember(userPassword) {
+        derivedStateOf {
+            userPassword.length >= 6
+        }
+    }
+
 
     val isPasswordMatching by remember {
         derivedStateOf {
@@ -65,16 +84,20 @@ fun SignUpScreen(navController: NavController) {
 
     val isFormValid by remember {
         derivedStateOf {
-            userId.isNotBlank() &&
-            userPassword.isNotBlank() &&
-            confirmedPassword.isNotBlank() &&
-            isPasswordMatching
+            userEmailId.isNotBlank() &&
+                    userPassword.isNotBlank() &&
+                    confirmedPassword.isNotBlank() &&
+                    isPasswordMatching && isEmailValid
         }
     }
 
     val passwordFocusRequester = remember { FocusRequester() }
     val confirmedPasswordFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+
+    val auth: FirebaseAuth = Firebase.auth
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -103,12 +126,15 @@ fun SignUpScreen(navController: NavController) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    UserIdTextField(
-                        userId = userId, onUserIdChange = { userId = it }, onNext = {
+                    UserEmailIdTextField(
+                        userEmailId = userEmailId,
+                        onUserEmailIdChange = { userEmailId = it },
+                        onNext = {
                             passwordFocusRequester.requestFocus()
                         },
-                        isError = isUserIdError,
-                        onErrorChange = { isUserIdError = it }
+                        isError = isUserEmailIdError,
+                        isEmailValid = isEmailValid,
+                        onErrorChange = { isUserEmailIdError = it },
                     )
                     UserPassWordTextField(
                         userPassword = userPassword,
@@ -119,7 +145,8 @@ fun SignUpScreen(navController: NavController) {
                         onNext = {
                             confirmedPasswordFocusRequester.requestFocus()
                         },
-                        isError = isUserPasswordError,
+                        isError = isUserPasswordError || !isPasswordValid,
+                        isPasswordValid = isPasswordValid,
                         onErrorChange = { isUserPasswordError = it }
                     )
                     ConfirmedPassWordTextField(
@@ -135,7 +162,35 @@ fun SignUpScreen(navController: NavController) {
                     )
                 }
                 Column {
-                    SignUpButton(navController= navController, isFormValid = isFormValid)
+                    SignUpButton(
+                        navController = navController, isFormValid = isFormValid,
+                        onClick = {
+                            coroutineScope.launch {
+                                auth.createUserWithEmailAndPassword(userEmailId, userPassword)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Toast.makeText(
+                                                context,
+                                                "Sign Up Successful",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            navController.navigate("sign-in") {
+                                                popUpTo("sign-up") {
+                                                    inclusive = true
+                                                }
+                                            }
+                                        } else {
+                                            val errorMessage = "Sign Up Failed"
+                                            Toast.makeText(
+                                                context,
+                                                errorMessage,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+
+                            }
+                        })
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -153,12 +208,13 @@ fun SignUpScreen(navController: NavController) {
 }
 
 @Composable
-fun UserIdTextField(
-    userId: String,
-    onUserIdChange: (String) -> Unit,
+fun UserEmailIdTextField(
+    userEmailId: String,
+    onUserEmailIdChange: (String) -> Unit,
     onNext: () -> Unit,
     isError: Boolean = false,
-    onErrorChange: (Boolean) -> Unit = {}
+    isEmailValid: Boolean,
+    onErrorChange: (Boolean) -> Unit = {},
 ) {
     var isInputFocusChanged by remember { mutableStateOf(false) }
 
@@ -168,9 +224,9 @@ fun UserIdTextField(
             .padding(horizontal = 16.dp)
     ) {
         OutlinedTextField(
-            value = userId,
-            onValueChange = { onUserIdChange(it); onErrorChange(false) },
-            label = { Text("Enter new ID") },
+            value = userEmailId,
+            onValueChange = { onUserEmailIdChange(it); onErrorChange(false) },
+            label = { Text("Enter Email ID") },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.AccountCircle,
@@ -182,18 +238,20 @@ fun UserIdTextField(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next,
             ),
-            isError = isError,
+            isError = isError || (isInputFocusChanged && !isEmailValid && userEmailId.isNotBlank()),
             keyboardActions = KeyboardActions(onNext = {
-                if (userId.isBlank()) {
+                if (userEmailId.isBlank()) {
+                    onErrorChange(true)
+                } else if (!isEmailValid) {
                     onErrorChange(true)
                 }
                 onNext()
             }),
             trailingIcon = {
-                if (userId.isNotEmpty()) {
+                if (userEmailId.isNotEmpty()) {
                     IconButton(
                         onClick = {
-                            onUserIdChange("")
+                            onUserEmailIdChange("")
                         }) {
                         Icon(
                             imageVector = Icons.Filled.HighlightOff, contentDescription = "Clear ID"
@@ -205,18 +263,24 @@ fun UserIdTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .onFocusChanged { focusState ->
-                    if(focusState.isFocused) {
+                    if (focusState.isFocused) {
                         isInputFocusChanged = true
-                    } else if(!focusState.isFocused && userId.isBlank() && isInputFocusChanged) {
+                    } else if (isInputFocusChanged && (!focusState.isFocused && userEmailId.isBlank() || !isEmailValid)) {
                         onErrorChange(true)
                     }
 
                 }
 
         )
-        if (isError) {
+        if (isError && userEmailId.isBlank() && isInputFocusChanged) {
             Text(
-                "Please enter ID",
+                "Please enter Email ID",
+                color = Color.Red,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
+        } else if (userEmailId.isNotEmpty() && !isEmailValid && isInputFocusChanged) {
+            Text(
+                "Invalid Email Format",
                 color = Color.Red,
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp)
             )
@@ -233,17 +297,20 @@ fun UserPassWordTextField(
     passwordFocusRequester: FocusRequester,
     onNext: () -> Unit,
     isError: Boolean,
+    isPasswordValid: Boolean,
     onErrorChange: (Boolean) -> Unit
 ) {
     var isInputFocusChanged by remember { mutableStateOf(false) }
 
-    Column (modifier = Modifier.padding(horizontal = 16.dp)) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         OutlinedTextField(
             value = userPassword,
             onValueChange = { onUserPasswordChange(it); onErrorChange(false) },
             label = { Text("Enter new Password") },
             keyboardActions = KeyboardActions(onNext = {
-                if(userPassword.isEmpty()) {
+                if (userPassword.isEmpty()) {
+                    onErrorChange(true)
+                } else if (!isPasswordValid) {
                     onErrorChange(true)
                 }
                 onNext()
@@ -252,7 +319,7 @@ fun UserPassWordTextField(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
             ),
-            isError = isError,
+            isError = isError || isPasswordValid,
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             leadingIcon = {
                 Icon(
@@ -277,17 +344,23 @@ fun UserPassWordTextField(
                 .fillMaxWidth()
                 .focusRequester(passwordFocusRequester)
                 .onFocusChanged { focusState ->
-                    if(focusState.isFocused) {
+                    if (focusState.isFocused) {
                         isInputFocusChanged = true
-                    } else if(!focusState.isFocused && userPassword.isBlank() && isInputFocusChanged) {
+                    } else if (isInputFocusChanged && !focusState.isFocused && userPassword.isBlank() || !isPasswordValid) {
                         onErrorChange(true)
                     }
 
                 }
         )
-        if (isError) {
+        if (isError && isInputFocusChanged) {
             Text(
                 "Please enter password",
+                color = Color.Red,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
+        } else if (!isPasswordValid && isInputFocusChanged) {
+            Text(
+                "Password must be at least 6 characters",
                 color = Color.Red,
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp)
             )
@@ -309,7 +382,7 @@ fun ConfirmedPassWordTextField(
 ) {
     var isFocusChanged by remember { mutableStateOf(false) }
 
-    Column (modifier = Modifier.padding(horizontal = 16.dp)) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { onConfirmPasswordChange(it); onErrorChange(false) },
@@ -353,13 +426,13 @@ fun ConfirmedPassWordTextField(
                     }
                 }
         )
-        if( isError) {
+        if (isError) {
             Text(
                 "Please enter confirm password",
                 color = Color.Red,
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp)
             )
-        } else if (isPasswordMatchError) {
+        } else if (isPasswordMatchError && isFocusChanged) {
             Text(
                 "Passwords do not match",
                 color = Color.Red,
@@ -371,10 +444,10 @@ fun ConfirmedPassWordTextField(
 }
 
 @Composable
-fun SignUpButton(navController : NavController, isFormValid: Boolean) {
+fun SignUpButton(navController: NavController, isFormValid: Boolean, onClick: () -> Unit) {
     Button(
         onClick = {
-            navController.navigate("sign-in")
+            onClick()
         },
         enabled = isFormValid,
         modifier = Modifier
@@ -388,7 +461,7 @@ fun SignUpButton(navController : NavController, isFormValid: Boolean) {
 }
 
 @Composable
-fun SignInButton(navController : NavController) {
+fun SignInButton(navController: NavController) {
     TextButton(
         onClick = { navController.navigate("sign-in") }
     ) {
