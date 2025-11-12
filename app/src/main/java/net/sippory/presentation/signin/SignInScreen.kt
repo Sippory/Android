@@ -1,11 +1,15 @@
 package net.sippory.presentation.signin
 
-import androidx.compose.foundation.border
+import net.sippory.R
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -17,6 +21,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,13 +36,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 
@@ -63,9 +71,24 @@ fun SignInScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.sippory_logo),
+                contentDescription = "sippory logo"
+            )
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+            )
+
             UserIdTextField(
                 userId = userId,
                 onUserIdChange = { newId -> userId = newId },
@@ -78,7 +101,7 @@ fun SignInScreen(navController: NavController) {
                 passwordFocusRequester = passwordFocusRequester,
                 focusManager = focusManager
             )
-            SignInButton(onClick = { navController.navigate("home")})
+            SignInButton(onClick = { navController.navigate("home") })
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -86,7 +109,7 @@ fun SignInScreen(navController: NavController) {
             ) {
                 Text("Don't have an account?")
                 TextButton(
-                    onClick = { navController.navigate("sign-up")}
+                    onClick = { navController.navigate("sign-up") }
                 ) {
                     Text("Sign Up")
                 }
@@ -189,10 +212,11 @@ fun SignInButton(onClick: () -> Unit) {
             onClick()
         },
         shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(Color.Black),
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Text("Sign In", fontWeight = FontWeight.Bold)
+        Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp)
     }
 }
