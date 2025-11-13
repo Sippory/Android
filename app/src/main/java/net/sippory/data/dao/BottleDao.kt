@@ -29,10 +29,16 @@ interface BottleDao {
     fun getOwnedBottles(): Flow<List<BottleEntity>>
 
     @Query("UPDATE bottles SET isWishlist = :isWishlist WHERE id = :id")
-    suspend fun updateWishlistStatus(id: Int, isWishlist: Boolean)
+    suspend fun updateWishlistStatus(
+        id: Int,
+        isWishlist: Boolean,
+    )
 
     @Query("UPDATE bottles SET drinkCount = drinkCount + 1, updatedAt = :updatedAt WHERE id = :id")
-    suspend fun incrementDrinkCount(id: Int, updatedAt: Long = System.currentTimeMillis())
+    suspend fun incrementDrinkCount(
+        id: Int,
+        updatedAt: Long = System.currentTimeMillis(),
+    )
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBottle(bottle: BottleEntity): Long

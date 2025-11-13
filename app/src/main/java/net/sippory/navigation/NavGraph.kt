@@ -16,6 +16,7 @@ import net.sippory.utils.BottleViewModelFactory
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
+
     object Detail : Screen("detail/{bottleId}") {
         fun createRoute(bottleId: Int) = "detail/$bottleId"
     }
@@ -24,13 +25,13 @@ sealed class Screen(val route: String) {
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    repository: BottleRepository
+    repository: BottleRepository,
 ) {
     val viewModelFactory = BottleViewModelFactory(repository)
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = Screen.Home.route,
     ) {
         composable(Screen.Home.route) {
             val homeViewModel: HomeViewModel = viewModel(factory = viewModelFactory)
@@ -39,22 +40,23 @@ fun NavGraph(
                 onBottleClick = { bottleId ->
                     navController.navigate(Screen.Detail.createRoute(bottleId))
                 },
-                repository = repository
+                repository = repository,
             )
         }
 
         composable(
             route = Screen.Detail.route,
-            arguments = listOf(
-                navArgument("bottleId") { type = NavType.IntType }
-            )
+            arguments =
+                listOf(
+                    navArgument("bottleId") { type = NavType.IntType },
+                ),
         ) { backStackEntry ->
             val bottleId = backStackEntry.arguments?.getInt("bottleId") ?: return@composable
             val detailViewModel: DetailViewModel = viewModel(factory = viewModelFactory)
             DetailScreen(
                 bottleId = bottleId,
                 viewModel = detailViewModel,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
             )
         }
     }

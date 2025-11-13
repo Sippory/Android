@@ -17,5 +17,5 @@ data class BottleEntity(
     val isWishlist: Boolean = false, // 위시리스트 여부
     val drinkCount: Int = 0, // 마신 횟수
     val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
 )

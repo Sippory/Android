@@ -5,7 +5,6 @@ import net.sippory.data.dao.BottleDao
 import net.sippory.data.entity.BottleEntity
 
 class BottleRepository(private val bottleDao: BottleDao) {
-
     fun getAllBottles(): Flow<List<BottleEntity>> = bottleDao.getAllBottles()
 
     suspend fun getBottleById(id: Int): BottleEntity? = bottleDao.getBottleById(id)
@@ -21,7 +20,10 @@ class BottleRepository(private val bottleDao: BottleDao) {
 
     fun getOwnedBottles(): Flow<List<BottleEntity>> = bottleDao.getOwnedBottles()
 
-    suspend fun updateWishlistStatus(id: Int, isWishlist: Boolean) = bottleDao.updateWishlistStatus(id, isWishlist)
+    suspend fun updateWishlistStatus(
+        id: Int,
+        isWishlist: Boolean,
+    ) = bottleDao.updateWishlistStatus(id, isWishlist)
 
     suspend fun incrementDrinkCount(id: Int) = bottleDao.incrementDrinkCount(id)
 

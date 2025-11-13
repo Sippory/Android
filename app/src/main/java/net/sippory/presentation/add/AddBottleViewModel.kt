@@ -18,11 +18,10 @@ data class AddBottleUiState(
     val isSaving: Boolean = false,
     val error: String? = null,
     val saveSuccess: Boolean = false,
-    val isWishlist: Boolean = false
+    val isWishlist: Boolean = false,
 )
 
 class AddBottleViewModel(private val repository: BottleRepository) : ViewModel() {
-
     private val _uiState = MutableStateFlow(AddBottleUiState())
     val uiState: StateFlow<AddBottleUiState> = _uiState.asStateFlow()
 
@@ -70,29 +69,30 @@ class AddBottleViewModel(private val repository: BottleRepository) : ViewModel()
             _uiState.update { it.copy(isSaving = true, error = null) }
 
             try {
-                val bottle = BottleEntity(
-                    name = state.name,
-                    type = state.type,
-                    abv = state.abv.toFloatOrNull(),
-                    country = state.country.ifBlank { null },
-                    photoUri = state.photoUri,
-                    rating = state.rating,
-                    note = state.note,
-                    isWishlist = state.isWishlist
-                )
+                val bottle =
+                    BottleEntity(
+                        name = state.name,
+                        type = state.type,
+                        abv = state.abv.toFloatOrNull(),
+                        country = state.country.ifBlank { null },
+                        photoUri = state.photoUri,
+                        rating = state.rating,
+                        note = state.note,
+                        isWishlist = state.isWishlist,
+                    )
 
                 repository.insertBottle(bottle)
                 _uiState.update {
                     it.copy(
                         isSaving = false,
-                        saveSuccess = true
+                        saveSuccess = true,
                     )
                 }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         isSaving = false,
-                        error = e.message ?: "저장 실패"
+                        error = e.message ?: "저장 실패",
                     )
                 }
             }
