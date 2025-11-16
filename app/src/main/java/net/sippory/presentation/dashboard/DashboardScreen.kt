@@ -32,31 +32,31 @@ fun DashboardScreen(
     val mostConsumed by actualVm.mostConsumedBottleRanking.collectAsState()
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.padding(16.dp).fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         item {
             RankingSection(
                 title = "내가 주로 마시는 주종 랭킹",
-                items = typeRanking.map { "${it.type} (${it.count}회)" }
+                items = typeRanking.map { bottle -> "${bottle.type} (${bottle.count}회)" }
             )
         }
         item {
             RankingSection(
                 title = "자주 마신 도수 랭킹",
-                items = abvRanking.map { "${it.abv}% (${it.count}회)" }
+                items = abvRanking.map { bottle -> "${bottle.abv}% (${bottle.count}회)" }
             )
         }
         item {
             RankingSection(
                 title = "주종별 평균 평점 랭킹",
-                items = averageRatingPerType.map { "${it.type} (평균 ${String.format("%.1f", it.averageRating)}점)" }
+                items = averageRatingPerType.map { bottle -> "${bottle.type} (평균 ${String.format("%.1f", bottle.averageRating)}점)" }
             )
         }
         item {
             RankingSection(
                 title = "가장 많이 마신 술 랭킹",
-                items = mostConsumed.map { "${it.name} (${it.count}회)" }
+                items = mostConsumed.map { bottle -> "${bottle.name} (${bottle.count}회)" }
             )
         }
         if (onBack != null) {
