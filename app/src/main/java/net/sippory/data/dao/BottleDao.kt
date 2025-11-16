@@ -37,7 +37,7 @@ interface BottleDao {
     @Query("UPDATE bottles SET drinkCount = drinkCount + 1, updatedAt = :updatedAt WHERE id = :id")
     suspend fun incrementDrinkCount(
         id: Int,
-        updatedAt: Long = System.currentTimeMillis(),
+        updatedAt: Long,
     )
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

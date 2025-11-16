@@ -233,7 +233,7 @@ fun AddBottleSheet(
             ) {
                 Checkbox(
                     checked = uiState.isWishlist,
-                    onCheckedChange = { viewModel.toggleWishlist() },
+                    onCheckedChange = null,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(

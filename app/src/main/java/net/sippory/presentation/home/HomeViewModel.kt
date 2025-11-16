@@ -143,14 +143,14 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
     ): List<BottleEntity> {
         var filtered = bottles
 
-        // Apply filter
+        // Apply filter (Wishlist와 Owned는 이미 repository에서 필터링됨)
         filtered =
             when (filter) {
                 is BottleFilter.All -> filtered
                 is BottleFilter.ByType -> filtered.filter { it.type == filter.type }
                 is BottleFilter.ByRating -> filtered.filter { it.rating >= filter.minRating }
-                is BottleFilter.Wishlist -> filtered.filter { it.isWishlist }
-                is BottleFilter.Owned -> filtered.filter { !it.isWishlist }
+                is BottleFilter.Wishlist -> filtered // 이미 DB에서 필터링됨
+                is BottleFilter.Owned -> filtered // 이미 DB에서 필터링됨
             }
 
         // Apply search

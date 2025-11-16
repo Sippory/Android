@@ -25,7 +25,7 @@ class BottleRepository(private val bottleDao: BottleDao) {
         isWishlist: Boolean,
     ) = bottleDao.updateWishlistStatus(id, isWishlist)
 
-    suspend fun incrementDrinkCount(id: Int) = bottleDao.incrementDrinkCount(id)
+    suspend fun incrementDrinkCount(id: Int) = bottleDao.incrementDrinkCount(id, System.currentTimeMillis())
 
     suspend fun insertBottle(bottle: BottleEntity): Long = bottleDao.insertBottle(bottle)
 
