@@ -28,7 +28,7 @@ import java.util.*
 fun DetailScreen(
     bottleId: Int,
     viewModel: DetailViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -47,40 +47,59 @@ fun DetailScreen(
                     }
                 },
                 actions = {
+                    // 위시리스트 토글 버튼
+                    IconButton(onClick = viewModel::toggleWishlist) {
+                        Icon(
+                            if (uiState.bottle?.isWishlist == true) {
+                                Icons.Default.Favorite
+                            } else {
+                                Icons.Default.FavoriteBorder
+                            },
+                            contentDescription = "위시리스트",
+                            tint =
+                                if (uiState.bottle?.isWishlist == true) {
+                                    MaterialTheme.colorScheme.error
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                },
+                        )
+                    }
                     IconButton(onClick = viewModel::toggleEditMode) {
                         Icon(
                             if (uiState.isEditing) Icons.Default.Close else Icons.Default.Edit,
-                            contentDescription = if (uiState.isEditing) "취소" else "수정"
+                            contentDescription = if (uiState.isEditing) "취소" else "수정",
                         )
                     }
                     IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(Icons.Default.Delete, contentDescription = "삭제")
                     }
-                }
+                },
             )
-        }
+        },
     ) { padding ->
         when {
             uiState.isLoading -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
                 }
             }
             uiState.bottle == null -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = "술 정보를 찾을 수 없습니다",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
             }
@@ -89,9 +108,11 @@ fun DetailScreen(
                     bottle = uiState.bottle!!,
                     isEditing = uiState.isEditing,
                     onUpdate = viewModel::updateBottle,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
+                    onRecordDrink = viewModel::recordDrink,
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(padding),
                 )
             }
         }
@@ -109,7 +130,7 @@ fun DetailScreen(
                         viewModel.deleteBottle(uiState.bottle!!)
                         showDeleteDialog = false
                         onNavigateBack()
-                    }
+                    },
                 ) {
                     Text("삭제", color = MaterialTheme.colorScheme.error)
                 }
@@ -118,7 +139,7 @@ fun DetailScreen(
                 TextButton(onClick = { showDeleteDialog = false }) {
                     Text("취소")
                 }
-            }
+            },
         )
     }
 }
@@ -128,35 +149,38 @@ fun BottleDetailContent(
     bottle: BottleEntity,
     isEditing: Boolean,
     onUpdate: (BottleEntity) -> Unit,
-    modifier: Modifier = Modifier
+    onRecordDrink: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var editedBottle by remember(bottle) { mutableStateOf(bottle) }
 
     Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+        modifier =
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
     ) {
         // 이미지
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentAlignment = Alignment.Center,
         ) {
             if (bottle.photoUri != null) {
                 AsyncImage(
                     model = bottle.photoUri,
                     contentDescription = bottle.name,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
                 )
             } else {
                 Text(
                     text = BottleTypes.getEmojiForType(bottle.type),
-                    style = MaterialTheme.typography.displayLarge
+                    style = MaterialTheme.typography.displayLarge,
                 )
             }
         }
@@ -169,13 +193,13 @@ fun BottleDetailContent(
                 value = editedBottle.name,
                 onValueChange = { editedBottle = editedBottle.copy(name = it) },
                 label = { Text("이름") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         } else {
             Text(
                 text = bottle.name,
                 style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
 
@@ -184,14 +208,14 @@ fun BottleDetailContent(
         // 종류
         DetailRow(
             label = "종류",
-            value = "${BottleTypes.getEmojiForType(bottle.type)} ${bottle.type}"
+            value = "${BottleTypes.getEmojiForType(bottle.type)} ${bottle.type}",
         )
 
         // 도수
         bottle.abv?.let {
             DetailRow(
                 label = "도수",
-                value = "${it}%"
+                value = "$it%",
             )
         }
 
@@ -199,7 +223,7 @@ fun BottleDetailContent(
         bottle.country?.let {
             DetailRow(
                 label = "원산지",
-                value = it
+                value = it,
             )
         }
 
@@ -209,28 +233,28 @@ fun BottleDetailContent(
         if (isEditing) {
             Text(
                 text = "평점: ${String.format("%.1f", editedBottle.rating)}",
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
             Slider(
                 value = editedBottle.rating,
                 onValueChange = { editedBottle = editedBottle.copy(rating = it) },
                 valueRange = 0.5f..5f,
-                steps = 8
+                steps = 8,
             )
         } else {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "평점: ",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 RatingDisplay(rating = bottle.rating)
                 Text(
                     text = " ${String.format("%.1f", bottle.rating)}",
                     style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
         }
@@ -241,11 +265,59 @@ fun BottleDetailContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // 마신 횟수 표시
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
+        ) {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column {
+                    Text(
+                        text = "마신 횟수",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = "${bottle.drinkCount}회",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+                if (!isEditing) {
+                    Button(
+                        onClick = onRecordDrink,
+                        modifier = Modifier.height(48.dp),
+                    ) {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("기록하기")
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // 메모
         Text(
             text = "메모",
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -254,19 +326,22 @@ fun BottleDetailContent(
             OutlinedTextField(
                 value = editedBottle.note,
                 onValueChange = { editedBottle = editedBottle.copy(note = it) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp),
-                maxLines = 8
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(150.dp),
+                maxLines = 8,
             )
         } else {
             Text(
                 text = bottle.note.ifBlank { "메모가 없습니다." },
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (bottle.note.isBlank())
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                else
-                    MaterialTheme.colorScheme.onSurface
+                color =
+                    if (bottle.note.isBlank()) {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
             )
         }
 
@@ -277,13 +352,13 @@ fun BottleDetailContent(
         Text(
             text = "생성: ${dateFormat.format(Date(bottle.createdAt))}",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         if (bottle.updatedAt != bottle.createdAt) {
             Text(
                 text = "수정: ${dateFormat.format(Date(bottle.updatedAt))}",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
@@ -292,7 +367,7 @@ fun BottleDetailContent(
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { onUpdate(editedBottle) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("저장")
             }
@@ -304,23 +379,24 @@ fun BottleDetailContent(
 fun DetailRow(
     label: String,
     value: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
     }
 }
@@ -328,18 +404,19 @@ fun DetailRow(
 @Composable
 fun RatingDisplay(
     rating: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
         repeat(5) { index ->
             val starRating = (rating - index).coerceIn(0f, 1f)
             Text(
-                text = when {
-                    starRating >= 1f -> "⭐"
-                    starRating >= 0.5f -> "⭐"
-                    else -> "☆"
-                },
-                style = MaterialTheme.typography.bodyLarge
+                text =
+                    when {
+                        starRating >= 1f -> "⭐"
+                        starRating >= 0.5f -> "⭐"
+                        else -> "☆"
+                    },
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }

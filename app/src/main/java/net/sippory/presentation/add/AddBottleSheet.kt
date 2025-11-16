@@ -28,7 +28,7 @@ import net.sippory.utils.BottleViewModelFactory
 @Composable
 fun AddBottleSheet(
     onDismiss: () -> Unit,
-    repository: BottleRepository
+    repository: BottleRepository,
 ) {
     val viewModelFactory = BottleViewModelFactory(repository)
     val viewModel: AddBottleViewModel = viewModel(factory = viewModelFactory)
@@ -36,11 +36,12 @@ fun AddBottleSheet(
 
     var showTypeDropdown by remember { mutableStateOf(false) }
 
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { viewModel.updatePhotoUri(it.toString()) }
-    }
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+        ) { uri: Uri? ->
+            uri?.let { viewModel.updatePhotoUri(it.toString()) }
+        }
 
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
@@ -51,24 +52,25 @@ fun AddBottleSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 32.dp)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 32.dp)
+                    .verticalScroll(rememberScrollState()),
         ) {
             // 헤더
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "새 술 추가",
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineSmall,
                 )
                 IconButton(onClick = onDismiss) {
                     Icon(Icons.Default.Close, contentDescription = "닫기")
@@ -79,34 +81,35 @@ fun AddBottleSheet(
 
             // 사진 선택
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .clickable { imagePickerLauncher.launch("image/*") },
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .clickable { imagePickerLauncher.launch("image/*") },
+                contentAlignment = Alignment.Center,
             ) {
                 if (uiState.photoUri != null) {
                     AsyncImage(
                         model = uiState.photoUri,
                         contentDescription = "선택된 사진",
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
                     )
                 } else {
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
                             text = "📷",
-                            style = MaterialTheme.typography.displayMedium
+                            style = MaterialTheme.typography.displayMedium,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "사진 추가",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -120,7 +123,7 @@ fun AddBottleSheet(
                 onValueChange = viewModel::updateName,
                 label = { Text("이름 *") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -128,7 +131,7 @@ fun AddBottleSheet(
             // 종류
             ExposedDropdownMenuBox(
                 expanded = showTypeDropdown,
-                onExpandedChange = { showTypeDropdown = it }
+                onExpandedChange = { showTypeDropdown = it },
             ) {
                 OutlinedTextField(
                     value = "${BottleTypes.getEmojiForType(uiState.type)} ${uiState.type}",
@@ -136,13 +139,14 @@ fun AddBottleSheet(
                     readOnly = true,
                     label = { Text("종류") },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showTypeDropdown) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                 )
                 ExposedDropdownMenu(
                     expanded = showTypeDropdown,
-                    onDismissRequest = { showTypeDropdown = false }
+                    onDismissRequest = { showTypeDropdown = false },
                 ) {
                     BottleTypes.ALL_TYPES.forEach { (type, emoji) ->
                         DropdownMenuItem(
@@ -150,7 +154,7 @@ fun AddBottleSheet(
                             onClick = {
                                 viewModel.updateType(type)
                                 showTypeDropdown = false
-                            }
+                            },
                         )
                     }
                 }
@@ -161,14 +165,14 @@ fun AddBottleSheet(
             // ABV와 Country
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 OutlinedTextField(
                     value = uiState.abv,
                     onValueChange = viewModel::updateAbv,
                     label = { Text("도수 (%)") },
                     modifier = Modifier.weight(1f),
-                    singleLine = true
+                    singleLine = true,
                 )
 
                 OutlinedTextField(
@@ -176,7 +180,7 @@ fun AddBottleSheet(
                     onValueChange = viewModel::updateCountry,
                     label = { Text("원산지") },
                     modifier = Modifier.weight(1f),
-                    singleLine = true
+                    singleLine = true,
                 )
             }
 
@@ -185,19 +189,19 @@ fun AddBottleSheet(
             // 평점
             Text(
                 text = "평점: ${String.format("%.1f", uiState.rating)}",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
             Slider(
                 value = uiState.rating,
                 onValueChange = viewModel::updateRating,
                 valueRange = 0.5f..5f,
                 steps = 8,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text("⭐ 0.5", style = MaterialTheme.typography.bodySmall)
                 Text("⭐⭐⭐⭐⭐ 5.0", style = MaterialTheme.typography.bodySmall)
@@ -210,11 +214,33 @@ fun AddBottleSheet(
                 value = uiState.note,
                 onValueChange = viewModel::updateNote,
                 label = { Text("메모") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp),
-                maxLines = 5
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(120.dp),
+                maxLines = 5,
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 위시리스트 체크박스
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { viewModel.toggleWishlist() },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Checkbox(
+                    checked = uiState.isWishlist,
+                    onCheckedChange = null,
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "위시리스트에 추가 (아직 구매하지 않은 술)",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -224,7 +250,7 @@ fun AddBottleSheet(
                     text = error,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
                 )
             }
 
@@ -232,12 +258,12 @@ fun AddBottleSheet(
             Button(
                 onClick = { viewModel.saveBottle() },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isSaving
+                enabled = !uiState.isSaving,
             ) {
                 if (uiState.isSaving) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 } else {
                     Text("저장")
