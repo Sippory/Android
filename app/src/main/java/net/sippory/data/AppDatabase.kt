@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import net.sippory.data.dao.BottleDao
+import net.sippory.data.dao.DashboardDao
 import net.sippory.data.entity.BottleEntity
 
 @Database(
@@ -14,6 +15,8 @@ import net.sippory.data.entity.BottleEntity
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bottleDao(): BottleDao
+
+    abstract fun dashboardDao(): DashboardDao
 
     companion object {
         @Volatile

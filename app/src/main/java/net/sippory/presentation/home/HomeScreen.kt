@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onBottleClick: (Int) -> Unit,
     repository: net.sippory.data.repository.BottleRepository,
+    onDashboardClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showAddBottleSheet by remember { mutableStateOf(false) }
@@ -42,6 +44,14 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("Sippory", fontWeight = FontWeight.Bold) },
                 actions = {
+                    // ✅ 대시보드로 이동 버튼 추가
+                    IconButton(onClick = onDashboardClick) {
+                        Icon(
+                            imageVector = Icons.Default.ThumbUp,
+                            contentDescription = "대시보드로 이동",
+                        )
+                    }
+
                     IconButton(onClick = { showSearchBar = !showSearchBar }) {
                         Icon(Icons.Default.Search, contentDescription = "검색")
                     }
