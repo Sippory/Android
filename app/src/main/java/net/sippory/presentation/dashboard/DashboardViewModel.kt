@@ -11,9 +11,8 @@ import net.sippory.data.dao.DashboardDao
 import net.sippory.data.repository.DashboardRepository
 
 class DashboardViewModel(
-    repository: DashboardRepository
+    repository: DashboardRepository,
 ) : ViewModel() {
-
     val typeRanking: StateFlow<List<DashboardDao.TypeRanking>> =
         repository.getTypeRanking()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
@@ -32,7 +31,7 @@ class DashboardViewModel(
 }
 
 class DashboardViewModelFactory(
-    private val repository: DashboardRepository
+    private val repository: DashboardRepository,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

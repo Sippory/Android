@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,12 +22,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.filled.ThumbUp
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
 import net.sippory.presentation.add.AddBottleSheet
 import net.sippory.utils.BottleTypes
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,8 +33,7 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onBottleClick: (Int) -> Unit,
     repository: net.sippory.data.repository.BottleRepository,
-    onDashboardClick: () -> Unit // ✅ 추가
-
+    onDashboardClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showAddBottleSheet by remember { mutableStateOf(false) }
@@ -50,7 +48,7 @@ fun HomeScreen(
                     IconButton(onClick = onDashboardClick) {
                         Icon(
                             imageVector = Icons.Default.ThumbUp,
-                            contentDescription = "대시보드로 이동"
+                            contentDescription = "대시보드로 이동",
                         )
                     }
 

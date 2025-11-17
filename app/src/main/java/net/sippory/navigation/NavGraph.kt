@@ -12,17 +12,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import net.sippory.data.AppDatabase
 import net.sippory.data.repository.BottleRepository
+import net.sippory.data.repository.DashboardRepository
+import net.sippory.presentation.dashboard.DashboardScreen
+import net.sippory.presentation.dashboard.DashboardViewModel
+import net.sippory.presentation.dashboard.DashboardViewModelFactory
 import net.sippory.presentation.detail.DetailScreen
 import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeScreen
 import net.sippory.presentation.home.HomeViewModel
 import net.sippory.utils.BottleViewModelFactory
-
-// ✅ 대시보드 추가 임포트
-import net.sippory.data.repository.DashboardRepository
-import net.sippory.presentation.dashboard.DashboardScreen
-import net.sippory.presentation.dashboard.DashboardViewModel
-import net.sippory.presentation.dashboard.DashboardViewModelFactory
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -30,6 +28,7 @@ sealed class Screen(val route: String) {
     object Detail : Screen("detail/{bottleId}") {
         fun createRoute(bottleId: Int) = "detail/$bottleId"
     }
+
     object Dashboard : Screen("dashboard") // ✅ 추가
 }
 
@@ -56,11 +55,9 @@ fun NavGraph(
                     navController.navigate(Screen.Detail.createRoute(bottleId))
                 },
                 repository = repository,
-              
                 onDashboardClick = { // ✅ 버튼 누르면 대시보드로 이동
                     navController.navigate(Screen.Dashboard.route)
-                }
-
+                },
             )
         }
 
@@ -86,7 +83,7 @@ fun NavGraph(
             val vm: DashboardViewModel = viewModel(factory = DashboardViewModelFactory(repo))
             DashboardScreen(
                 viewModel = vm,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
             )
         }
     }

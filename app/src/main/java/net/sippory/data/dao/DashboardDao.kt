@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DashboardDao {
-
     // 1. 가장 많이 기록된 주류 타입 랭킹 (이름과 횟수)
     @Query("SELECT type, COUNT(type) as count FROM bottles GROUP BY type ORDER BY count DESC")
     fun getTypeRanking(): Flow<List<TypeRanking>>
@@ -25,7 +24,10 @@ interface DashboardDao {
 
     // 데이터 클래스는 쿼리 결과에 맞춰 별도 파일이나 DAO 파일 내에 정의합니다.
     data class TypeRanking(val type: String, val count: Int)
+
     data class AbvRanking(val abv: Float, val count: Int)
+
     data class TypeRating(val type: String, val averageRating: Float)
+
     data class BottleRanking(val name: String, val count: Int)
 }

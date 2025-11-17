@@ -15,6 +15,7 @@ import net.sippory.data.entity.BottleEntity
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bottleDao(): BottleDao
+
     abstract fun dashboardDao(): DashboardDao
 
     companion object {
