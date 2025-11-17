@@ -35,6 +35,7 @@ fun HomeScreen(
     onBottleClick: (Int) -> Unit,
     repository: net.sippory.data.repository.BottleRepository,
     onDashboardClick: () -> Unit // ✅ 추가
+
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showAddBottleSheet by remember { mutableStateOf(false) }
@@ -56,35 +57,37 @@ fun HomeScreen(
                     IconButton(onClick = { showSearchBar = !showSearchBar }) {
                         Icon(Icons.Default.Search, contentDescription = "검색")
                     }
-                }
+                },
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddBottleSheet = true },
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.primary,
             ) {
                 Icon(Icons.Default.Add, contentDescription = "술 추가")
             }
-        }
+        },
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding),
         ) {
             // 검색 바
             AnimatedVisibility(
                 visible = showSearchBar,
                 enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
+                exit = shrinkVertically() + fadeOut(),
             ) {
                 SearchBar(
                     query = uiState.searchQuery,
                     onQueryChange = viewModel::onSearchQueryChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                 )
             }
 
@@ -92,14 +95,14 @@ fun HomeScreen(
             FilterChips(
                 selectedFilter = uiState.selectedFilter,
                 onFilterChange = viewModel::onFilterChange,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )
 
             // 병 그리드
             if (uiState.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
                 }
@@ -109,7 +112,7 @@ fun HomeScreen(
                 BottleGrid(
                     bottles = uiState.bottles,
                     onBottleClick = onBottleClick,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }
@@ -119,7 +122,7 @@ fun HomeScreen(
     if (showAddBottleSheet) {
         AddBottleSheet(
             onDismiss = { showAddBottleSheet = false },
-            repository = repository
+            repository = repository,
         )
     }
 }
@@ -128,7 +131,7 @@ fun HomeScreen(
 fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
         value = query,
@@ -137,7 +140,7 @@ fun SearchBar(
         placeholder = { Text("술 이름이나 종류로 검색") },
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
         singleLine = true,
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(24.dp),
     )
 }
 
@@ -145,30 +148,42 @@ fun SearchBar(
 fun FilterChips(
     selectedFilter: BottleFilter,
     onFilterChange: (BottleFilter) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FilterChip(
             selected = selectedFilter is BottleFilter.All,
             onClick = { onFilterChange(BottleFilter.All) },
-            label = { Text("전체") }
+            label = { Text("전체") },
+        )
+
+        FilterChip(
+            selected = selectedFilter is BottleFilter.Wishlist,
+            onClick = { onFilterChange(BottleFilter.Wishlist) },
+            label = { Text("💝 위시리스트") },
+        )
+
+        FilterChip(
+            selected = selectedFilter is BottleFilter.Owned,
+            onClick = { onFilterChange(BottleFilter.Owned) },
+            label = { Text("🍾 소유") },
         )
 
         BottleTypes.ALL_TYPES.take(5).forEach { (type, emoji) ->
             FilterChip(
                 selected = selectedFilter is BottleFilter.ByType && selectedFilter.type == type,
                 onClick = { onFilterChange(BottleFilter.ByType(type)) },
-                label = { Text("$emoji $type") }
+                label = { Text("$emoji $type") },
             )
         }
 
         FilterChip(
             selected = selectedFilter is BottleFilter.ByRating,
             onClick = { onFilterChange(BottleFilter.ByRating(4f)) },
-            label = { Text("⭐ 4점 이상") }
+            label = { Text("⭐ 4점 이상") },
         )
     }
 }
@@ -177,20 +192,20 @@ fun FilterChips(
 fun BottleGrid(
     bottles: List<BottleEntity>,
     onBottleClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(bottles, key = { it.id }) { bottle ->
             BottleCard(
                 bottle = bottle,
                 onClick = { onBottleClick(bottle.id) },
-                modifier = Modifier.animateItem()
+                modifier = Modifier.animateItem(),
             )
         }
     }
@@ -200,56 +215,60 @@ fun BottleGrid(
 fun BottleCard(
     bottle: BottleEntity,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(0.7f)
-            .clickable(onClick = onClick),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .aspectRatio(0.7f)
+                .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
         ) {
             // 이미지
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(MaterialTheme.colorScheme.surface),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center,
             ) {
                 if (bottle.photoUri != null) {
                     AsyncImage(
                         model = bottle.photoUri,
                         contentDescription = bottle.name,
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
                     )
                 } else {
                     Text(
                         text = BottleTypes.getEmojiForType(bottle.type),
-                        style = MaterialTheme.typography.displayLarge
+                        style = MaterialTheme.typography.displayLarge,
                     )
                 }
             }
 
             // 정보
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
             ) {
                 Text(
                     text = bottle.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -257,14 +276,14 @@ fun BottleCard(
                 Text(
                     text = bottle.type,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 RatingStars(
                     rating = bottle.rating,
-                    modifier = Modifier.height(16.dp)
+                    modifier = Modifier.height(16.dp),
                 )
 
                 if (bottle.note.isNotBlank()) {
@@ -274,7 +293,7 @@ fun BottleCard(
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -285,18 +304,19 @@ fun BottleCard(
 @Composable
 fun RatingStars(
     rating: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
         repeat(5) { index ->
             val starRating = (rating - index).coerceIn(0f, 1f)
             Text(
-                text = when {
-                    starRating >= 1f -> "⭐"
-                    starRating >= 0.5f -> "⭐"
-                    else -> "☆"
-                },
-                style = MaterialTheme.typography.bodySmall
+                text =
+                    when {
+                        starRating >= 1f -> "⭐"
+                        starRating >= 0.5f -> "⭐"
+                        else -> "☆"
+                    },
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }
@@ -306,27 +326,27 @@ fun RatingStars(
 fun EmptyState(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = "🍷",
-                style = MaterialTheme.typography.displayLarge
+                style = MaterialTheme.typography.displayLarge,
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "아직 추가된 술이 없습니다",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "+ 버튼을 눌러 첫 번째 술을 추가해보세요",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

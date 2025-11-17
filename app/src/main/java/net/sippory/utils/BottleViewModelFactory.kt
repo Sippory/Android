@@ -8,7 +8,7 @@ import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeViewModel
 
 class BottleViewModelFactory(
-    private val repository: BottleRepository
+    private val repository: BottleRepository,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
