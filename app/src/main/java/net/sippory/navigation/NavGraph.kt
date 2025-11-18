@@ -1,6 +1,7 @@
 package net.sippory.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -8,7 +9,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import net.sippory.data.AppDatabase
 import net.sippory.data.repository.BottleRepository
+import net.sippory.data.repository.DashboardRepository
+import net.sippory.presentation.dashboard.DashboardScreen
+import net.sippory.presentation.dashboard.DashboardViewModel
+import net.sippory.presentation.dashboard.DashboardViewModelFactory
 import net.sippory.presentation.detail.DetailScreen
 import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeScreen
@@ -21,6 +27,8 @@ sealed class Screen(val route: String) {
     object Detail : Screen("detail/{bottleId}") {
         fun createRoute(bottleId: Int) = "detail/$bottleId"
     }
+
+    object Dashboard : Screen("dashboard") // ✅ 추가
 }
 
 @Composable
@@ -28,8 +36,11 @@ fun NavGraph(
     navController: NavHostController,
     repository: BottleRepository,
 ) {
-    val context = LocalContext.current
     val viewModelFactory = BottleViewModelFactory(repository, context)
+
+    // ✅ DB 인스턴스 (대시보드 DAO용)
+    val context = LocalContext.current
+    val db = remember { AppDatabase.getDatabase(context) }
 
     NavHost(
         navController = navController,
@@ -43,6 +54,9 @@ fun NavGraph(
                     navController.navigate(Screen.Detail.createRoute(bottleId))
                 },
                 repository = repository,
+                onDashboardClick = { // ✅ 버튼 누르면 대시보드로 이동
+                    navController.navigate(Screen.Dashboard.route)
+                },
             )
         }
 
@@ -59,6 +73,16 @@ fun NavGraph(
                 bottleId = bottleId,
                 viewModel = detailViewModel,
                 onNavigateBack = { navController.popBackStack() },
+            )
+        }
+
+        // ✅ Dashboard 목적지
+        composable(Screen.Dashboard.route) {
+            val repo = remember { DashboardRepository(db.dashboardDao()) }
+            val vm: DashboardViewModel = viewModel(factory = DashboardViewModelFactory(repo))
+            DashboardScreen(
+                viewModel = vm,
+                onBack = { navController.popBackStack() },
             )
         }
     }
