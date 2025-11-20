@@ -11,11 +11,10 @@ data class DetailUiState(
     val bottle: BottleEntity? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isEditing: Boolean = false
+    val isEditing: Boolean = false,
 )
 
 class DetailViewModel(private val repository: BottleRepository) : ViewModel() {
-
     private val _uiState = MutableStateFlow(DetailUiState())
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
@@ -28,14 +27,14 @@ class DetailViewModel(private val repository: BottleRepository) : ViewModel() {
                     it.copy(
                         bottle = bottle,
                         isLoading = false,
-                        error = if (bottle == null) "Bottle not found" else null
+                        error = if (bottle == null) "Bottle not found" else null,
                     )
                 }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message
+                        error = e.message,
                     )
                 }
             }
@@ -57,6 +56,35 @@ class DetailViewModel(private val repository: BottleRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.deleteBottle(bottle)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
+    fun toggleWishlist() {
+        viewModelScope.launch {
+            val currentBottle = _uiState.value.bottle ?: return@launch
+            try {
+                val newWishlistStatus = !currentBottle.isWishlist
+                repository.updateWishlistStatus(currentBottle.id, newWishlistStatus)
+                _uiState.update {
+                    it.copy(bottle = currentBottle.copy(isWishlist = newWishlistStatus))
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
+    fun recordDrink() {
+        viewModelScope.launch {
+            val currentBottle = _uiState.value.bottle ?: return@launch
+            try {
+                repository.incrementDrinkCount(currentBottle.id)
+                _uiState.update {
+                    it.copy(bottle = currentBottle.copy(drinkCount = currentBottle.drinkCount + 1))
+                }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = e.message) }
             }

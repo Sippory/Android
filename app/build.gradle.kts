@@ -4,9 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.ktlint)
 }
-
-
 
 android {
     namespace = "net.sippory"
@@ -45,9 +44,7 @@ android {
     }
 }
 
-
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -56,11 +53,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation("androidx.compose.material:material-icons-extended")
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    implementation(libs.firebase.auth)
     ksp(libs.androidx.room.compiler)
 
     // Navigation
@@ -72,8 +68,6 @@ dependencies {
 
     // Coil for image loading
     implementation(libs.coil.compose)
-
-    implementation("com.google.firebase:firebase-auth:24.0.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

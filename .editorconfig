@@ -1,0 +1,21 @@
+[*.{kt,kts}]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+tab_width = 4
+trim_trailing_whitespace = true
+
+# Compose 함수는 대문자로 시작하는 것이 정상
+ktlint_standard_function-naming = disabled
+
+# Wildcard imports 허용
+ktlint_standard_no-wildcard-imports = disabled
+
+# 상수 네이밍 규칙 완화 (INSTANCE 같은 companion object 변수 허용)
+ktlint_standard_property-naming = disabled
+
+# 파라미터 주석 규칙 완화
+ktlint_standard_comment-wrapping = disabled

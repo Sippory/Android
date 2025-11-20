@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavGraph(
                     navController = navController,
-                    repository = repository
+                    repository = repository,
                 )
             }
         }

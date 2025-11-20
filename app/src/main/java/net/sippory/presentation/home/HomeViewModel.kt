@@ -2,7 +2,10 @@ package net.sippory.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.sippory.data.entity.BottleEntity
 import net.sippory.data.repository.BottleRepository
@@ -12,17 +15,22 @@ data class HomeUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val searchQuery: String = "",
-    val selectedFilter: BottleFilter = BottleFilter.All
+    val selectedFilter: BottleFilter = BottleFilter.All,
 )
 
 sealed class BottleFilter {
     object All : BottleFilter()
+
     data class ByType(val type: String) : BottleFilter()
+
     data class ByRating(val minRating: Float) : BottleFilter()
+
+    object Wishlist : BottleFilter()
+
+    object Owned : BottleFilter()
 }
 
 class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
-
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
@@ -39,7 +47,7 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
                         it.copy(
                             bottles = filterBottles(bottles, it.selectedFilter, it.searchQuery),
                             isLoading = false,
-                            error = null
+                            error = null,
                         )
                     }
                 }
@@ -47,7 +55,7 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message
+                        error = e.message,
                     )
                 }
             }
@@ -59,7 +67,7 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
             val currentBottles = it.bottles
             it.copy(
                 searchQuery = query,
-                bottles = filterBottles(currentBottles, it.selectedFilter, query)
+                bottles = filterBottles(currentBottles, it.selectedFilter, query),
             )
         }
     }
@@ -68,16 +76,19 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(selectedFilter = filter, isLoading = true) }
             try {
-                val flow = when (filter) {
-                    is BottleFilter.All -> repository.getAllBottles()
-                    is BottleFilter.ByType -> repository.getBottlesByType(filter.type)
-                    is BottleFilter.ByRating -> repository.getBottlesByRating(filter.minRating)
-                }
+                val flow =
+                    when (filter) {
+                        is BottleFilter.All -> repository.getAllBottles()
+                        is BottleFilter.ByType -> repository.getBottlesByType(filter.type)
+                        is BottleFilter.ByRating -> repository.getBottlesByRating(filter.minRating)
+                        is BottleFilter.Wishlist -> repository.getWishlistBottles()
+                        is BottleFilter.Owned -> repository.getOwnedBottles()
+                    }
                 flow.collect { bottles ->
                     _uiState.update {
                         it.copy(
                             bottles = filterBottles(bottles, filter, it.searchQuery),
-                            isLoading = false
+                            isLoading = false,
                         )
                     }
                 }
@@ -85,7 +96,7 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message
+                        error = e.message,
                     )
                 }
             }
@@ -102,26 +113,53 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
         }
     }
 
+    fun toggleWishlist(
+        bottleId: Int,
+        isWishlist: Boolean,
+    ) {
+        viewModelScope.launch {
+            try {
+                repository.updateWishlistStatus(bottleId, isWishlist)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
+    fun recordDrink(bottleId: Int) {
+        viewModelScope.launch {
+            try {
+                repository.incrementDrinkCount(bottleId)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+        }
+    }
+
     private fun filterBottles(
         bottles: List<BottleEntity>,
         filter: BottleFilter,
-        searchQuery: String
+        searchQuery: String,
     ): List<BottleEntity> {
         var filtered = bottles
 
-        // Apply filter
-        filtered = when (filter) {
-            is BottleFilter.All -> filtered
-            is BottleFilter.ByType -> filtered.filter { it.type == filter.type }
-            is BottleFilter.ByRating -> filtered.filter { it.rating >= filter.minRating }
-        }
+        // Apply filter (Wishlist와 Owned는 이미 repository에서 필터링됨)
+        filtered =
+            when (filter) {
+                is BottleFilter.All -> filtered
+                is BottleFilter.ByType -> filtered.filter { it.type == filter.type }
+                is BottleFilter.ByRating -> filtered.filter { it.rating >= filter.minRating }
+                is BottleFilter.Wishlist -> filtered // 이미 DB에서 필터링됨
+                is BottleFilter.Owned -> filtered // 이미 DB에서 필터링됨
+            }
 
         // Apply search
         if (searchQuery.isNotBlank()) {
-            filtered = filtered.filter {
-                it.name.contains(searchQuery, ignoreCase = true) ||
-                it.type.contains(searchQuery, ignoreCase = true)
-            }
+            filtered =
+                filtered.filter {
+                    it.name.contains(searchQuery, ignoreCase = true) ||
+                        it.type.contains(searchQuery, ignoreCase = true)
+                }
         }
 
         return filtered
