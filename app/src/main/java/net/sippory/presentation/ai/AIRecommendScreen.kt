@@ -1,6 +1,5 @@
 package net.sippory.presentation.ai
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -11,19 +10,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import net.sippory.data.entity.BottleEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AIRecommendScreen(
     viewModel: AIRecommendViewModel,
-    dashboardSummary: String,
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.requestRecommendation(dashboardSummary)
+        viewModel.requestRecommendation()
     }
 
     Scaffold(
@@ -34,14 +31,15 @@ fun AIRecommendScreen(
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.FavoriteBorder, contentDescription = "뒤로")
                     }
-                }
+                },
             )
-        }
+        },
     ) { padding ->
         Box(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             when {
@@ -87,7 +85,7 @@ fun RecommendCard(
             Text(
                 "추천 이유: ${item.reason}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
             )
 
             IconButton(
@@ -97,16 +95,14 @@ fun RecommendCard(
                         isWish = true
                     }
                 },
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier.align(Alignment.End),
             ) {
                 Icon(
                     imageVector = if (isWish) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error
+                    tint = MaterialTheme.colorScheme.error,
                 )
             }
         }
     }
 }
-
-

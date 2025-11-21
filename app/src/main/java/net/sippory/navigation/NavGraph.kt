@@ -28,12 +28,12 @@ import net.sippory.utils.BottleViewModelFactory
 sealed class Screen(val route: String) {
     object Home : Screen("home")
 
-
     object Detail : Screen("detail/{bottleId}") {
         fun createRoute(bottleId: Int) = "detail/$bottleId"
     }
 
     object Dashboard : Screen("dashboard")
+
     object AIRecommend : Screen("ai_recommend")
 }
 
@@ -94,17 +94,16 @@ fun NavGraph(
         }
 
         composable(Screen.AIRecommend.route) {
-            val vm: AIRecommendViewModel = viewModel(
-                factory = AIRecommendViewModelFactory(repository)
-            )
+            val vm: AIRecommendViewModel =
+                viewModel(
+                    factory = AIRecommendViewModelFactory(repository),
+                )
 
             // 대시보드 데이터를 간단 문자열로 넘겨줌
             AIRecommendScreen(
                 viewModel = vm,
-                dashboardSummary = "Type/ABV/Rating 통계 기반 요약 정보",
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
             )
         }
-
     }
 }

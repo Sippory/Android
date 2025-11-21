@@ -12,9 +12,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,12 +24,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import net.sippory.navigation.Screen
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
+import net.sippory.navigation.Screen
 import net.sippory.presentation.add.AddBottleSheet
 import net.sippory.utils.BottleTypes
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,8 +65,6 @@ fun HomeScreen(
                     }) {
                         Icon(Icons.Default.Email, contentDescription = "AI 추천")
                     }
-
-
                 },
             )
         },

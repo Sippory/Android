@@ -7,10 +7,10 @@ import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import net.sippory.BuildConfig
 import net.sippory.data.entity.BottleEntity
 import net.sippory.data.repository.BottleRepository
 import org.json.JSONArray
-import net.sippory.BuildConfig
 
 data class AIRecommendUiState(
     val isLoading: Boolean = false,
@@ -18,70 +18,98 @@ data class AIRecommendUiState(
     val error: String? = null,
 )
 
-
 data class RecommendItem(
     val name: String,
     val type: String,
     val abv: Float?,
     val country: String?,
-    val reason: String
+    val reason: String,
 )
-
 
 class AIRecommendViewModel(
     private val repository: BottleRepository,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(AIRecommendUiState())
     val uiState: StateFlow<AIRecommendUiState> = _uiState.asStateFlow()
 
     // Gemini SDK
-    private val model = GenerativeModel(
-        modelName = "gemini-2.5-flash",
-        apiKey = BuildConfig.GEMINI_API_KEY
-    )
+    private val model =
+        GenerativeModel(
+            modelName = "gemini-2.5-flash",
+            apiKey = BuildConfig.GEMINI_API_KEY,
+        )
 
-    fun requestRecommendation(dashboardSummary: String) {
+    fun requestRecommendation() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _uiState.update { it.copy(isLoading = true, error = null) }
 
-                val prompt = """
-    Analyze the user's alcohol consumption statistics and recommend 5 alcoholic beverages.
+                // 1) 전체 기록 가져오기
+                val allBottles = repository.getAllBottles().first()
 
-    Respond ONLY as a JSON array with:
-    "name", "type", "abv", "country", "reason"
+                // 2) "마신 기록"만 추리기
+                val history =
+                    allBottles
+                        .filter { bottle ->
+                            // 마신 횟수가 양수면
+                            bottle.drinkCount > 0
+                        }
+                // .take(20) // 토큰 과다 방지: 최근 20개만 사용
 
-    Example:
-    [
-      {
-        "name": "string",
-        "type": "string",
-        "abv": 0.0,
-        "country": "string",
-        "reason": "why this was recommended"
-      }
-    ]
+                val historyText =
+                    if (history.isEmpty()) {
+                        "No drinking history yet."
+                    } else {
+                        history.joinToString(separator = "\n") { b ->
+                            buildString {
+                                append("- name: ${b.name}")
+                                append(", type: ${b.type}")
+                                if (b.abv != null) append(", abv: ${b.abv}")
+                                if (!b.country.isNullOrBlank()) append(", country: ${b.country}")
+                                append(", rating: ${b.rating}")
+                                append(", drinkCount: ${b.drinkCount}")
+                                if (b.note.isNotBlank()) append(", note: ${b.note}")
+                            }
+                        }
+                    }
 
-    --- User Statistics ---
-    $dashboardSummary
-""".trimIndent()
+                Log.d("History", historyText)
 
+                // 3) 프롬프트 구성 (Detail 기록 기반)
+                val prompt =
+                    """
+                    You are an expert sommelier/bartender.
+                    Based on the user's actual drinking history below, recommend 5 alcoholic beverages they are likely to enjoy next.
+                    Consider preferred types, ABV range, countries, ratings, notes, and re-drink frequency.
 
-                val response = model.generateContent(prompt)
-                val rawText = response.text ?: throw Exception("No output")
+                    USER DRINKING HISTORY:
+                    $historyText
 
-                Log.e("AI_DEBUG", "Gemini output RAW: $rawText")
+                    Respond ONLY as a JSON array with objects containing:
+                    "name", "type", "abv", "country", "reason"
 
-                // 🔥 1) 코드블록 제거
-                var cleaned = rawText
-                    .replace("```json", "")
-                    .replace("```", "")
-                    .replace("\r", "")
-                    .trim()
+                    Example:
+                    [
+                      {
+                        "name": "string",
+                        "type": "string",
+                        "abv": number,
+                        "country": "string",
+                        "reason": "string"
+                      }
+                    ]
+                    """.trimIndent()
 
-                // 🔥 2) JSON 내부 앞뒤의 텍스트 제거
-                // 예: "Here is your JSON: [...]"
+                val response = model.generateContent(prompt).text ?: "[]"
+
+                val cleaned =
+                    response
+                        .replace("```json", "")
+                        .replace("```", "")
+                        .replace("\r", "")
+                        .trim()
+
+                // 4) JSON 내부 앞뒤 텍스트 제거
                 val startIndex = cleaned.indexOf("[")
                 val endIndex = cleaned.lastIndexOf("]")
 
@@ -89,31 +117,24 @@ class AIRecommendViewModel(
                     throw Exception("JSON array not found in model output.\n$cleaned")
                 }
 
-                cleaned = cleaned.substring(startIndex, endIndex + 1).trim()
+                val jsonArrayStr = cleaned.substring(startIndex, endIndex + 1)
+                val jsonArray = JSONArray(jsonArrayStr)
 
-                Log.e("AI_DEBUG", "Gemini output CLEAN: $cleaned")
+                val items =
+                    (0 until jsonArray.length()).map { i ->
+                        val obj = jsonArray.getJSONObject(i)
+                        RecommendItem(
+                            name = obj.optString("name"),
+                            type = obj.optString("type"),
+                            abv = obj.optDouble("abv").toFloat().takeIf { it > 0f },
+                            country = obj.optString("country"),
+                            reason = obj.optString("reason"),
+                        )
+                    }
 
-                // 🔥 3) JSONArray 변환
-                val array = JSONArray(cleaned)
-
-                val list = mutableListOf<RecommendItem>()
-
-                for (i in 0 until array.length()) {
-                    val obj = array.getJSONObject(i)
-
-                    list += RecommendItem(
-                        name = obj.getString("name"),
-                        type = normalizeType(obj.getString("type")),
-                        abv = obj.optDouble("abv", 0.0).toFloat(),
-                        country = obj.optString("country", "Unknown"),
-                        reason = obj.optString("reason", "AI 추천 이유 없음")
-                    )
-                }
-
-                _uiState.update { it.copy(isLoading = false, recommendations = list) }
-
-
+                _uiState.update { it.copy(isLoading = false, recommendations = items, error = null) }
             } catch (e: Exception) {
+                Log.e("AIRecommend", "Recommendation error", e)
                 e.printStackTrace()
                 _uiState.update { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
             }
@@ -125,15 +146,14 @@ class AIRecommendViewModel(
             repository.insertBottle(
                 BottleEntity(
                     name = item.name,
-                    type = item.type,
+                    type = normalizeType(item.type),
                     abv = item.abv,
                     country = item.country,
-                    isWishlist = true
-                )
+                    isWishlist = true,
+                ),
             )
         }
     }
-
 
     private fun normalizeType(aiType: String): String {
         val normalized = aiType.lowercase()
@@ -152,5 +172,4 @@ class AIRecommendViewModel(
             else -> "Other"
         }
     }
-
 }
