@@ -13,6 +13,9 @@ import androidx.navigation.navArgument
 import net.sippory.data.AppDatabase
 import net.sippory.data.repository.BottleRepository
 import net.sippory.data.repository.DashboardRepository
+import net.sippory.presentation.ai.AIRecommendScreen
+import net.sippory.presentation.ai.AIRecommendViewModel
+import net.sippory.presentation.ai.AIRecommendViewModelFactory
 import net.sippory.presentation.dashboard.DashboardScreen
 import net.sippory.presentation.dashboard.DashboardViewModel
 import net.sippory.presentation.dashboard.DashboardViewModelFactory
@@ -25,11 +28,13 @@ import net.sippory.utils.BottleViewModelFactory
 sealed class Screen(val route: String) {
     object Home : Screen("home")
 
+
     object Detail : Screen("detail/{bottleId}") {
         fun createRoute(bottleId: Int) = "detail/$bottleId"
     }
 
-    object Dashboard : Screen("dashboard") // ✅ 추가
+    object Dashboard : Screen("dashboard")
+    object AIRecommend : Screen("ai_recommend")
 }
 
 @Composable
@@ -55,9 +60,10 @@ fun NavGraph(
                     navController.navigate(Screen.Detail.createRoute(bottleId))
                 },
                 repository = repository,
-                onDashboardClick = { // ✅ 버튼 누르면 대시보드로 이동
+                onDashboardClick = {
                     navController.navigate(Screen.Dashboard.route)
                 },
+                navController = navController,
             )
         }
 
@@ -86,5 +92,19 @@ fun NavGraph(
                 onBack = { navController.popBackStack() },
             )
         }
+
+        composable(Screen.AIRecommend.route) {
+            val vm: AIRecommendViewModel = viewModel(
+                factory = AIRecommendViewModelFactory(repository)
+            )
+
+            // 대시보드 데이터를 간단 문자열로 넘겨줌
+            AIRecommendScreen(
+                viewModel = vm,
+                dashboardSummary = "Type/ABV/Rating 통계 기반 요약 정보",
+                onBack = { navController.popBackStack() }
+            )
+        }
+
     }
 }
