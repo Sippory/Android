@@ -20,9 +20,13 @@ import net.sippory.presentation.detail.DetailScreen
 import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeScreen
 import net.sippory.presentation.home.HomeViewModel
+import net.sippory.presentation.signin.SignInScreen
+import net.sippory.presentation.signup.SignUpScreen
 import net.sippory.utils.BottleViewModelFactory
 
 sealed class Screen(val route: String) {
+    object SignIn : Screen("sign-in")
+    object SignUp : Screen("sign-up")
     object Home : Screen("home")
 
     object Detail : Screen("detail/{bottleId}") {
@@ -45,8 +49,20 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.SignIn.route,
     ) {
+        composable(Screen.SignIn.route) {
+            SignInScreen(
+                navController = navController
+            )
+        }
+
+        composable(Screen.SignUp.route) {
+            SignUpScreen(
+                navController = navController
+            )
+        }
+
         composable(Screen.Home.route) {
             val homeViewModel: HomeViewModel = viewModel(factory = viewModelFactory)
             HomeScreen(
