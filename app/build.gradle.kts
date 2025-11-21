@@ -28,7 +28,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -56,7 +56,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation(libs.firebase.auth)
-
+    implementation("com.google.firebase:firebase-firestore")
 
     // Room
     implementation(libs.androidx.room.runtime)
