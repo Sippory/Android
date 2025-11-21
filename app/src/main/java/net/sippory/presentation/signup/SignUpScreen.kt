@@ -145,7 +145,7 @@ fun SignUpScreen(navController: NavController) {
                         onNext = {
                             confirmedPasswordFocusRequester.requestFocus()
                         },
-                        isError = isUserPasswordError || !isPasswordValid,
+                        isError = isUserPasswordError,
                         isPasswordValid = isPasswordValid,
                         onErrorChange = { isUserPasswordError = it }
                     )
@@ -346,8 +346,10 @@ fun UserPassWordTextField(
                 .onFocusChanged { focusState ->
                     if (focusState.isFocused) {
                         isInputFocusChanged = true
-                    } else if (isInputFocusChanged && !focusState.isFocused && userPassword.isBlank() || !isPasswordValid) {
-                        onErrorChange(true)
+                    } else if (isInputFocusChanged) {
+                        if (userPassword.isBlank() || !isPasswordValid) {
+                            onErrorChange(true)
+                        }
                     }
 
                 }
