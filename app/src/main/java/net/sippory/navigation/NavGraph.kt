@@ -13,6 +13,8 @@ import androidx.navigation.navArgument
 import net.sippory.data.AppDatabase
 import net.sippory.data.repository.BottleRepository
 import net.sippory.data.repository.DashboardRepository
+import net.sippory.data.repository.DrinkRepository
+import net.sippory.data.repository.RecentlySearchedDrinkRepository
 import net.sippory.presentation.dashboard.DashboardScreen
 import net.sippory.presentation.dashboard.DashboardViewModel
 import net.sippory.presentation.dashboard.DashboardViewModelFactory
@@ -20,13 +22,19 @@ import net.sippory.presentation.detail.DetailScreen
 import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeScreen
 import net.sippory.presentation.home.HomeViewModel
+import net.sippory.presentation.search.DrinkSearchScreen
+import net.sippory.presentation.search.DrinkSearchViewModel
+import net.sippory.presentation.searchDetail.SearchDetailScreen
 import net.sippory.presentation.signin.SignInScreen
 import net.sippory.presentation.signup.SignUpScreen
 import net.sippory.utils.BottleViewModelFactory
+import net.sippory.utils.DrinkViewModelFactory
 
 sealed class Screen(val route: String) {
     object SignIn : Screen("sign-in")
+
     object SignUp : Screen("sign-up")
+
     object Home : Screen("home")
 
     object Detail : Screen("detail/{bottleId}") {
@@ -34,6 +42,12 @@ sealed class Screen(val route: String) {
     }
 
     object Dashboard : Screen("dashboard") // ✅ 추가
+
+    object Search : Screen("search")
+
+    object SearchDetail : Screen("search/{drinkName}") {
+        fun createRoute(drinkName: String) = "search/$drinkName"
+    }
 }
 
 @Composable
@@ -49,17 +63,17 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.SignIn.route,
+        startDestination = Screen.Home.route,
     ) {
         composable(Screen.SignIn.route) {
             SignInScreen(
-                navController = navController
+                navController = navController,
             )
         }
 
         composable(Screen.SignUp.route) {
             SignUpScreen(
-                navController = navController
+                navController = navController,
             )
         }
 
@@ -73,6 +87,9 @@ fun NavGraph(
                 repository = repository,
                 onDashboardClick = { // ✅ 버튼 누르면 대시보드로 이동
                     navController.navigate(Screen.Dashboard.route)
+                },
+                onSearchClick = {
+                    navController.navigate(Screen.Search.route)
                 },
             )
         }
@@ -100,6 +117,55 @@ fun NavGraph(
             DashboardScreen(
                 viewModel = vm,
                 onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(Screen.Search.route) {
+            val context = LocalContext.current
+            val db = remember { AppDatabase.getDatabase(context) }
+            val drinkRepository = remember { DrinkRepository() }
+            val recentlySearchedDrinkRepository =
+                remember { RecentlySearchedDrinkRepository(db.recentlySearchedDrinkDao()) }
+
+            val factory =
+                remember {
+                    DrinkViewModelFactory(drinkRepository, recentlySearchedDrinkRepository)
+                }
+            val drinkSearchViewModel: DrinkSearchViewModel = viewModel(factory = factory)
+            DrinkSearchScreen(
+                navController = navController,
+                viewModel = drinkSearchViewModel,
+            )
+        }
+
+        composable(Screen.SearchDetail.route) { backStackEntry ->
+            val parentEntry =
+                remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.Search.route)
+                }
+
+            val context = LocalContext.current
+            val db = remember { AppDatabase.getDatabase(context) }
+            val drinkRepository = remember { DrinkRepository() }
+            val recentlySearchedDrinkRepository =
+                remember {
+                    RecentlySearchedDrinkRepository(db.recentlySearchedDrinkDao())
+                }
+
+            val factory =
+                remember {
+                    DrinkViewModelFactory(drinkRepository, recentlySearchedDrinkRepository)
+                }
+
+            val drinkSearchViewModel: DrinkSearchViewModel =
+                viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    factory = factory,
+                )
+
+            SearchDetailScreen(
+                navController = navController,
+                viewModel = drinkSearchViewModel,
             )
         }
     }
