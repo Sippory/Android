@@ -1,7 +1,6 @@
 package net.sippory.presentation.signin
 
 import android.widget.Toast
-import net.sippory.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,8 +52,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
-
-
+import net.sippory.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,46 +77,51 @@ fun SignInScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Sippory") })
-        }
-
+                title = { Text("Sippory") },
+            )
+        },
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(24.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(24.dp),
             )
             Image(
                 painter = painterResource(id = R.drawable.sippory_logo),
                 contentDescription = "sippory logo",
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(156.dp)
+                modifier =
+                    Modifier
+                        .width(200.dp)
+                        .height(156.dp),
             )
             Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(24.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(24.dp),
             )
 
             UserEmailIdTextField(
                 userEmailId = userEmailId,
                 onUserEmailIdChange = { newId -> userEmailId = newId },
-                onNext = { passwordFocusRequester.requestFocus() })
+                onNext = { passwordFocusRequester.requestFocus() },
+            )
             UserPasswordTextField(
                 userPassword = userPassword,
                 onUserPasswordChange = { newPassword -> userPassword = newPassword },
                 isPasswordVisible = isPasswordVisible,
                 onUserPasswordVisibilityChange = { isVisible -> isPasswordVisible = isVisible },
                 passwordFocusRequester = passwordFocusRequester,
-                focusManager = focusManager
+                focusManager = focusManager,
             )
             SignInButton(isEnable = isFormValid, onClick = {
                 coroutineScope.launch {
@@ -134,14 +137,14 @@ fun SignInScreen(navController: NavController) {
                         },
                         onFailure = {
                             Toast.makeText(context, "Sign In Failed", Toast.LENGTH_SHORT).show()
-                        }
+                        },
                     )
                 }
             })
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text("Don't have an account?")
                 SignUpButton(navController = navController)
@@ -154,24 +157,26 @@ fun SignInScreen(navController: NavController) {
 fun UserEmailIdTextField(
     userEmailId: String,
     onUserEmailIdChange: (String) -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
 ) {
     OutlinedTextField(
         value = userEmailId,
         onValueChange = { onUserEmailIdChange(it) },
         label = { Text("Enter your Email ID") },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next,
-        ),
-        keyboardActions = KeyboardActions(onNext = {
-            onNext()
-        }),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
+        keyboardActions =
+            KeyboardActions(onNext = {
+                onNext()
+            }),
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.AccountCircle,
                 contentDescription =
-                    "User ID Icon"
+                    "User ID Icon",
             )
         },
         trailingIcon = {
@@ -179,19 +184,21 @@ fun UserEmailIdTextField(
                 IconButton(
                     onClick = {
                         onUserEmailIdChange("")
-                    }) {
+                    },
+                ) {
                     Icon(
-                        imageVector = Icons.Filled.HighlightOff, contentDescription = "Clear ID"
+                        imageVector = Icons.Filled.HighlightOff,
+                        contentDescription = "Clear ID",
                     )
                 }
             }
         },
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
     )
-
 }
 
 @Composable
@@ -201,48 +208,55 @@ fun UserPasswordTextField(
     isPasswordVisible: Boolean,
     onUserPasswordVisibilityChange: (Boolean) -> Unit,
     passwordFocusRequester: FocusRequester,
-    focusManager: FocusManager
+    focusManager: FocusManager,
 ) {
     OutlinedTextField(
         value = userPassword,
         onValueChange = { onUserPasswordChange(it) },
         label = { Text("Enter your Password") },
-        keyboardActions = KeyboardActions(onDone = {
-            focusManager.clearFocus()
-        }),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
-        ),
+        keyboardActions =
+            KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            }),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
+            ),
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.Lock,
                 contentDescription =
-                    "Password Icon"
+                    "Password Icon",
             )
         },
         trailingIcon = {
             IconButton(
                 onClick = {
                     onUserPasswordVisibilityChange(!isPasswordVisible)
-                }) {
+                },
+            ) {
                 Icon(
                     imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                    contentDescription = if (isPasswordVisible) "Show Password" else "Hide Password"
+                    contentDescription = if (isPasswordVisible) "Show Password" else "Hide Password",
                 )
             }
         },
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .focusRequester(passwordFocusRequester)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .focusRequester(passwordFocusRequester),
     )
 }
 
 @Composable
-fun SignInButton(isEnable: Boolean, onClick: () -> Unit) {
+fun SignInButton(
+    isEnable: Boolean,
+    onClick: () -> Unit,
+) {
     Button(
         onClick = {
             onClick()
@@ -250,9 +264,10 @@ fun SignInButton(isEnable: Boolean, onClick: () -> Unit) {
         enabled = isEnable,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(Color.Black),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
     ) {
         Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp)
     }
@@ -261,7 +276,7 @@ fun SignInButton(isEnable: Boolean, onClick: () -> Unit) {
 @Composable
 fun SignUpButton(navController: NavController) {
     TextButton(
-        onClick = { navController.navigate("sign-up") }
+        onClick = { navController.navigate("sign-up") },
     ) {
         Text("Sign Up", color = Color.Black)
     }
@@ -272,7 +287,7 @@ private fun signIn(
     userEmailId: String,
     userPassword: String,
     onSuccess: () -> Unit,
-    onFailure: () -> Unit
+    onFailure: () -> Unit,
 ) {
     auth.signInWithEmailAndPassword(userEmailId, userPassword)
         .addOnCompleteListener { task ->
