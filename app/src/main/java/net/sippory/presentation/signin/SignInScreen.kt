@@ -276,10 +276,9 @@ private fun signIn(
 ) {
     auth.signInWithEmailAndPassword(userEmailId, userPassword)
         .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                onSuccess()
-            } else {
-                onFailure()
+            when {
+                task.isSuccessful -> onSuccess()
+                else -> onFailure()
             }
         }
 }
