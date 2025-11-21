@@ -4,6 +4,8 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -34,6 +36,7 @@ fun HomeScreen(
     onBottleClick: (Int) -> Unit,
     repository: net.sippory.data.repository.BottleRepository,
     onDashboardClick: () -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showAddBottleSheet by remember { mutableStateOf(false) }
@@ -86,6 +89,9 @@ fun HomeScreen(
                         Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
+                    onClick = {
+                        onSearchClick()
+                    },
                 )
             }
 
@@ -125,12 +131,23 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    LaunchedEffect(isPressed) {
+        if (isPressed) {
+            onClick()
+        }
+    }
+
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
@@ -139,6 +156,8 @@ fun SearchBar(
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
         singleLine = true,
         shape = RoundedCornerShape(24.dp),
+        readOnly = true,
+        interactionSource = interactionSource,
     )
 }
 
