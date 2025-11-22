@@ -99,7 +99,6 @@ fun NavGraph(
                     factory = AIRecommendViewModelFactory(repository),
                 )
 
-            // 대시보드 데이터를 간단 문자열로 넘겨줌
             AIRecommendScreen(
                 viewModel = vm,
                 onBack = { navController.popBackStack() },

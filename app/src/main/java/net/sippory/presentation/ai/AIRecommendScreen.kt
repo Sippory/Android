@@ -99,7 +99,7 @@ fun RecommendCard(
             ) {
                 Icon(
                     imageVector = if (isWish) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = null,
+                    contentDescription = "위시리스트에 추가",
                     tint = MaterialTheme.colorScheme.error,
                 )
             }
