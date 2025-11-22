@@ -1,5 +1,6 @@
 package net.sippory.utils
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import net.sippory.data.repository.BottleRepository
@@ -9,6 +10,7 @@ import net.sippory.presentation.home.HomeViewModel
 
 class BottleViewModelFactory(
     private val repository: BottleRepository,
+    private val context: Context,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -20,7 +22,7 @@ class BottleViewModelFactory(
                 DetailViewModel(repository) as T
             }
             modelClass.isAssignableFrom(AddBottleViewModel::class.java) -> {
-                AddBottleViewModel(repository) as T
+                AddBottleViewModel(repository, context) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

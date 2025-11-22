@@ -1,4 +1,3 @@
-// net/sippory/navigation/NavGraph.kt
 package net.sippory.navigation
 
 import androidx.compose.runtime.Composable
@@ -41,11 +40,10 @@ fun NavGraph(
     navController: NavHostController,
     repository: BottleRepository,
 ) {
-    val viewModelFactory = BottleViewModelFactory(repository)
-
     // ✅ DB 인스턴스 (대시보드 DAO용)
     val context = LocalContext.current
     val db = remember { AppDatabase.getDatabase(context) }
+    val viewModelFactory = BottleViewModelFactory(repository, context)
 
     NavHost(
         navController = navController,
