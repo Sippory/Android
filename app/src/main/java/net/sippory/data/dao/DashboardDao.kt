@@ -57,7 +57,10 @@ interface DashboardDao {
     fun getMostConsumedBottleRanking(): Flow<List<BottleRanking>>
 
     data class TypeRanking(val type: String, val count: Int)
+
     data class AbvRanking(val abv: Float, val count: Int)
+
     data class TypeRating(val type: String, val averageRating: Float)
+
     data class BottleRanking(val name: String, val count: Int)
 }
