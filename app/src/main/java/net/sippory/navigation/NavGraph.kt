@@ -36,11 +36,10 @@ fun NavGraph(
     navController: NavHostController,
     repository: BottleRepository,
 ) {
-    val viewModelFactory = BottleViewModelFactory(repository, context)
-
     // ✅ DB 인스턴스 (대시보드 DAO용)
     val context = LocalContext.current
     val db = remember { AppDatabase.getDatabase(context) }
+    val viewModelFactory = BottleViewModelFactory(repository, context)
 
     NavHost(
         navController = navController,

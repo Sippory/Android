@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import net.sippory.BuildConfig
 import net.sippory.data.ai.GeminiService
 import net.sippory.data.entity.BottleEntity
 import net.sippory.data.repository.BottleRepository
@@ -69,23 +70,27 @@ class AddBottleViewModel(
     }
 
     fun analyzeBottleImage(imageUri: Uri) {
-        Log.d(TAG, "========================================")
-        Log.d(TAG, "🔍 이미지 분석 요청 시작")
-        Log.d(TAG, "이미지 URI: $imageUri")
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "========================================")
+            Log.d(TAG, "🔍 이미지 분석 요청 시작")
+            Log.d(TAG, "이미지 URI: $imageUri")
+        }
 
         viewModelScope.launch {
             _uiState.update { it.copy(isAnalyzing = true, error = null, aiSuggestion = null) }
-            Log.d(TAG, "UI 상태 업데이트: 분석 중...")
+            if (BuildConfig.DEBUG) Log.d(TAG, "UI 상태 업데이트: 분석 중...")
 
             geminiService.analyzeBottle(imageUri).fold(
                 onSuccess = { bottleInfo ->
-                    Log.d(TAG, "✅ AI 분석 성공!")
-                    Log.d(TAG, "- 이름: ${bottleInfo.name}")
-                    Log.d(TAG, "- 타입: ${bottleInfo.type}")
-                    Log.d(TAG, "- 도수: ${bottleInfo.abv ?: "N/A"}")
-                    Log.d(TAG, "- 국가: ${bottleInfo.country ?: "N/A"}")
-                    Log.d(TAG, "- 신뢰도: ${bottleInfo.confidence}%")
-                    Log.d(TAG, "- 설명: ${bottleInfo.description ?: "N/A"}")
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "✅ AI 분석 성공!")
+                        Log.d(TAG, "- 이름: ${bottleInfo.name}")
+                        Log.d(TAG, "- 타입: ${bottleInfo.type}")
+                        Log.d(TAG, "- 도수: ${bottleInfo.abv ?: "N/A"}")
+                        Log.d(TAG, "- 국가: ${bottleInfo.country ?: "N/A"}")
+                        Log.d(TAG, "- 신뢰도: ${bottleInfo.confidence}%")
+                        Log.d(TAG, "- 설명: ${bottleInfo.description ?: "N/A"}")
+                    }
 
                     _uiState.update {
                         it.copy(
@@ -101,12 +106,14 @@ class AddBottleViewModel(
                                     "'${bottleInfo.name}'으로 인식했습니다!",
                         )
                     }
-                    Log.d(TAG, "UI 상태 업데이트 완료")
+                    if (BuildConfig.DEBUG) Log.d(TAG, "UI 상태 업데이트 완료")
                 },
                 onFailure = { error ->
                     Log.e(TAG, "❌ AI 분석 실패")
-                    Log.e(TAG, "에러 메시지: ${error.message}")
-                    Log.e(TAG, "에러 스택: ${error.stackTraceToString()}")
+                    if (BuildConfig.DEBUG) {
+                        Log.e(TAG, "에러 메시지: ${error.message}")
+                        Log.e(TAG, "에러 스택: ${error.stackTraceToString()}")
+                    }
 
                     _uiState.update {
                         it.copy(
@@ -116,10 +123,10 @@ class AddBottleViewModel(
                             photoUri = imageUri.toString(),
                         )
                     }
-                    Log.d(TAG, "UI 에러 상태 업데이트 완료")
+                    if (BuildConfig.DEBUG) Log.d(TAG, "UI 에러 상태 업데이트 완료")
                 },
             )
-            Log.d(TAG, "========================================")
+            if (BuildConfig.DEBUG) Log.d(TAG, "========================================")
         }
     }
 

@@ -30,6 +30,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "GEMINI_API_KEY",
+            "\"${localProperties.getProperty("GEMINI_API_KEY") ?: ""}\"",
+        )
     }
 
     buildTypes {
@@ -38,18 +44,6 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
-            )
-            buildConfigField(
-                "String",
-                "GEMINI_API_KEY",
-                "\"${localProperties.getProperty("GEMINI_API_KEY") ?: ""}\"",
-            )
-        }
-        debug {
-            buildConfigField(
-                "String",
-                "GEMINI_API_KEY",
-                "\"${localProperties.getProperty("GEMINI_API_KEY") ?: ""}\"",
             )
         }
     }
@@ -94,10 +88,6 @@ dependencies {
 
     // Coil for image loading
     implementation(libs.coil.compose)
-
-    // Gemini AI
-    implementation(libs.generativeai)
-    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
