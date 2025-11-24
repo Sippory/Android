@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -31,22 +30,17 @@ fun AddBottleSheet(
     onDismiss: () -> Unit,
     repository: BottleRepository,
 ) {
-    val context = LocalContext.current
-    val viewModelFactory = BottleViewModelFactory(repository, context)
+    val viewModelFactory = BottleViewModelFactory(repository)
     val viewModel: AddBottleViewModel = viewModel(factory = viewModelFactory)
     val uiState by viewModel.uiState.collectAsState()
 
     var showTypeDropdown by remember { mutableStateOf(false) }
-    var showImageSourceDialog by remember { mutableStateOf(false) }
 
     val imagePickerLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
         ) { uri: Uri? ->
-            uri?.let {
-                viewModel.updatePhotoUri(it.toString())
-                viewModel.analyzeBottleImage(it)
-            }
+            uri?.let { viewModel.updatePhotoUri(it.toString()) }
         }
 
     LaunchedEffect(uiState.saveSuccess) {
@@ -85,7 +79,7 @@ fun AddBottleSheet(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 사진 선택 + AI 분석
+            // 사진 선택
             Box(
                 modifier =
                     Modifier
@@ -93,7 +87,7 @@ fun AddBottleSheet(
                         .height(200.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .clickable { showImageSourceDialog = true },
+                        .clickable { imagePickerLauncher.launch("image/*") },
                 contentAlignment = Alignment.Center,
             ) {
                 if (uiState.photoUri != null) {
@@ -103,26 +97,6 @@ fun AddBottleSheet(
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
                     )
-                    if (uiState.isAnalyzing) {
-                        Box(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                CircularProgressIndicator()
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = "🤖 AI 분석 중...",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                            }
-                        }
-                    }
                 } else {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -133,54 +107,11 @@ fun AddBottleSheet(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "사진 추가하고 AI로 인식하기",
+                            text = "사진 추가",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                }
-            }
-
-            // 이미지 소스 선택 다이얼로그
-            if (showImageSourceDialog) {
-                AlertDialog(
-                    onDismissRequest = { showImageSourceDialog = false },
-                    title = { Text("이미지 선택") },
-                    text = { Text("갤러리에서 술병 사진을 선택하세요") },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                showImageSourceDialog = false
-                                imagePickerLauncher.launch("image/*")
-                            },
-                        ) {
-                            Text("📁 갤러리")
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showImageSourceDialog = false }) {
-                            Text("취소")
-                        }
-                    },
-                )
-            }
-
-            // AI 분석 결과 표시
-            uiState.aiSuggestion?.let { suggestion ->
-                Spacer(modifier = Modifier.height(16.dp))
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors =
-                        CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        ),
-                ) {
-                    Text(
-                        text = suggestion,
-                        modifier = Modifier.padding(12.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
                 }
             }
 

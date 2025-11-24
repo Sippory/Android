@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
@@ -22,8 +23,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
+import net.sippory.navigation.Screen
 import net.sippory.presentation.add.AddBottleSheet
 import net.sippory.utils.BottleTypes
 
@@ -34,6 +37,7 @@ fun HomeScreen(
     onBottleClick: (Int) -> Unit,
     repository: net.sippory.data.repository.BottleRepository,
     onDashboardClick: () -> Unit,
+    navController: NavHostController,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showAddBottleSheet by remember { mutableStateOf(false) }
@@ -54,6 +58,12 @@ fun HomeScreen(
 
                     IconButton(onClick = { showSearchBar = !showSearchBar }) {
                         Icon(Icons.Default.Search, contentDescription = "검색")
+                    }
+
+                    IconButton(onClick = {
+                        navController.navigate(Screen.AIRecommend.route)
+                    }) {
+                        Icon(Icons.Default.Email, contentDescription = "AI 추천")
                     }
                 },
             )

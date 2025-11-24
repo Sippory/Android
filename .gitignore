@@ -96,7 +96,3 @@ app/build/
 
 # Signing Files
 .signing/
-
-# Firebase
-sippory-eb240-firebase-adminsdk-fbsvc-e095dc73c9.json
-app/google-services.json
