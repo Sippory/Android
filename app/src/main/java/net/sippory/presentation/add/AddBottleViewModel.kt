@@ -15,6 +15,9 @@ data class AddBottleUiState(
     val photoUri: String? = null,
     val rating: Float = 3f,
     val note: String = "",
+    val locationName: String = "",
+    val latitudeInput: String = "",
+    val longitudeInput: String = "",
     val isSaving: Boolean = false,
     val error: String? = null,
     val saveSuccess: Boolean = false,
@@ -53,6 +56,18 @@ class AddBottleViewModel(private val repository: BottleRepository) : ViewModel()
         _uiState.update { it.copy(note = note) }
     }
 
+    fun updateLocationName(location: String) {
+        _uiState.update { it.copy(locationName = location) }
+    }
+
+    fun updateLatitude(latitude: String) {
+        _uiState.update { it.copy(latitudeInput = latitude) }
+    }
+
+    fun updateLongitude(longitude: String) {
+        _uiState.update { it.copy(longitudeInput = longitude) }
+    }
+
     fun toggleWishlist() {
         _uiState.update { it.copy(isWishlist = !it.isWishlist) }
     }
@@ -79,6 +94,9 @@ class AddBottleViewModel(private val repository: BottleRepository) : ViewModel()
                         rating = state.rating,
                         note = state.note,
                         isWishlist = state.isWishlist,
+                        locationName = state.locationName.trim().ifBlank { null },
+                        latitude = state.latitudeInput.replace(',', '.').toDoubleOrNull(),
+                        longitude = state.longitudeInput.replace(',', '.').toDoubleOrNull(),
                     )
 
                 repository.insertBottle(bottle)

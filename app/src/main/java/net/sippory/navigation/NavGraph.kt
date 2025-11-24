@@ -23,6 +23,9 @@ import net.sippory.presentation.detail.DetailScreen
 import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeScreen
 import net.sippory.presentation.home.HomeViewModel
+import net.sippory.presentation.tastefinder.TasteFinderScreen
+import net.sippory.presentation.tastefinder.TasteFinderViewModel
+import net.sippory.presentation.tastefinder.TasteFinderViewModelFactory
 import net.sippory.utils.BottleViewModelFactory
 
 sealed class Screen(val route: String) {
@@ -35,6 +38,8 @@ sealed class Screen(val route: String) {
     object Dashboard : Screen("dashboard")
 
     object AIRecommend : Screen("ai_recommend")
+
+    object TasteFinder : Screen("taste_finder")
 }
 
 @Composable
@@ -100,6 +105,18 @@ fun NavGraph(
                 )
 
             AIRecommendScreen(
+                viewModel = vm,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(Screen.TasteFinder.route) {
+            val vm: TasteFinderViewModel =
+                viewModel(
+                    factory = TasteFinderViewModelFactory(repository),
+                )
+
+            TasteFinderScreen(
                 viewModel = vm,
                 onBack = { navController.popBackStack() },
             )
