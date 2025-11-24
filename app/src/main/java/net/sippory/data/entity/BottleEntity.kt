@@ -24,4 +24,7 @@ data class BottleEntity(
     val drinkCount: Int = 0,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
+    val locationName: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
 )

@@ -223,6 +223,24 @@ fun AddBottleSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // 기록한 장소
+            Text(
+                text = "기록한 장소",
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = uiState.locationName,
+                onValueChange = viewModel::updateLocationName,
+                label = { Text("장소 이름") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             // 위시리스트 체크박스
             Row(
                 modifier =
