@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
@@ -48,6 +49,16 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("Sippory", fontWeight = FontWeight.Bold) },
                 actions = {
+                    // 취향 찾기 버튼
+                    IconButton(onClick = {
+                        navController.navigate(Screen.TasteFinder.route)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "나에게 맞는 술 찾기",
+                        )
+                    }
+
                     // ✅ 대시보드로 이동 버튼 추가
                     IconButton(onClick = onDashboardClick) {
                         Icon(

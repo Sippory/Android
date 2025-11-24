@@ -35,6 +35,8 @@ sealed class Screen(val route: String) {
     object Dashboard : Screen("dashboard")
 
     object AIRecommend : Screen("ai_recommend")
+
+    object TasteFinder : Screen("taste_finder")
 }
 
 @Composable
@@ -100,6 +102,18 @@ fun NavGraph(
                 )
 
             AIRecommendScreen(
+                viewModel = vm,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(Screen.TasteFinder.route) {
+            val vm: net.sippory.presentation.tastefinder.TasteFinderViewModel =
+                viewModel(
+                    factory = net.sippory.presentation.tastefinder.TasteFinderViewModelFactory(repository),
+                )
+
+            net.sippory.presentation.tastefinder.TasteFinderScreen(
                 viewModel = vm,
                 onBack = { navController.popBackStack() },
             )
