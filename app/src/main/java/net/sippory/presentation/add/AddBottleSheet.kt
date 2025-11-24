@@ -239,6 +239,37 @@ fun AddBottleSheet(
                 singleLine = true,
             )
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                OutlinedTextField(
+                    value = uiState.latitudeInput,
+                    onValueChange = viewModel::updateLatitude,
+                    label = { Text("위도") },
+                    modifier = Modifier.weight(1f),
+                    singleLine = true,
+                )
+
+                OutlinedTextField(
+                    value = uiState.longitudeInput,
+                    onValueChange = viewModel::updateLongitude,
+                    label = { Text("경도") },
+                    modifier = Modifier.weight(1f),
+                    singleLine = true,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "지도 앱에서 좌표를 복사해 붙여넣을 수 있어요",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // 위시리스트 체크박스

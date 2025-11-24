@@ -16,7 +16,7 @@ data class TasteQuestion(
 data class TasteOption(
     val text: String,
     val description: String,
-    val tags: List<String>, // 이 선택이 나타내는 술 특성 태그
+    val tags: List<String>,
 )
 
 /**
@@ -27,7 +27,7 @@ data class RecommendedBottle(
     val type: String,
     val subType: String,
     val description: String,
-    val tags: List<String>, // 이 술이 가진 특성 태그
+    val tags: List<String>,
     val abv: Float,
     val country: String,
     val imageUrl: String? = null,

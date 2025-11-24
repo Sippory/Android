@@ -453,7 +453,7 @@ private fun LocationSection(
             OutlinedTextField(
                 value = editedBottle.locationName.orEmpty(),
                 onValueChange = {
-                    onBottleChange(editedBottle.copy(locationName = it.trim().ifBlank { null }))
+                    onBottleChange(editedBottle.copy(locationName = it.ifBlank { null }))
                 },
                 label = { Text("장소 이름") },
                 modifier = Modifier.fillMaxWidth(),
@@ -471,7 +471,7 @@ private fun LocationSection(
                     },
                     label = { Text("위도") },
                     modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
                 )
                 OutlinedTextField(
@@ -482,7 +482,7 @@ private fun LocationSection(
                     },
                     label = { Text("경도") },
                     modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
                 )
             }
@@ -503,8 +503,8 @@ private fun LocationSection(
                         label = "좌표",
                         value =
                             listOfNotNull(
-                                bottle.latitude?.let { "${"%.5f".format(it)}" },
-                                bottle.longitude?.let { "${"%.5f".format(it)}" },
+                                bottle.latitude?.let { "%.5f".format(it) },
+                                bottle.longitude?.let { "%.5f".format(it) },
                             ).joinToString(", "),
                     )
                 }

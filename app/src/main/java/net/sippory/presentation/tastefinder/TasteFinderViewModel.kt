@@ -21,7 +21,9 @@ data class TasteFinderUiState(
     val questions: List<TasteQuestion> = emptyList(),
     val currentQuestionIndex: Int = 0,
     val selectedTags: List<String> = emptyList(),
+    val selectedAnswers: Map<Int, Boolean> = emptyMap(),
     val recommendations: List<RecommendedBottle> = emptyList(),
+    val addedBottleNames: Set<String> = emptySet(),
     val isCompleted: Boolean = false,
     val isLoading: Boolean = false,
 )
@@ -71,6 +73,7 @@ class TasteFinderViewModel(
         // 선택한 옵션의 태그들을 추가
         _uiState.update { state ->
             val newTags = state.selectedTags + selectedOption.tags
+            val newAnswers = state.selectedAnswers + (currentQuestion.id to isOptionA)
             val nextIndex = state.currentQuestionIndex + 1
 
             // 마지막 질문이었다면 추천 계산
@@ -78,14 +81,16 @@ class TasteFinderViewModel(
                 val recommendations = tasteFinderRepository.getRecommendations(newTags)
                 state.copy(
                     selectedTags = newTags,
+                    selectedAnswers = newAnswers,
                     currentQuestionIndex = nextIndex,
                     recommendations = recommendations,
-                    isCompleted = true
+                    isCompleted = true,
                 )
             } else {
                 state.copy(
                     selectedTags = newTags,
-                    currentQuestionIndex = nextIndex
+                    selectedAnswers = newAnswers,
+                    currentQuestionIndex = nextIndex,
                 )
             }
         }
@@ -97,15 +102,28 @@ class TasteFinderViewModel(
     fun goBack() {
         _uiState.update { state ->
             if (state.currentQuestionIndex > 0) {
-                // 이전 질문으로 돌아가면서 마지막으로 추가된 태그들 제거
-                val prevQuestion = state.questions[state.currentQuestionIndex - 1]
-                val tagsToRemove = prevQuestion.optionA.tags + prevQuestion.optionB.tags
+                val prevQuestionIndex = state.currentQuestionIndex - 1
+                val prevQuestion = state.questions[prevQuestionIndex]
+
+                // 이전 질문에서 실제로 선택했던 답변을 찾아서 해당 태그만 제거
+                val wasOptionASelected = state.selectedAnswers[prevQuestion.id]
+                val tagsToRemove =
+                    if (wasOptionASelected == true) {
+                        prevQuestion.optionA.tags
+                    } else if (wasOptionASelected == false) {
+                        prevQuestion.optionB.tags
+                    } else {
+                        emptyList()
+                    }
+
                 val newTags = state.selectedTags.filterNot { it in tagsToRemove }
+                val newAnswers = state.selectedAnswers - prevQuestion.id
 
                 state.copy(
-                    currentQuestionIndex = state.currentQuestionIndex - 1,
+                    currentQuestionIndex = prevQuestionIndex,
                     selectedTags = newTags,
-                    isCompleted = false
+                    selectedAnswers = newAnswers,
+                    isCompleted = false,
                 )
             } else {
                 state
@@ -121,18 +139,27 @@ class TasteFinderViewModel(
             _uiState.update { it.copy(isLoading = true) }
 
             try {
-                val entity = BottleEntity(
-                    name = bottle.name,
-                    type = bottle.type,
-                    abv = bottle.abv,
-                    country = bottle.country,
-                    rating = 0f,
-                    note = "${bottle.subType}\n\n${bottle.description}",
-                    isWishlist = true,
-                )
+                val entity =
+                    BottleEntity(
+                        name = bottle.name,
+                        type = bottle.type,
+                        abv = bottle.abv,
+                        country = bottle.country,
+                        rating = 0f,
+                        note = "${bottle.subType}\n\n${bottle.description}",
+                        isWishlist = true,
+                    )
 
                 bottleRepository.insertBottle(entity)
-            } finally {
+
+                // 위시리스트에 추가된 항목을 상태에 추가
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        addedBottleNames = it.addedBottleNames + bottle.name,
+                    )
+                }
+            } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false) }
             }
         }
@@ -147,8 +174,10 @@ class TasteFinderViewModel(
                 questions = it.questions,
                 currentQuestionIndex = 0,
                 selectedTags = emptyList(),
+                selectedAnswers = emptyMap(),
                 recommendations = emptyList(),
-                isCompleted = false
+                addedBottleNames = emptySet(),
+                isCompleted = false,
             )
         }
     }

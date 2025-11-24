@@ -23,6 +23,9 @@ import net.sippory.presentation.detail.DetailScreen
 import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeScreen
 import net.sippory.presentation.home.HomeViewModel
+import net.sippory.presentation.tastefinder.TasteFinderScreen
+import net.sippory.presentation.tastefinder.TasteFinderViewModel
+import net.sippory.presentation.tastefinder.TasteFinderViewModelFactory
 import net.sippory.utils.BottleViewModelFactory
 
 sealed class Screen(val route: String) {
@@ -108,12 +111,12 @@ fun NavGraph(
         }
 
         composable(Screen.TasteFinder.route) {
-            val vm: net.sippory.presentation.tastefinder.TasteFinderViewModel =
+            val vm: TasteFinderViewModel =
                 viewModel(
-                    factory = net.sippory.presentation.tastefinder.TasteFinderViewModelFactory(repository),
+                    factory = TasteFinderViewModelFactory(repository),
                 )
 
-            net.sippory.presentation.tastefinder.TasteFinderScreen(
+            TasteFinderScreen(
                 viewModel = vm,
                 onBack = { navController.popBackStack() },
             )
