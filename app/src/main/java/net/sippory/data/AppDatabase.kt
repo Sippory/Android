@@ -6,10 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import net.sippory.data.dao.BottleDao
 import net.sippory.data.dao.DashboardDao
+import net.sippory.data.dao.RecentlySearchedDrinkDao
 import net.sippory.data.entity.BottleEntity
+import net.sippory.data.entity.RecentlySearchedDrinkEntity
 
 @Database(
-    entities = [BottleEntity::class],
+    entities = [BottleEntity::class, RecentlySearchedDrinkEntity::class],
     version = 2,
     exportSchema = false,
 )
@@ -17,6 +19,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun bottleDao(): BottleDao
 
     abstract fun dashboardDao(): DashboardDao
+
+    abstract fun recentlySearchedDrinkDao(): RecentlySearchedDrinkDao
 
     companion object {
         @Volatile

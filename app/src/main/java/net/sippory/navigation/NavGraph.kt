@@ -13,6 +13,8 @@ import androidx.navigation.navArgument
 import net.sippory.data.AppDatabase
 import net.sippory.data.repository.BottleRepository
 import net.sippory.data.repository.DashboardRepository
+import net.sippory.data.repository.DrinkRepository
+import net.sippory.data.repository.RecentlySearchedDrinkRepository
 import net.sippory.presentation.ai.AIRecommendScreen
 import net.sippory.presentation.ai.AIRecommendViewModel
 import net.sippory.presentation.ai.AIRecommendViewModelFactory
@@ -23,19 +25,35 @@ import net.sippory.presentation.detail.DetailScreen
 import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeScreen
 import net.sippory.presentation.home.HomeViewModel
+import net.sippory.presentation.search.DrinkSearchScreen
+import net.sippory.presentation.search.DrinkSearchViewModel
+import net.sippory.presentation.searchDetail.SearchDetailScreen
+import net.sippory.presentation.signin.SignInScreen
+import net.sippory.presentation.signup.SignUpScreen
 import net.sippory.presentation.tastefinder.TasteFinderScreen
 import net.sippory.presentation.tastefinder.TasteFinderViewModel
 import net.sippory.presentation.tastefinder.TasteFinderViewModelFactory
 import net.sippory.utils.BottleViewModelFactory
+import net.sippory.utils.DrinkViewModelFactory
 
 sealed class Screen(val route: String) {
+    object SignIn : Screen("sign-in")
+
+    object SignUp : Screen("sign-up")
+
     object Home : Screen("home")
 
     object Detail : Screen("detail/{bottleId}") {
         fun createRoute(bottleId: Int) = "detail/$bottleId"
     }
 
-    object Dashboard : Screen("dashboard")
+    object Dashboard : Screen("dashboard") // ✅ 추가
+
+    object Search : Screen("search")
+
+    object SearchDetail : Screen("search/{drinkName}") {
+        fun createRoute(drinkName: String) = "search/$drinkName"
+    }
 
     object AIRecommend : Screen("ai_recommend")
 
@@ -52,11 +70,30 @@ fun NavGraph(
     // ✅ DB 인스턴스 (대시보드 DAO용)
     val context = LocalContext.current
     val db = remember { AppDatabase.getDatabase(context) }
+    val drinkRepository = remember { DrinkRepository() }
+    val recentlySearchedDrinkRepository =
+        remember { RecentlySearchedDrinkRepository(db.recentlySearchedDrinkDao()) }
+    val drinkViewModelFactory =
+        remember {
+            DrinkViewModelFactory(drinkRepository, recentlySearchedDrinkRepository)
+        }
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.SignIn.route,
     ) {
+        composable(Screen.SignIn.route) {
+            SignInScreen(
+                navController = navController,
+            )
+        }
+
+        composable(Screen.SignUp.route) {
+            SignUpScreen(
+                navController = navController,
+            )
+        }
+
         composable(Screen.Home.route) {
             val homeViewModel: HomeViewModel = viewModel(factory = viewModelFactory)
             HomeScreen(
@@ -67,6 +104,9 @@ fun NavGraph(
                 repository = repository,
                 onDashboardClick = {
                     navController.navigate(Screen.Dashboard.route)
+                },
+                onSearchClick = {
+                    navController.navigate(Screen.Search.route)
                 },
                 navController = navController,
             )
@@ -95,6 +135,32 @@ fun NavGraph(
             DashboardScreen(
                 viewModel = vm,
                 onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(Screen.Search.route) {
+            val drinkSearchViewModel: DrinkSearchViewModel = viewModel(factory = drinkViewModelFactory)
+            DrinkSearchScreen(
+                navController = navController,
+                viewModel = drinkSearchViewModel,
+            )
+        }
+
+        composable(Screen.SearchDetail.route) { backStackEntry ->
+            val parentEntry =
+                remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.Search.route)
+                }
+
+            val drinkSearchViewModel: DrinkSearchViewModel =
+                viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    factory = drinkViewModelFactory,
+                )
+
+            SearchDetailScreen(
+                navController = navController,
+                viewModel = drinkSearchViewModel,
             )
         }
 
