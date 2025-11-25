@@ -14,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
@@ -24,8 +26,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
+import net.sippory.navigation.Screen
 import net.sippory.presentation.add.AddBottleSheet
 import net.sippory.utils.BottleTypes
 
@@ -37,6 +41,7 @@ fun HomeScreen(
     repository: net.sippory.data.repository.BottleRepository,
     onDashboardClick: () -> Unit,
     onSearchClick: () -> Unit,
+    navController: NavHostController,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showAddBottleSheet by remember { mutableStateOf(false) }
@@ -47,6 +52,16 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("Sippory", fontWeight = FontWeight.Bold) },
                 actions = {
+                    // 취향 찾기 버튼
+                    IconButton(onClick = {
+                        navController.navigate(Screen.TasteFinder.route)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "나에게 맞는 술 찾기",
+                        )
+                    }
+
                     // ✅ 대시보드로 이동 버튼 추가
                     IconButton(onClick = onDashboardClick) {
                         Icon(
@@ -57,6 +72,12 @@ fun HomeScreen(
 
                     IconButton(onClick = { showSearchBar = !showSearchBar }) {
                         Icon(Icons.Default.Search, contentDescription = "검색")
+                    }
+
+                    IconButton(onClick = {
+                        navController.navigate(Screen.AIRecommend.route)
+                    }) {
+                        Icon(Icons.Default.Email, contentDescription = "AI 추천")
                     }
                 },
             )

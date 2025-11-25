@@ -15,6 +15,9 @@ import net.sippory.data.repository.BottleRepository
 import net.sippory.data.repository.DashboardRepository
 import net.sippory.data.repository.DrinkRepository
 import net.sippory.data.repository.RecentlySearchedDrinkRepository
+import net.sippory.presentation.ai.AIRecommendScreen
+import net.sippory.presentation.ai.AIRecommendViewModel
+import net.sippory.presentation.ai.AIRecommendViewModelFactory
 import net.sippory.presentation.dashboard.DashboardScreen
 import net.sippory.presentation.dashboard.DashboardViewModel
 import net.sippory.presentation.dashboard.DashboardViewModelFactory
@@ -22,6 +25,9 @@ import net.sippory.presentation.detail.DetailScreen
 import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeScreen
 import net.sippory.presentation.home.HomeViewModel
+import net.sippory.presentation.tastefinder.TasteFinderScreen
+import net.sippory.presentation.tastefinder.TasteFinderViewModel
+import net.sippory.presentation.tastefinder.TasteFinderViewModelFactory
 import net.sippory.presentation.search.DrinkSearchScreen
 import net.sippory.presentation.search.DrinkSearchViewModel
 import net.sippory.presentation.searchDetail.SearchDetailScreen
@@ -32,7 +38,6 @@ import net.sippory.utils.DrinkViewModelFactory
 
 sealed class Screen(val route: String) {
     object SignIn : Screen("sign-in")
-
     object SignUp : Screen("sign-up")
 
     object Home : Screen("home")
@@ -48,6 +53,10 @@ sealed class Screen(val route: String) {
     object SearchDetail : Screen("search/{drinkName}") {
         fun createRoute(drinkName: String) = "search/$drinkName"
     }
+
+    object AIRecommend : Screen("ai_recommend")
+
+    object TasteFinder : Screen("taste_finder")
 }
 
 @Composable
@@ -63,7 +72,7 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.SignIn.route,
+        startDestination = Screen.Home.route,
     ) {
         composable(Screen.SignIn.route) {
             SignInScreen(
@@ -85,12 +94,13 @@ fun NavGraph(
                     navController.navigate(Screen.Detail.createRoute(bottleId))
                 },
                 repository = repository,
-                onDashboardClick = { // ✅ 버튼 누르면 대시보드로 이동
+                onDashboardClick = {
                     navController.navigate(Screen.Dashboard.route)
                 },
                 onSearchClick = {
                     navController.navigate(Screen.Search.route)
                 },
+                navController = navController,
             )
         }
 
@@ -166,6 +176,30 @@ fun NavGraph(
             SearchDetailScreen(
                 navController = navController,
                 viewModel = drinkSearchViewModel,
+            )
+        }
+
+        composable(Screen.AIRecommend.route) {
+            val vm: AIRecommendViewModel =
+                viewModel(
+                    factory = AIRecommendViewModelFactory(repository),
+                )
+
+            AIRecommendScreen(
+                viewModel = vm,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(Screen.TasteFinder.route) {
+            val vm: TasteFinderViewModel =
+                viewModel(
+                    factory = TasteFinderViewModelFactory(repository),
+                )
+
+            TasteFinderScreen(
+                viewModel = vm,
+                onBack = { navController.popBackStack() },
             )
         }
     }

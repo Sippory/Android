@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
@@ -347,6 +349,15 @@ fun BottleDetailContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        LocationSection(
+            isEditing = isEditing,
+            bottle = bottle,
+            editedBottle = editedBottle,
+            onBottleChange = { editedBottle = it },
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         // 생성/수정 일시
         val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 HH:mm", Locale.KOREAN)
         Text(
@@ -418,6 +429,92 @@ fun RatingDisplay(
                     },
                 style = MaterialTheme.typography.bodyLarge,
             )
+        }
+    }
+}
+
+@Composable
+private fun LocationSection(
+    isEditing: Boolean,
+    bottle: BottleEntity,
+    editedBottle: BottleEntity,
+    onBottleChange: (BottleEntity) -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "기록한 장소",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (isEditing) {
+            OutlinedTextField(
+                value = editedBottle.locationName.orEmpty(),
+                onValueChange = {
+                    onBottleChange(editedBottle.copy(locationName = it.ifBlank { null }))
+                },
+                label = { Text("장소 이름") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = editedBottle.latitude?.toString().orEmpty(),
+                    onValueChange = { input ->
+                        val sanitized = input.replace(',', '.')
+                        onBottleChange(editedBottle.copy(latitude = sanitized.toDoubleOrNull()))
+                    },
+                    label = { Text("위도") },
+                    modifier = Modifier.weight(1f),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                )
+                OutlinedTextField(
+                    value = editedBottle.longitude?.toString().orEmpty(),
+                    onValueChange = { input ->
+                        val sanitized = input.replace(',', '.')
+                        onBottleChange(editedBottle.copy(longitude = sanitized.toDoubleOrNull()))
+                    },
+                    label = { Text("경도") },
+                    modifier = Modifier.weight(1f),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "지도 앱에서 좌표를 복사해 붙여넣을 수 있어요",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            val hasLocation =
+                bottle.locationName != null || bottle.latitude != null || bottle.longitude != null
+            if (hasLocation) {
+                bottle.locationName?.let { DetailRow(label = "장소", value = it) }
+                if (bottle.latitude != null || bottle.longitude != null) {
+                    DetailRow(
+                        label = "좌표",
+                        value =
+                            listOfNotNull(
+                                bottle.latitude?.let { "%.5f".format(it) },
+                                bottle.longitude?.let { "%.5f".format(it) },
+                            ).joinToString(", "),
+                    )
+                }
+            } else {
+                Text(
+                    text = "기록된 위치가 없습니다.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

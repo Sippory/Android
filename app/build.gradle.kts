@@ -1,10 +1,19 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.ktlint)
+}
+
+// local.properties에서 API 키 읽기
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 
 android {
@@ -30,6 +39,18 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            buildConfigField(
+                "String",
+                "GEMINI_API_KEY",
+                "\"${localProperties.getProperty("GEMINI_API_KEY") ?: ""}\"",
+            )
+        }
+        debug {
+            buildConfigField(
+                "String",
+                "GEMINI_API_KEY",
+                "\"${localProperties.getProperty("GEMINI_API_KEY") ?: ""}\"",
+            )
         }
     }
     compileOptions {
@@ -41,6 +62,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -66,12 +88,20 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
+    // Gemini AI
+    implementation(libs.generativeai)
+    implementation(libs.kotlinx.serialization.json)
+
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
 
     // Coil for image loading
     implementation(libs.coil.compose)
+
+    // Gemini AI
+    implementation(libs.generativeai)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
