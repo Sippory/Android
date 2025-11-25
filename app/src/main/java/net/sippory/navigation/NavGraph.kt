@@ -70,6 +70,13 @@ fun NavGraph(
     // ✅ DB 인스턴스 (대시보드 DAO용)
     val context = LocalContext.current
     val db = remember { AppDatabase.getDatabase(context) }
+    val drinkRepository = remember { DrinkRepository() }
+    val recentlySearchedDrinkRepository =
+        remember { RecentlySearchedDrinkRepository(db.recentlySearchedDrinkDao()) }
+    val drinkViewModelFactory =
+        remember {
+            DrinkViewModelFactory(drinkRepository, recentlySearchedDrinkRepository)
+        }
 
     NavHost(
         navController = navController,
@@ -132,17 +139,7 @@ fun NavGraph(
         }
 
         composable(Screen.Search.route) {
-            val context = LocalContext.current
-            val db = remember { AppDatabase.getDatabase(context) }
-            val drinkRepository = remember { DrinkRepository() }
-            val recentlySearchedDrinkRepository =
-                remember { RecentlySearchedDrinkRepository(db.recentlySearchedDrinkDao()) }
-
-            val factory =
-                remember {
-                    DrinkViewModelFactory(drinkRepository, recentlySearchedDrinkRepository)
-                }
-            val drinkSearchViewModel: DrinkSearchViewModel = viewModel(factory = factory)
+            val drinkSearchViewModel: DrinkSearchViewModel = viewModel(factory = drinkViewModelFactory)
             DrinkSearchScreen(
                 navController = navController,
                 viewModel = drinkSearchViewModel,
@@ -155,23 +152,10 @@ fun NavGraph(
                     navController.getBackStackEntry(Screen.Search.route)
                 }
 
-            val context = LocalContext.current
-            val db = remember { AppDatabase.getDatabase(context) }
-            val drinkRepository = remember { DrinkRepository() }
-            val recentlySearchedDrinkRepository =
-                remember {
-                    RecentlySearchedDrinkRepository(db.recentlySearchedDrinkDao())
-                }
-
-            val factory =
-                remember {
-                    DrinkViewModelFactory(drinkRepository, recentlySearchedDrinkRepository)
-                }
-
             val drinkSearchViewModel: DrinkSearchViewModel =
                 viewModel(
                     viewModelStoreOwner = parentEntry,
-                    factory = factory,
+                    factory = drinkViewModelFactory,
                 )
 
             SearchDetailScreen(
