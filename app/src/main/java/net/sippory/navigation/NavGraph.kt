@@ -25,19 +25,20 @@ import net.sippory.presentation.detail.DetailScreen
 import net.sippory.presentation.detail.DetailViewModel
 import net.sippory.presentation.home.HomeScreen
 import net.sippory.presentation.home.HomeViewModel
-import net.sippory.presentation.tastefinder.TasteFinderScreen
-import net.sippory.presentation.tastefinder.TasteFinderViewModel
-import net.sippory.presentation.tastefinder.TasteFinderViewModelFactory
 import net.sippory.presentation.search.DrinkSearchScreen
 import net.sippory.presentation.search.DrinkSearchViewModel
 import net.sippory.presentation.searchDetail.SearchDetailScreen
 import net.sippory.presentation.signin.SignInScreen
 import net.sippory.presentation.signup.SignUpScreen
+import net.sippory.presentation.tastefinder.TasteFinderScreen
+import net.sippory.presentation.tastefinder.TasteFinderViewModel
+import net.sippory.presentation.tastefinder.TasteFinderViewModelFactory
 import net.sippory.utils.BottleViewModelFactory
 import net.sippory.utils.DrinkViewModelFactory
 
 sealed class Screen(val route: String) {
     object SignIn : Screen("sign-in")
+
     object SignUp : Screen("sign-up")
 
     object Home : Screen("home")
