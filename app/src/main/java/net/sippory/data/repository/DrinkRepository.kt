@@ -22,7 +22,7 @@ class DrinkRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
     }
 
     override suspend fun getDrinksByName(searchTerm: String): List<DrinkEntity> {
-        val editedSearchTerm = searchTerm[0].uppercase() + searchTerm.substring(1)
+        val editedSearchTerm = searchTerm.takeIf { it.isNotBlank() }?.replaceFirstChar { it.uppercaseChar() } ?: ""
         val endIndex = editedSearchTerm + "\uf8ff"
 
         return try {
