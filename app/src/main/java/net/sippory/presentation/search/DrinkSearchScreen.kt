@@ -54,7 +54,6 @@ fun DrinkSearchScreen(
     var searchQuery by remember { mutableStateOf("") }
     val searchResults by viewModel.searchResults.collectAsState()
     val recentlySearchedDrinks by viewModel.recentlySearchedDrinks.collectAsState()
-    val isSearching by viewModel.isSearching.collectAsState()
 
     LaunchedEffect(searchQuery) {
         viewModel.searchDrinks(searchQuery)
@@ -142,7 +141,6 @@ fun DrinkSearchScreen(
                 ) {
                     if (searchQuery.isNotBlank() && searchResults.isNotEmpty()) {
                         items(searchResults) { drink ->
-                            println(drink)
                             Row(
                                 modifier =
                                     Modifier

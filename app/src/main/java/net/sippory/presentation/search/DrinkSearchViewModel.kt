@@ -45,7 +45,6 @@ class DrinkSearchViewModel(
     }
 
     fun searchDrinks(query: String) {
-        println(query)
         searchJob?.cancel()
 
         if (query.isBlank()) {
