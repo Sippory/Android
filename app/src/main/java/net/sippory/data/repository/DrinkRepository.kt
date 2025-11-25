@@ -16,6 +16,7 @@ class DrinkRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
                 document.toObject(DrinkEntity::class.java)
             }
         } catch (e: Exception) {
+            android.util.Log.e("DrinkRepository", "Error fetching drinks: ${e.message}")
             println("Error fetching drinks: ${e.message}")
             emptyList()
         }
@@ -30,7 +31,7 @@ class DrinkRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
                 drinksCollection.orderBy("name").startAt(editedSearchTerm).endAt(endIndex).limit(5).get().await()
             snapshot.documents.mapNotNull { it.toObject<DrinkEntity>() }
         } catch (e: Exception) {
-            println("Error fetching drinks by name: ${e.message}")
+            android.util.Log.e("DrinkRepository", "Error fetching drinks by name: ${e.message}")
             emptyList()
         }
     }
