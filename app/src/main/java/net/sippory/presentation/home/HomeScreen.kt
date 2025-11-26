@@ -4,8 +4,6 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -14,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
@@ -79,6 +78,12 @@ fun HomeScreen(
                     }) {
                         Icon(Icons.Default.Email, contentDescription = "AI 추천")
                     }
+
+                    IconButton(onClick = {
+                        navController.navigate(Screen.Search.route)
+                    }) {
+                        Icon(imageVector = Icons.Default.Book, contentDescription = "술 검색")
+                    }
                 },
             )
         },
@@ -110,9 +115,6 @@ fun HomeScreen(
                         Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
-                    onClick = {
-                        onSearchClick()
-                    },
                 )
             }
 
@@ -158,17 +160,7 @@ fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    LaunchedEffect(isPressed) {
-        if (isPressed) {
-            onClick()
-        }
-    }
-
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
@@ -177,8 +169,6 @@ fun SearchBar(
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
         singleLine = true,
         shape = RoundedCornerShape(24.dp),
-        readOnly = true,
-        interactionSource = interactionSource,
     )
 }
 
