@@ -1,7 +1,9 @@
 package net.sippory.presentation.home
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -21,6 +23,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,32 +55,8 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("Sippory", fontWeight = FontWeight.Bold) },
                 actions = {
-                    // 취향 찾기 버튼
-                    IconButton(onClick = {
-                        navController.navigate(Screen.TasteFinder.route)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = "나에게 맞는 술 찾기",
-                        )
-                    }
-
-                    // ✅ 대시보드로 이동 버튼 추가
-                    IconButton(onClick = onDashboardClick) {
-                        Icon(
-                            imageVector = Icons.Default.ThumbUp,
-                            contentDescription = "대시보드로 이동",
-                        )
-                    }
-
                     IconButton(onClick = { showSearchBar = !showSearchBar }) {
                         Icon(Icons.Default.Search, contentDescription = "검색")
-                    }
-
-                    IconButton(onClick = {
-                        navController.navigate(Screen.AIRecommend.route)
-                    }) {
-                        Icon(Icons.Default.Email, contentDescription = "AI 추천")
                     }
 
                     IconButton(onClick = {
@@ -88,12 +68,12 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showAddBottleSheet = true },
-                containerColor = MaterialTheme.colorScheme.primary,
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "술 추가")
-            }
+            ExpandableFAB(
+                onAddBottleClick = { showAddBottleSheet = true },
+                onTasteFinderClick = { navController.navigate(Screen.TasteFinder.route) },
+                onDashboardClick = onDashboardClick,
+                onAIRecommendClick = { navController.navigate(Screen.AIRecommend.route) },
+            )
         },
     ) { padding ->
         Column(
@@ -375,6 +355,129 @@ fun EmptyState(modifier: Modifier = Modifier) {
                 text = "+ 버튼을 눌러 첫 번째 술을 추가해보세요",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+fun ExpandableFAB(
+    onAddBottleClick: () -> Unit,
+    onTasteFinderClick: () -> Unit,
+    onDashboardClick: () -> Unit,
+    onAIRecommendClick: () -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val rotation by animateFloatAsState(
+        targetValue = if (expanded) 45f else 0f,
+        label = "FAB rotation",
+    )
+
+    Box {
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            // 서브 메뉴 아이템들
+            AnimatedVisibility(
+                visible = expanded,
+                enter = fadeIn() + expandVertically(expandFrom = Alignment.Bottom),
+                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Bottom),
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    // AI 추천
+                    FABMenuItem(
+                        icon = Icons.Default.Email,
+                        label = "AI 추천",
+                        onClick = {
+                            onAIRecommendClick()
+                            expanded = false
+                        },
+                    )
+
+                    // 대시보드
+                    FABMenuItem(
+                        icon = Icons.Default.ThumbUp,
+                        label = "대시보드",
+                        onClick = {
+                            onDashboardClick()
+                            expanded = false
+                        },
+                    )
+
+                    // 취향 찾기
+                    FABMenuItem(
+                        icon = Icons.Default.Favorite,
+                        label = "취향 찾기",
+                        onClick = {
+                            onTasteFinderClick()
+                            expanded = false
+                        },
+                    )
+
+                    // 술 추가
+                    FABMenuItem(
+                        icon = Icons.Default.Add,
+                        label = "술 추가",
+                        onClick = {
+                            onAddBottleClick()
+                            expanded = false
+                        },
+                    )
+                }
+            }
+
+            // 메인 FAB
+            FloatingActionButton(
+                onClick = { expanded = !expanded },
+                containerColor = MaterialTheme.colorScheme.primary,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "메뉴",
+                    modifier = Modifier.rotate(rotation),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun FABMenuItem(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        // 라벨
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            color = MaterialTheme.colorScheme.surface,
+            shadowElevation = 4.dp,
+        ) {
+            Text(
+                text = label,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+
+        // 작은 FAB
+        SmallFloatingActionButton(
+            onClick = onClick,
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
             )
         }
     }
