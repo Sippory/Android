@@ -2,10 +2,10 @@ package net.sippory.presentation.detail
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -40,16 +40,20 @@ fun DetailScreen(
     }
 
     Scaffold(
+        containerColor = androidx.compose.ui.graphics.Color.Black,
         topBar = {
             TopAppBar(
-                title = { Text("상세 정보") },
+                title = { Text("Detail", color = androidx.compose.ui.graphics.Color.White) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "뒤로가기")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = androidx.compose.ui.graphics.Color.White
+                        )
                     }
                 },
                 actions = {
-                    // 위시리스트 토글 버튼
                     IconButton(onClick = viewModel::toggleWishlist) {
                         Icon(
                             if (uiState.bottle?.isWishlist == true) {
@@ -57,25 +61,33 @@ fun DetailScreen(
                             } else {
                                 Icons.Default.FavoriteBorder
                             },
-                            contentDescription = "위시리스트",
+                            contentDescription = "Wishlist",
                             tint =
                                 if (uiState.bottle?.isWishlist == true) {
                                     MaterialTheme.colorScheme.error
                                 } else {
-                                    MaterialTheme.colorScheme.onSurface
+                                    androidx.compose.ui.graphics.Color.White
                                 },
                         )
                     }
                     IconButton(onClick = viewModel::toggleEditMode) {
                         Icon(
                             if (uiState.isEditing) Icons.Default.Close else Icons.Default.Edit,
-                            contentDescription = if (uiState.isEditing) "취소" else "수정",
+                            contentDescription = if (uiState.isEditing) "Cancel" else "Edit",
+                            tint = androidx.compose.ui.graphics.Color.White
                         )
                     }
                     IconButton(onClick = { showDeleteDialog = true }) {
-                        Icon(Icons.Default.Delete, contentDescription = "삭제")
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            tint = androidx.compose.ui.graphics.Color.White
+                        )
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = androidx.compose.ui.graphics.Color.Black
+                )
             )
         },
     ) { padding ->
@@ -85,10 +97,11 @@ fun DetailScreen(
                     modifier =
                         Modifier
                             .fillMaxSize()
+                            .background(androidx.compose.ui.graphics.Color.Black)
                             .padding(padding),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = androidx.compose.ui.graphics.Color.White)
                 }
             }
             uiState.bottle == null -> {
@@ -96,12 +109,14 @@ fun DetailScreen(
                     modifier =
                         Modifier
                             .fillMaxSize()
+                            .background(androidx.compose.ui.graphics.Color.Black)
                             .padding(padding),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "술 정보를 찾을 수 없습니다",
+                        text = "Bottle not found",
                         style = MaterialTheme.typography.bodyLarge,
+                        color = androidx.compose.ui.graphics.Color.White,
                     )
                 }
             }
@@ -120,12 +135,22 @@ fun DetailScreen(
         }
     }
 
-    // 삭제 확인 다이얼로그
+    // Delete confirmation dialog
     if (showDeleteDialog && uiState.bottle != null) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("삭제 확인") },
-            text = { Text("'${uiState.bottle!!.name}'을(를) 삭제하시겠습니까?") },
+            title = {
+                Text(
+                    "Delete Confirmation",
+                    color = androidx.compose.ui.graphics.Color.White
+                )
+            },
+            text = {
+                Text(
+                    "Are you sure you want to delete '${uiState.bottle!!.name}'?",
+                    color = androidx.compose.ui.graphics.Color.White
+                )
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -134,14 +159,15 @@ fun DetailScreen(
                         onNavigateBack()
                     },
                 ) {
-                    Text("삭제", color = MaterialTheme.colorScheme.error)
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("취소")
+                    Text("Cancel", color = androidx.compose.ui.graphics.Color.White)
                 }
             },
+            containerColor = androidx.compose.ui.graphics.Color(0xFF1C1C1E),
         )
     }
 }
@@ -159,17 +185,18 @@ fun BottleDetailContent(
     Column(
         modifier =
             modifier
+                .background(androidx.compose.ui.graphics.Color.Black)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
     ) {
-        // 이미지
+        // Image
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .height(300.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                    .background(androidx.compose.ui.graphics.Color(0xFF1C1C1E)),
             contentAlignment = Alignment.Center,
         ) {
             if (bottle.photoUri != null) {
@@ -189,90 +216,123 @@ fun BottleDetailContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 이름
+        // Name
         if (isEditing) {
             OutlinedTextField(
                 value = editedBottle.name,
                 onValueChange = { editedBottle = editedBottle.copy(name = it) },
-                label = { Text("이름") },
+                label = { Text("Name", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
                 modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                ),
             )
         } else {
             Text(
                 text = bottle.name,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
+                color = androidx.compose.ui.graphics.Color.White,
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 종류
+        // Type
         DetailRow(
-            label = "종류",
+            label = "Type",
             value = "${BottleTypes.getEmojiForType(bottle.type)} ${bottle.type}",
         )
 
-        // 도수
+        // ABV
         bottle.abv?.let {
             DetailRow(
-                label = "도수",
+                label = "ABV",
                 value = "$it%",
             )
         }
 
-        // 원산지
+        // Country
         bottle.country?.let {
             DetailRow(
-                label = "원산지",
+                label = "Country",
                 value = it,
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 평점
+        // Rating
+        Text(
+            text = "⭐ Rating",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = androidx.compose.ui.graphics.Color.White,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         if (isEditing) {
+            // Editable star rating
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                repeat(5) { index ->
+                    val starIndex = index + 1
+                    val isFilled = editedBottle.rating >= starIndex
+
+                    Text(
+                        text = if (isFilled) "⭐" else "☆",
+                        style = MaterialTheme.typography.displaySmall,
+                        modifier = Modifier
+                            .clickable {
+                                editedBottle = editedBottle.copy(rating = starIndex.toFloat())
+                            }
+                            .padding(horizontal = 4.dp),
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "평점: ${String.format("%.1f", editedBottle.rating)}",
+                text = "${editedBottle.rating.toInt()} / 5",
                 style = MaterialTheme.typography.bodyLarge,
-            )
-            Slider(
-                value = editedBottle.rating,
-                onValueChange = { editedBottle = editedBottle.copy(rating = it) },
-                valueRange = 0.5f..5f,
-                steps = 8,
+                color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.7f),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             )
         } else {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(
-                    text = "평점: ",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
                 RatingDisplay(rating = bottle.rating)
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = " ${String.format("%.1f", bottle.rating)}",
+                    text = "${bottle.rating.toInt()} / 5",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
+                    color = androidx.compose.ui.graphics.Color.White,
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        HorizontalDivider()
+        HorizontalDivider(color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.2f))
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 마신 횟수 표시
+        // Drink Count
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors =
                 CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = androidx.compose.ui.graphics.Color(0xFF2D0A0A),
                 ),
         ) {
             Row(
@@ -285,21 +345,25 @@ fun BottleDetailContent(
             ) {
                 Column {
                     Text(
-                        text = "마신 횟수",
+                        text = "Drink Count",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
+                        color = androidx.compose.ui.graphics.Color.White,
                     )
                     Text(
-                        text = "${bottle.drinkCount}회",
+                        text = "${bottle.drinkCount} times",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = androidx.compose.ui.graphics.Color(0xFFB22222),
                     )
                 }
                 if (!isEditing) {
                     Button(
                         onClick = onRecordDrink,
                         modifier = Modifier.height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = androidx.compose.ui.graphics.Color(0xFF6B0000),
+                        ),
                     ) {
                         Icon(
                             Icons.Default.Add,
@@ -307,7 +371,7 @@ fun BottleDetailContent(
                             modifier = Modifier.size(20.dp),
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("기록하기")
+                        Text("Record")
                     }
                 }
             }
@@ -315,11 +379,12 @@ fun BottleDetailContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 메모
+        // Notes
         Text(
-            text = "메모",
+            text = "📝 Notes",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
+            color = androidx.compose.ui.graphics.Color.White,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -333,16 +398,23 @@ fun BottleDetailContent(
                         .fillMaxWidth()
                         .height(150.dp),
                 maxLines = 8,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                ),
             )
         } else {
             Text(
-                text = bottle.note.ifBlank { "메모가 없습니다." },
+                text = bottle.note.ifBlank { "No notes." },
                 style = MaterialTheme.typography.bodyMedium,
                 color =
                     if (bottle.note.isBlank()) {
-                        MaterialTheme.colorScheme.onSurfaceVariant
+                        androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)
                     } else {
-                        MaterialTheme.colorScheme.onSurface
+                        androidx.compose.ui.graphics.Color.White
                     },
             )
         }
@@ -358,29 +430,29 @@ fun BottleDetailContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 생성/수정 일시
-        val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 HH:mm", Locale.KOREAN)
+        // Created/Updated time
+        val dateFormat = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.ENGLISH)
         Text(
-            text = "생성: ${dateFormat.format(Date(bottle.createdAt))}",
+            text = "Created: ${dateFormat.format(Date(bottle.createdAt))}",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f),
         )
         if (bottle.updatedAt != bottle.createdAt) {
             Text(
-                text = "수정: ${dateFormat.format(Date(bottle.updatedAt))}",
+                text = "Updated: ${dateFormat.format(Date(bottle.updatedAt))}",
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f),
             )
         }
 
-        // 수정 버튼
+        // Save button
         if (isEditing) {
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { onUpdate(editedBottle) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("저장")
+                Text("Save")
             }
         }
     }
@@ -402,12 +474,13 @@ fun DetailRow(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.7f),
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
+            color = androidx.compose.ui.graphics.Color.White,
         )
     }
 }
@@ -442,9 +515,10 @@ private fun LocationSection(
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "기록한 장소",
+            text = "📍 Location",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
+            color = androidx.compose.ui.graphics.Color.White,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -455,64 +529,28 @@ private fun LocationSection(
                 onValueChange = {
                     onBottleChange(editedBottle.copy(locationName = it.ifBlank { null }))
                 },
-                label = { Text("장소 이름") },
+                label = { Text("Location name", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = editedBottle.latitude?.toString().orEmpty(),
-                    onValueChange = { input ->
-                        val sanitized = input.replace(',', '.')
-                        onBottleChange(editedBottle.copy(latitude = sanitized.toDoubleOrNull()))
-                    },
-                    label = { Text("위도") },
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    singleLine = true,
-                )
-                OutlinedTextField(
-                    value = editedBottle.longitude?.toString().orEmpty(),
-                    onValueChange = { input ->
-                        val sanitized = input.replace(',', '.')
-                        onBottleChange(editedBottle.copy(longitude = sanitized.toDoubleOrNull()))
-                    },
-                    label = { Text("경도") },
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    singleLine = true,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "지도 앱에서 좌표를 복사해 붙여넣을 수 있어요",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                ),
             )
         } else {
-            val hasLocation =
-                bottle.locationName != null || bottle.latitude != null || bottle.longitude != null
+            val hasLocation = bottle.locationName != null
             if (hasLocation) {
-                bottle.locationName?.let { DetailRow(label = "장소", value = it) }
-                if (bottle.latitude != null || bottle.longitude != null) {
-                    DetailRow(
-                        label = "좌표",
-                        value =
-                            listOfNotNull(
-                                bottle.latitude?.let { "%.5f".format(it) },
-                                bottle.longitude?.let { "%.5f".format(it) },
-                            ).joinToString(", "),
-                    )
+                bottle.locationName?.let {
+                    DetailRow(label = "Location", value = it)
                 }
             } else {
                 Text(
-                    text = "기록된 위치가 없습니다.",
+                    text = "No location recorded.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f),
                 )
             }
         }
