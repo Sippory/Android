@@ -4,7 +4,6 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -376,14 +375,15 @@ fun ExpandableFAB(
     )
 
     // 메뉴 아이템 리스트
-    val menuItems = remember {
-        listOf(
-            Triple(Icons.Default.Add, "술 추가", onAddBottleClick),
-            Triple(Icons.Default.Favorite, "취향 찾기", onTasteFinderClick),
-            Triple(Icons.Default.ThumbUp, "대시보드", onDashboardClick),
-            Triple(Icons.Default.Email, "AI 추천", onAIRecommendClick),
-        )
-    }
+    val menuItems =
+        remember {
+            listOf(
+                Triple(Icons.Default.Add, "술 추가", onAddBottleClick),
+                Triple(Icons.Default.Favorite, "취향 찾기", onTasteFinderClick),
+                Triple(Icons.Default.ThumbUp, "대시보드", onDashboardClick),
+                Triple(Icons.Default.Email, "AI 추천", onAIRecommendClick),
+            )
+        }
 
     Box(
         modifier = Modifier.size(250.dp),
@@ -391,7 +391,7 @@ fun ExpandableFAB(
     ) {
         // 서브 메뉴 아이템들 - 아치형 배치 (오른쪽 아래에서 왼쪽 위로 펼치기)
         menuItems.forEachIndexed { index, (icon, label, onClick) ->
-            val targetAngle = 90f- (index * 30f)
+            val targetAngle = 90f - (index * 30f)
             val radius = 100.dp
 
             AnimatedFABMenuItem(
@@ -442,48 +442,53 @@ fun AnimatedFABMenuItem(
     // 애니메이션
     val offsetX by animateDpAsState(
         targetValue = targetX.dp,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "offsetX"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow,
+            ),
+        label = "offsetX",
     )
 
     val offsetY by animateDpAsState(
         targetValue = targetY.dp,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "offsetY"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow,
+            ),
+        label = "offsetY",
     )
 
     val alpha by animateFloatAsState(
         targetValue = if (expanded) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 200,
-            delayMillis = if (expanded) index * 50 else 0
-        ),
-        label = "alpha"
+        animationSpec =
+            tween(
+                durationMillis = 200,
+                delayMillis = if (expanded) index * 50 else 0,
+            ),
+        label = "alpha",
     )
 
     val scale by animateFloatAsState(
         targetValue = if (expanded) 1f else 0.3f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium
-        ),
-        label = "scale"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMedium,
+            ),
+        label = "scale",
     )
 
     Box(
-        modifier = Modifier
-            .offset(x = offsetX, y = offsetY)
-            .graphicsLayer {
-                this.alpha = alpha
-                scaleX = scale
-                scaleY = scale
-            }
+        modifier =
+            Modifier
+                .offset(x = offsetX, y = offsetY)
+                .graphicsLayer {
+                    this.alpha = alpha
+                    scaleX = scale
+                    scaleY = scale
+                },
     ) {
         if (expanded) {
             // 작은 FAB만 표시 (라벨 제거)

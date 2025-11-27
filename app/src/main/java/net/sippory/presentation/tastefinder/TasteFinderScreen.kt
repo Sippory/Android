@@ -42,60 +42,88 @@ fun TasteFinderScreen(
         label = "progress",
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        if (uiState.isCompleted) "추천 결과" else "나에게 맞는 술 찾기",
-                        fontWeight = FontWeight.Bold,
-                    )
-                },
-                navigationIcon = {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(androidx.compose.ui.graphics.Color.Black),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            // 커스텀 상단 바
+            if (!uiState.isCompleted) {
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     IconButton(onClick = {
-                        if (uiState.currentQuestionIndex > 0 && !uiState.isCompleted) {
+                        if (uiState.currentQuestionIndex > 0) {
                             viewModel.goBack()
                         } else {
                             onBack()
                         }
                     }) {
-                        Icon(Icons.Default.ChevronLeft, contentDescription = "뒤로가기")
+                        Icon(
+                            Icons.Default.ChevronLeft,
+                            contentDescription = "Back",
+                            tint = androidx.compose.ui.graphics.Color.White,
+                        )
                     }
-                },
-                actions = {
-                    if (uiState.isCompleted) {
-                        IconButton(onClick = { viewModel.restart() }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "다시 시작")
-                        }
-                    }
-                },
-            )
-        },
-    ) { padding ->
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-        ) {
-            // 진행률 표시
-            if (!uiState.isCompleted) {
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier.fillMaxWidth(),
+
+                    // 사용자 아이콘 영역 (선택사항)
+                    Spacer(modifier = Modifier.size(48.dp))
+                }
+
+                // 진행률 표시
+                Text(
+                    text = "Question ${uiState.currentQuestionIndex + 1} of ${uiState.questions.size}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = androidx.compose.ui.graphics.Color.White,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                    textAlign = TextAlign.Center,
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "질문 ${uiState.currentQuestionIndex + 1} / ${uiState.questions.size}",
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                // 프로그레스 바
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
+                            .height(8.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = androidx.compose.ui.graphics.Color.DarkGray,
+                )
+            } else {
+                // 결과 화면 상단바
+                TopAppBar(
+                    title = {
+                        Text("Your Results", fontWeight = FontWeight.Bold)
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Default.ChevronLeft, contentDescription = "Back")
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { viewModel.restart() }) {
+                            Icon(Icons.Default.Refresh, contentDescription = "Restart")
+                        }
+                    },
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             // 컨텐츠
             AnimatedContent(
@@ -140,18 +168,30 @@ private fun QuestionScreen(
         modifier =
             Modifier
                 .fillMaxSize()
+                .background(androidx.compose.ui.graphics.Color.Black)
                 .padding(24.dp)
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Center,
     ) {
+        // 제목
+        Text(
+            text = "Taste Finder",
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            color = androidx.compose.ui.graphics.Color.White,
+            modifier = Modifier.padding(bottom = 32.dp),
+        )
+
         // 질문 텍스트
         Text(
             text = question.question,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 32.dp),
+            color = androidx.compose.ui.graphics.Color.White,
+            modifier = Modifier.padding(bottom = 48.dp),
         )
 
         // A/B 선택지
@@ -160,26 +200,16 @@ private fun QuestionScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // Option A
-            OptionCard(
+            ModernOptionCard(
+                label = "A",
                 text = question.optionA.text,
-                description = question.optionA.description,
-                gradientColors =
-                    listOf(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.secondaryContainer,
-                    ),
                 onClick = { onSelectOption(true) },
             )
 
             // Option B
-            OptionCard(
+            ModernOptionCard(
+                label = "B",
                 text = question.optionB.text,
-                description = question.optionB.description,
-                gradientColors =
-                    listOf(
-                        MaterialTheme.colorScheme.tertiaryContainer,
-                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f),
-                    ),
                 onClick = { onSelectOption(false) },
             )
         }
@@ -234,6 +264,106 @@ private fun OptionCard(
 }
 
 @Composable
+private fun ModernOptionCard(
+    label: String,
+    text: String,
+    onClick: () -> Unit,
+) {
+    var isPressed by remember { mutableStateOf(false) }
+
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessHigh,
+            ),
+        label = "scale",
+    )
+
+    Card(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
+                .clickable {
+                    isPressed = true
+                    onClick()
+                },
+        shape = RoundedCornerShape(12.dp),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = androidx.compose.ui.graphics.Color(0xFF2C2C2E),
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.weight(1f),
+            ) {
+                // 라벨 원
+                Surface(
+                    modifier = Modifier.size(48.dp),
+                    shape = androidx.compose.foundation.shape.CircleShape,
+                    color = androidx.compose.ui.graphics.Color(0xFF1C1C1E),
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = androidx.compose.ui.graphics.Color.White,
+                        )
+                    }
+                }
+
+                // 텍스트
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = androidx.compose.ui.graphics.Color.White,
+                )
+            }
+
+            // 라디오 버튼
+            Surface(
+                modifier = Modifier.size(28.dp),
+                shape = androidx.compose.foundation.shape.CircleShape,
+                color = androidx.compose.ui.graphics.Color.Transparent,
+                border =
+                    androidx.compose.foundation.BorderStroke(
+                        2.dp,
+                        androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                    ),
+            ) {
+                Box(modifier = Modifier.fillMaxSize())
+            }
+        }
+    }
+
+    LaunchedEffect(isPressed) {
+        if (isPressed) {
+            delay(100)
+            isPressed = false
+        }
+    }
+}
+
+@Composable
 private fun RecommendationResultScreen(
     recommendations: List<RecommendedBottle>,
     onAddToWishlist: (RecommendedBottle) -> Unit,
@@ -249,14 +379,14 @@ private fun RecommendationResultScreen(
     ) {
         item {
             Text(
-                text = "🎉 당신에게 추천하는 술",
+                text = "🎉 Recommended for You",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 8.dp),
             )
 
             Text(
-                text = "선택하신 취향을 바탕으로 이런 술들을 추천드려요!",
+                text = "Based on your preferences, here are some drinks we think you'll love!",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = 16.dp),
@@ -287,7 +417,7 @@ private fun RecommendationResultScreen(
                     modifier = Modifier.padding(16.dp),
                 ) {
                     Text(
-                        text = "💡 추천 받은 술이 마음에 드시나요?",
+                        text = "💡 Like what you see?",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                     )
@@ -295,7 +425,7 @@ private fun RecommendationResultScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "위시리스트에 추가하여 나중에 구매하거나,\n직접 마셔보고 기록을 남겨보세요!",
+                        text = "Add to your wishlist to purchase later,\nor try them and record your experience!",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -324,47 +454,51 @@ private fun AnimatedRecommendationCard(
     // 스케일 + 회전 애니메이션
     val scale by animateFloatAsState(
         targetValue = if (visible) 1f else 0.8f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "scale"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow,
+            ),
+        label = "scale",
     )
 
     val rotation by animateFloatAsState(
         targetValue = if (visible) 0f else -5f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "rotation"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow,
+            ),
+        label = "rotation",
     )
 
     // 슬라이드 + 페이드 효과
     val offsetX by animateDpAsState(
         targetValue = if (visible) 0.dp else 50.dp,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "offsetX"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow,
+            ),
+        label = "offsetX",
     )
 
     val alpha by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
         animationSpec = tween(durationMillis = 400),
-        label = "alpha"
+        label = "alpha",
     )
 
     // 버튼 클릭 시 펄스 애니메이션
     var buttonPressed by remember { mutableStateOf(false) }
     val buttonScale by animateFloatAsState(
         targetValue = if (buttonPressed) 0.95f else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessHigh
-        ),
-        label = "buttonScale"
+        animationSpec =
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessHigh,
+            ),
+        label = "buttonScale",
     )
 
     LaunchedEffect(buttonPressed) {
@@ -375,15 +509,16 @@ private fun AnimatedRecommendationCard(
     }
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-                rotationZ = rotation
-                translationX = offsetX.toPx()
-                this.alpha = alpha
-            },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    rotationZ = rotation
+                    translationX = offsetX.toPx()
+                    this.alpha = alpha
+                },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(
@@ -451,9 +586,10 @@ private fun AnimatedRecommendationCard(
                     buttonPressed = true
                     onAddToWishlist()
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .scale(buttonScale),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .scale(buttonScale),
                 enabled = !isAdded && !isLoading,
             ) {
                 Icon(
@@ -465,7 +601,7 @@ private fun AnimatedRecommendationCard(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = if (isAdded) "위시리스트에 추가됨" else "위시리스트에 추가",
+                    text = if (isAdded) "Added to Wishlist" else "Add to Wishlist",
                 )
             }
         }
