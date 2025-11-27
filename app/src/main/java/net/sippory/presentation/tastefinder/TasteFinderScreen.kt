@@ -1,13 +1,12 @@
 package net.sippory.presentation.tastefinder
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -20,10 +19,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import net.sippory.data.model.RecommendedBottle
 import net.sippory.data.model.TasteQuestion
 
@@ -261,12 +263,13 @@ private fun RecommendationResultScreen(
             )
         }
 
-        items(recommendations) { bottle ->
-            RecommendationCard(
+        itemsIndexed(recommendations) { index, bottle ->
+            AnimatedRecommendationCard(
                 bottle = bottle,
                 onAddToWishlist = { onAddToWishlist(bottle) },
                 isLoading = isLoading,
                 isAdded = bottle.name in addedBottleNames,
+                index = index,
             )
         }
 
@@ -303,14 +306,84 @@ private fun RecommendationResultScreen(
 }
 
 @Composable
-private fun RecommendationCard(
+private fun AnimatedRecommendationCard(
     bottle: RecommendedBottle,
     onAddToWishlist: () -> Unit,
     isLoading: Boolean,
     isAdded: Boolean = false,
+    index: Int,
 ) {
+    // 각 카드가 순차적으로 나타나는 웨이브 효과
+    var visible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(index * 100L) // 각 카드마다 100ms 지연
+        visible = true
+    }
+
+    // 스케일 + 회전 애니메이션
+    val scale by animateFloatAsState(
+        targetValue = if (visible) 1f else 0.8f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "scale"
+    )
+
+    val rotation by animateFloatAsState(
+        targetValue = if (visible) 0f else -5f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "rotation"
+    )
+
+    // 슬라이드 + 페이드 효과
+    val offsetX by animateDpAsState(
+        targetValue = if (visible) 0.dp else 50.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "offsetX"
+    )
+
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(durationMillis = 400),
+        label = "alpha"
+    )
+
+    // 버튼 클릭 시 펄스 애니메이션
+    var buttonPressed by remember { mutableStateOf(false) }
+    val buttonScale by animateFloatAsState(
+        targetValue = if (buttonPressed) 0.95f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessHigh
+        ),
+        label = "buttonScale"
+    )
+
+    LaunchedEffect(buttonPressed) {
+        if (buttonPressed) {
+            delay(150)
+            buttonPressed = false
+        }
+    }
+
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+                rotationZ = rotation
+                translationX = offsetX.toPx()
+                this.alpha = alpha
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(
@@ -374,8 +447,13 @@ private fun RecommendationCard(
 
             // 위시리스트 추가 버튼
             Button(
-                onClick = onAddToWishlist,
-                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    buttonPressed = true
+                    onAddToWishlist()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .scale(buttonScale),
                 enabled = !isAdded && !isLoading,
             ) {
                 Icon(

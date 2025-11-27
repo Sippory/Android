@@ -1,7 +1,7 @@
 package net.sippory.presentation.home
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.clickable
@@ -24,10 +24,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -373,72 +375,126 @@ fun ExpandableFAB(
         label = "FAB rotation",
     )
 
-    Box {
-        Column(
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+    // 메뉴 아이템 리스트
+    val menuItems = remember {
+        listOf(
+            Triple(Icons.Default.Add, "술 추가", onAddBottleClick),
+            Triple(Icons.Default.Favorite, "취향 찾기", onTasteFinderClick),
+            Triple(Icons.Default.ThumbUp, "대시보드", onDashboardClick),
+            Triple(Icons.Default.Email, "AI 추천", onAIRecommendClick),
+        )
+    }
+
+    Box(
+        modifier = Modifier.size(250.dp),
+        contentAlignment = Alignment.BottomEnd,
+    ) {
+        // 서브 메뉴 아이템들 - 아치형 배치 (오른쪽 아래에서 왼쪽 위로 펼치기)
+        menuItems.forEachIndexed { index, (icon, label, onClick) ->
+            val targetAngle = 90f- (index * 30f)
+            val radius = 100.dp
+
+            AnimatedFABMenuItem(
+                icon = icon,
+                label = label,
+                onClick = {
+                    onClick()
+                    expanded = false
+                },
+                expanded = expanded,
+                angle = targetAngle,
+                radius = radius,
+                index = index,
+            )
+        }
+
+        // 메인 FAB
+        FloatingActionButton(
+            onClick = { expanded = !expanded },
+            containerColor = MaterialTheme.colorScheme.primary,
         ) {
-            // 서브 메뉴 아이템들
-            AnimatedVisibility(
-                visible = expanded,
-                enter = fadeIn() + expandVertically(expandFrom = Alignment.Bottom),
-                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Bottom),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    // AI 추천
-                    FABMenuItem(
-                        icon = Icons.Default.Email,
-                        label = "AI 추천",
-                        onClick = {
-                            onAIRecommendClick()
-                            expanded = false
-                        },
-                    )
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "메뉴",
+                modifier = Modifier.rotate(rotation),
+            )
+        }
+    }
+}
 
-                    // 대시보드
-                    FABMenuItem(
-                        icon = Icons.Default.ThumbUp,
-                        label = "대시보드",
-                        onClick = {
-                            onDashboardClick()
-                            expanded = false
-                        },
-                    )
+@Composable
+fun AnimatedFABMenuItem(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    expanded: Boolean,
+    angle: Float,
+    radius: Dp,
+    index: Int,
+) {
+    // 각도를 라디안으로 변환
+    val angleInRadians = (angle * Math.PI / 180f).toFloat()
 
-                    // 취향 찾기
-                    FABMenuItem(
-                        icon = Icons.Default.Favorite,
-                        label = "취향 찾기",
-                        onClick = {
-                            onTasteFinderClick()
-                            expanded = false
-                        },
-                    )
+    // 극좌표를 직교좌표로 변환 (시계 모양 배치)
+    val targetX = if (expanded) -(radius.value * kotlin.math.cos(angleInRadians)) else 0f
+    val targetY = if (expanded) -(radius.value * kotlin.math.sin(angleInRadians)) else 0f
 
-                    // 술 추가
-                    FABMenuItem(
-                        icon = Icons.Default.Add,
-                        label = "술 추가",
-                        onClick = {
-                            onAddBottleClick()
-                            expanded = false
-                        },
-                    )
-                }
+    // 애니메이션
+    val offsetX by animateDpAsState(
+        targetValue = targetX.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "offsetX"
+    )
+
+    val offsetY by animateDpAsState(
+        targetValue = targetY.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "offsetY"
+    )
+
+    val alpha by animateFloatAsState(
+        targetValue = if (expanded) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = 200,
+            delayMillis = if (expanded) index * 50 else 0
+        ),
+        label = "alpha"
+    )
+
+    val scale by animateFloatAsState(
+        targetValue = if (expanded) 1f else 0.3f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "scale"
+    )
+
+    Box(
+        modifier = Modifier
+            .offset(x = offsetX, y = offsetY)
+            .graphicsLayer {
+                this.alpha = alpha
+                scaleX = scale
+                scaleY = scale
             }
-
-            // 메인 FAB
-            FloatingActionButton(
-                onClick = { expanded = !expanded },
-                containerColor = MaterialTheme.colorScheme.primary,
+    ) {
+        if (expanded) {
+            // 작은 FAB만 표시 (라벨 제거)
+            SmallFloatingActionButton(
+                onClick = onClick,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "메뉴",
-                    modifier = Modifier.rotate(rotation),
+                    imageVector = icon,
+                    contentDescription = label,
                 )
             }
         }
