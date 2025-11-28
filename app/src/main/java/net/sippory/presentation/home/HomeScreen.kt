@@ -7,9 +7,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -63,6 +62,12 @@ fun HomeScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Sippory", fontWeight = FontWeight.Bold) },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color(0xFF0B0B10),
+                        titleContentColor = Color(0xFFEDEDF5),
+                        actionIconContentColor = Color(0xFFEDEDF5),
+                    ),
                 actions = {
                     IconButton(onClick = { showSearchBar = !showSearchBar }) {
                         Icon(Icons.Default.Search, contentDescription = "검색")
@@ -89,6 +94,13 @@ fun HomeScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color(0xFF08080C), Color(0xFF0F1017)),
+                            startY = 0f,
+                            endY = 1600f,
+                        ),
+                    )
                     .padding(padding),
         ) {
             // 검색 바
@@ -158,6 +170,20 @@ fun SearchBar(
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
         singleLine = true,
         shape = RoundedCornerShape(24.dp),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF7C7CFF),
+                unfocusedBorderColor = Color(0xFF2E2E3A),
+                focusedContainerColor = Color(0xFF12121C),
+                unfocusedContainerColor = Color(0xFF101018),
+                cursorColor = Color(0xFFB3B3FF),
+                focusedTextColor = Color(0xFFEDEDF5),
+                unfocusedTextColor = Color(0xFFEDEDF5),
+                unfocusedLeadingIconColor = Color(0xFFB8B8C6),
+                focusedLeadingIconColor = Color(0xFFEDEDF5),
+                focusedPlaceholderColor = Color(0xFF7D7D92),
+                unfocusedPlaceholderColor = Color(0xFF6F7085),
+            ),
     )
 }
 
@@ -175,18 +201,21 @@ fun FilterChips(
             selected = selectedFilter is BottleFilter.All,
             onClick = { onFilterChange(BottleFilter.All) },
             label = { Text("전체") },
+            colors = chipColors(selectedFilter is BottleFilter.All),
         )
 
         FilterChip(
             selected = selectedFilter is BottleFilter.Wishlist,
             onClick = { onFilterChange(BottleFilter.Wishlist) },
             label = { Text("💝 위시리스트") },
+            colors = chipColors(selectedFilter is BottleFilter.Wishlist),
         )
 
         FilterChip(
             selected = selectedFilter is BottleFilter.Owned,
             onClick = { onFilterChange(BottleFilter.Owned) },
             label = { Text("🍾 소유") },
+            colors = chipColors(selectedFilter is BottleFilter.Owned),
         )
 
         BottleTypes.ALL_TYPES.take(5).forEach { (type, emoji) ->
@@ -194,6 +223,7 @@ fun FilterChips(
                 selected = selectedFilter is BottleFilter.ByType && selectedFilter.type == type,
                 onClick = { onFilterChange(BottleFilter.ByType(type)) },
                 label = { Text("$emoji $type") },
+                colors = chipColors(selectedFilter is BottleFilter.ByType && selectedFilter.type == type),
             )
         }
 
@@ -201,9 +231,21 @@ fun FilterChips(
             selected = selectedFilter is BottleFilter.ByRating,
             onClick = { onFilterChange(BottleFilter.ByRating(4f)) },
             label = { Text("⭐ 4점 이상") },
+            colors = chipColors(selectedFilter is BottleFilter.ByRating),
         )
     }
 }
+
+@Composable
+private fun chipColors(isSelected: Boolean) =
+    FilterChipDefaults.filterChipColors(
+        containerColor = Color(0xFF161620),
+        selectedContainerColor = Color(0xFF1E1E2A),
+        labelColor = if (isSelected) Color(0xFFEDEDF5) else Color(0xFFB8B8C6),
+        selectedLabelColor = Color(0xFFEDEDF5),
+        iconColor = Color(0xFFB8B8C6),
+        selectedLeadingIconColor = Color(0xFFEDEDF5),
+    )
 
 @Composable
 fun BottleGrid(
@@ -211,110 +253,155 @@ fun BottleGrid(
     onBottleClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+    val rows = bottles.chunked(2)
+    LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
-        items(bottles, key = { it.id }) { bottle ->
-            BottleCard(
-                bottle = bottle,
-                onClick = { onBottleClick(bottle.id) },
-                modifier = Modifier.animateItem(),
+        items(rows, key = { row -> row.joinToString { it.id.toString() } }) { rowBottles ->
+            ShelfBottleRow(
+                bottles = rowBottles,
+                onBottleClick = onBottleClick,
             )
         }
     }
 }
 
 @Composable
-fun BottleCard(
+fun ShelfBottleRow(
+    bottles: List<BottleEntity>,
+    onBottleClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.BottomCenter,
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            listOf(Color(0x2AFFFFFF), Color(0x0DFFFFFF)),
+                        ),
+                        shape = RoundedCornerShape(24.dp),
+                    ),
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+        ) {
+            bottles.forEach { bottle ->
+                ShelfBottleTile(
+                    bottle = bottle,
+                    onClick = { onBottleClick(bottle.id) },
+                    modifier = Modifier.weight(1f),
+                )
+            }
+
+            if (bottles.size == 1) {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+fun ShelfBottleTile(
     bottle: BottleEntity,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .aspectRatio(0.7f)
-                .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(16.dp),
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(
+        Box(
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                    .fillMaxWidth()
+                    .height(210.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color(0xFF181824), Color(0xFF10101A)),
+                        ),
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color(0x22FFFFFF),
+                        shape = RoundedCornerShape(24.dp),
+                    )
+                    .clickable(onClick = onClick)
+                    .padding(16.dp),
         ) {
-            // 이미지
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .background(MaterialTheme.colorScheme.surface),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (bottle.photoUri != null) {
-                    AsyncImage(
-                        model = bottle.photoUri,
-                        contentDescription = bottle.name,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                    )
-                } else {
-                    Text(
-                        text = BottleTypes.getEmojiForType(bottle.type),
-                        style = MaterialTheme.typography.displayLarge,
-                    )
-                }
-            }
-
-            // 정보
             Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
+                modifier = Modifier.fillMaxSize(),
             ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(Color(0xFF0D0D15))
+                            .border(1.dp, Color(0x1FFFFFFF), RoundedCornerShape(18.dp))
+                            .padding(12.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (bottle.photoUri != null) {
+                        AsyncImage(
+                            model = bottle.photoUri,
+                            contentDescription = bottle.name,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                        )
+                    } else {
+                        Text(
+                            text = BottleTypes.getEmojiForType(bottle.type),
+                            style = MaterialTheme.typography.headlineLarge,
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Text(
                     text = bottle.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = Color(0xFFEDEDF5),
+                        fontWeight = FontWeight.Bold,
+                    ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
-                Text(
-                    text = bottle.type,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                RatingStars(
-                    rating = bottle.rating,
-                    modifier = Modifier.height(16.dp),
-                )
-
-                if (bottle.note.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = bottle.note,
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 2,
+                        text = bottle.type,
+                        style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFFB8B8C6)),
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    RatingStars(
+                        rating = bottle.rating,
+                        modifier = Modifier.height(16.dp),
                     )
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(14.dp))
     }
 }
 
