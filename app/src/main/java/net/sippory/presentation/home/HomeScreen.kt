@@ -340,33 +340,39 @@ fun ShelfBottleTile(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
+                    .height(240.dp)
                     .padding(horizontal = 4.dp)
                     .clickable(onClick = onClick),
         ) {
+            // Back glow behind the glass case
+            Box(
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .size(170.dp)
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(Color(0x332E9AFE), Color.Transparent),
+                            radius = 220f,
+                        ),
+                        shape = RoundedCornerShape(40.dp),
+                    ),
+            )
+
+            // Info plaque
             Column(
                 modifier =
                     Modifier
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.TopCenter)
+                        .padding(horizontal = 6.dp, vertical = 6.dp)
                         .fillMaxWidth()
-                        .height(150.dp)
-                        .clip(RoundedCornerShape(24.dp))
+                        .clip(RoundedCornerShape(22.dp))
                         .background(
                             Brush.verticalGradient(
-                                listOf(Color(0xFF1A1A26), Color(0xFF11111C)),
+                                listOf(Color(0xFF1B1B27), Color(0xFF12121A)),
                             ),
                         )
-                        .border(
-                            width = 1.dp,
-                            color = Color(0x22FFFFFF),
-                            shape = RoundedCornerShape(24.dp),
-                        )
-                        .shadow(
-                            elevation = 12.dp,
-                            spotColor = Color(0x33000000),
-                            ambientColor = Color(0x22000000),
-                            shape = RoundedCornerShape(24.dp),
-                        )
+                        .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(22.dp))
                         .padding(horizontal = 16.dp, vertical = 14.dp),
             ) {
                 Row(
@@ -378,8 +384,8 @@ fun ShelfBottleTile(
                         text = bottle.name,
                         style = MaterialTheme.typography.titleMedium.copy(
                             color = Color(0xFFEDEDF5),
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.2.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 0.3.sp,
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -388,69 +394,125 @@ fun ShelfBottleTile(
                     RatingPill(rating = bottle.rating)
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 TypePill(type = bottle.type)
+            }
 
-                Spacer(modifier = Modifier.height(12.dp))
-
+            // Glass case for the icon/photo
+            Box(
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .offset(y = 10.dp)
+                        .size(width = 148.dp, height = 150.dp)
+                        .clip(RoundedCornerShape(28.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color(0xFF181824), Color(0xFF0F0F18)),
+                            ),
+                        )
+                        .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(28.dp))
+                        .shadow(
+                            elevation = 18.dp,
+                            spotColor = Color(0x33000000),
+                            ambientColor = Color(0x22000000),
+                            shape = RoundedCornerShape(28.dp),
+                        )
+                        .padding(14.dp),
+                contentAlignment = Alignment.Center,
+            ) {
                 Box(
                     modifier =
                         Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0xFF0C0C14))
-                            .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(16.dp))
-                            .padding(12.dp),
+                        .fillMaxSize()
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(Color(0x332E9AFE), Color.Transparent),
+                                radius = 180f,
+                            ),
+                            shape = RoundedCornerShape(22.dp),
+                        )
+                            .padding(10.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     if (bottle.photoUri != null) {
                         AsyncImage(
                             model = bottle.photoUri,
                             contentDescription = bottle.name,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(18.dp))
+                                    .border(
+                                        1.dp,
+                                        Color(0x22FFFFFF),
+                                        RoundedCornerShape(18.dp),
+                                    ),
                             contentScale = ContentScale.Crop,
                         )
                     } else {
                         Text(
                             text = BottleTypes.getEmojiForType(bottle.type),
-                            style = MaterialTheme.typography.headlineLarge,
+                            style = MaterialTheme.typography.headlineLarge.copy(fontSize = 42.sp),
                         )
                     }
                 }
             }
 
+            // Pedestal the icon stands on
             Box(
                 modifier =
                     Modifier
                         .align(Alignment.BottomCenter)
-                        .offset(y = 18.dp)
-                        .width(94.dp)
-                        .height(28.dp)
-                        .clip(RoundedCornerShape(14.dp))
+                        .offset(y = 12.dp)
+                        .width(128.dp)
+                        .height(44.dp)
+                        .clip(RoundedCornerShape(18.dp))
                         .background(
                             Brush.verticalGradient(
-                                listOf(Color(0xFF1F1F2C), Color(0x8011111C)),
+                                listOf(Color(0xFF262633), Color(0xFF15151E)),
                             ),
                         )
-                        .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(14.dp))
+                        .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(18.dp))
                         .shadow(
-                            elevation = 16.dp,
+                            elevation = 20.dp,
                             spotColor = Color(0x44000000),
                             ambientColor = Color(0x22000000),
-                            shape = RoundedCornerShape(14.dp),
+                            shape = RoundedCornerShape(18.dp),
                         ),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = "BASE",
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        color = Color(0xFFEDEDF5),
-                        letterSpacing = 0.8.sp,
-                    ),
+                    style =
+                        MaterialTheme.typography.labelLarge.copy(
+                            color = Color(0xFFEDEDF5),
+                            letterSpacing = 1.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
                 )
             }
+
+            // Shelf rail
+            Box(
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(12.dp)
+                        .clip(RoundedCornerShape(26.dp))
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                listOf(Color(0x22FFFFFF), Color(0x11FFFFFF)),
+                            ),
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = Color(0x18FFFFFF),
+                            shape = RoundedCornerShape(26.dp),
+                        ),
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
