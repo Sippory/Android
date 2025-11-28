@@ -61,7 +61,6 @@ import net.sippory.R
 private val DeepBlack = Color(0xFF0D0D0D)
 private val WineRed = Color(0xFF8B1538)
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreen(navController: NavController) {
@@ -86,7 +85,7 @@ fun SignInScreen(navController: NavController) {
         topBar = {
             TopAppBar(
                 title = { Text("Sippory") },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlack, titleContentColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlack, titleContentColor = Color.White),
             )
         },
     ) { padding ->
@@ -175,7 +174,7 @@ fun UserEmailIdTextField(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(text = "Email ID", color = Color.White)
         OutlinedTextField(
@@ -183,11 +182,12 @@ fun UserEmailIdTextField(
             onValueChange = { onUserEmailIdChange(it) },
             placeholder = { Text("Enter your Email ID", color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = WineRed,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = WineRed,
-            ),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = WineRed,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = WineRed,
+                ),
             keyboardOptions =
                 KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -202,7 +202,7 @@ fun UserEmailIdTextField(
                     imageVector = Icons.Filled.AccountCircle,
                     contentDescription =
                         "User ID Icon",
-                    tint = Color.Gray
+                    tint = Color.Gray,
                 )
             },
             trailingIcon = {
@@ -215,13 +215,13 @@ fun UserEmailIdTextField(
                         Icon(
                             imageVector = Icons.Filled.HighlightOff,
                             contentDescription = "Clear ID",
-                            tint = Color.Gray
+                            tint = Color.Gray,
                         )
                     }
                 }
             },
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -236,10 +236,11 @@ fun UserPasswordTextField(
     focusManager: FocusManager,
 ) {
     Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier =
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(text = "Password", color = Color.White)
         OutlinedTextField(
@@ -247,11 +248,12 @@ fun UserPasswordTextField(
             onValueChange = { onUserPasswordChange(it) },
             placeholder = { Text("Enter your Password", color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = WineRed,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = WineRed,
-            ),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = WineRed,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = WineRed,
+                ),
             keyboardActions =
                 KeyboardActions(onDone = {
                     focusManager.clearFocus()
@@ -267,7 +269,7 @@ fun UserPasswordTextField(
                     imageVector = Icons.Filled.Lock,
                     contentDescription =
                         "Password Icon",
-                    tint = Color.Gray
+                    tint = Color.Gray,
                 )
             },
             trailingIcon = {
@@ -279,7 +281,7 @@ fun UserPasswordTextField(
                     Icon(
                         imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = if (isPasswordVisible) "Show Password" else "Hide Password",
-                        tint = Color.Gray
+                        tint = Color.Gray,
                     )
                 }
             },
@@ -290,7 +292,6 @@ fun UserPasswordTextField(
                     .focusRequester(passwordFocusRequester),
         )
     }
-
 }
 
 @Composable
@@ -308,7 +309,7 @@ fun SignInButton(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
     ) {
         Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
     }

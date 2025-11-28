@@ -77,11 +77,12 @@ fun DrinkSearchScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DeepBlack,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White,
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = DeepBlack,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White,
+                    ),
             )
         },
     ) { innerPadding ->
@@ -90,8 +91,7 @@ fun DrinkSearchScreen(
                 Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .background(color = DeepBlack)
-            ,
+                    .background(color = DeepBlack),
         ) {
             Spacer(modifier = Modifier.padding(top = 24.dp))
             Column(
@@ -109,14 +109,14 @@ fun DrinkSearchScreen(
                         OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = WineRed,
                             unfocusedBorderColor = Color.Gray,
-                            cursorColor = Color.White
+                            cursorColor = Color.White,
                         ),
                     shape = RoundedCornerShape(size = 12.dp),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search Icon",
-                            tint = Color.Gray
+                            tint = Color.Gray,
                         )
                     },
                     trailingIcon = {
@@ -124,7 +124,7 @@ fun DrinkSearchScreen(
                             imageVector = Icons.Filled.HighlightOff,
                             contentDescription = "Clear Search",
                             tint = Color.Gray,
-                            modifier = Modifier.clickable { searchQuery = "" }
+                            modifier = Modifier.clickable { searchQuery = "" },
                         )
                     },
                     keyboardOptions =
@@ -182,7 +182,7 @@ fun DrinkSearchScreen(
                                         fontSize = 14.sp,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
-                                        color = Color.White
+                                        color = Color.White,
                                     )
                                     Text(drink.category, fontSize = 12.sp, color = Color.White)
                                 }
@@ -228,7 +228,7 @@ fun DrinkSearchScreen(
                                         fontSize = 14.sp,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
-                                        color = Color.White
+                                        color = Color.White,
                                     )
                                     Text(drink.category, fontSize = 12.sp, color = Color.White)
                                 }
@@ -264,7 +264,7 @@ private fun TextAndCountContainer(
         Text(
             text,
             fontSize = 14.sp,
-            color = Color.White
+            color = Color.White,
         )
         Text(
             count.toString(),

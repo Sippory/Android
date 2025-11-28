@@ -51,13 +51,11 @@ private val WineRed = Color(0xFF8B1538)
 fun SearchDetailScreen(
     navController: NavController,
     viewModel: DrinkSearchViewModel,
-    bottleRepository: BottleRepository
+    bottleRepository: BottleRepository,
 ) {
     val selectedDrink by viewModel.selectedDrink.collectAsState()
 
     var showAddBottleSheet by remember { mutableStateOf(false) }
-
-
 
     Scaffold(
         topBar = {
@@ -81,11 +79,12 @@ fun SearchDetailScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DeepBlack,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White,
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = DeepBlack,
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White,
+                    ),
             )
         },
     ) { innerPadding ->
@@ -151,20 +150,20 @@ fun SearchDetailScreen(
                         .padding(16.dp),
                 colors =
                     ButtonDefaults.buttonColors(
-                        containerColor = WineRed
+                        containerColor = WineRed,
                     ),
                 shape = RoundedCornerShape(12.dp),
             ) {
                 Text(text = "Add Tasting Note", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
             }
 
-            if(showAddBottleSheet) {
+            if (showAddBottleSheet) {
                 AddBottleSheet(
-                    onDismiss = { showAddBottleSheet = false},
+                    onDismiss = { showAddBottleSheet = false },
                     repository = bottleRepository,
                     drinkName = selectedDrink?.name ?: "",
                     drinkType = selectedDrink?.category ?: "",
-                    drinkPhotoUri = selectedDrink?.image_url
+                    drinkPhotoUri = selectedDrink?.image_url,
                 )
             }
         }

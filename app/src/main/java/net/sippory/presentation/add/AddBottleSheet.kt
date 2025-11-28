@@ -29,9 +29,9 @@ import net.sippory.utils.BottleViewModelFactory
 fun AddBottleSheet(
     onDismiss: () -> Unit,
     repository: BottleRepository,
-    drinkName : String = "",
-    drinkType : String = "Wine",
-    drinkPhotoUri : String? =null,
+    drinkName: String = "",
+    drinkType: String = "Wine",
+    drinkPhotoUri: String? = null,
 ) {
     val viewModelFactory = BottleViewModelFactory(repository)
     val viewModel: AddBottleViewModel = viewModel(factory = viewModelFactory)

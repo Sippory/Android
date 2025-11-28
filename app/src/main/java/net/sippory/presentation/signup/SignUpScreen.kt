@@ -110,10 +110,11 @@ fun SignUpScreen(navController: NavController) {
         topBar = {
             TopAppBar(
                 title = { Text("Sippory") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DeepBlack,
-                    titleContentColor = Color.White,
-                ),
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = DeepBlack,
+                        titleContentColor = Color.White,
+                    ),
                 navigationIcon = {
                     IconButton(
                         onClick = { navController.popBackStack() },
@@ -124,7 +125,7 @@ fun SignUpScreen(navController: NavController) {
                             tint = Color.White,
                         )
                     }
-                }
+                },
             )
         },
     ) { padding ->
@@ -246,7 +247,7 @@ fun UserEmailIdTextField(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text("Email ID", color = Color.White, fontWeight = FontWeight.Bold)
         OutlinedTextField(
@@ -257,17 +258,18 @@ fun UserEmailIdTextField(
             },
             placeholder = { Text("Enter Email ID", color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = WineRed,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = WineRed,
-            ),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = WineRed,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = WineRed,
+                ),
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.AccountCircle,
                     contentDescription =
                         "User ID Icon",
-                    tint = Color.Gray
+                    tint = Color.Gray,
                 )
             },
             keyboardOptions =
@@ -295,7 +297,7 @@ fun UserEmailIdTextField(
                         Icon(
                             imageVector = Icons.Filled.HighlightOff,
                             contentDescription = "Clear ID",
-                            tint = Color.Gray
+                            tint = Color.Gray,
                         )
                     }
                 }
@@ -355,11 +357,12 @@ fun UserPassWordTextField(
             },
             placeholder = { Text("Enter new Password", color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = WineRed,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = WineRed,
-            ),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = WineRed,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = WineRed,
+                ),
             keyboardActions =
                 KeyboardActions(onNext = {
                     if (userPassword.isEmpty()) {
@@ -381,7 +384,7 @@ fun UserPassWordTextField(
                     imageVector = Icons.Filled.Lock,
                     contentDescription =
                         "Password Icon",
-                    tint = Color.Gray
+                    tint = Color.Gray,
                 )
             },
             trailingIcon = {
@@ -393,7 +396,7 @@ fun UserPassWordTextField(
                     Icon(
                         imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = if (isPasswordVisible) "Show Password" else "Hide Password",
-                        tint = Color.Gray
+                        tint = Color.Gray,
                     )
                 }
             },
@@ -450,13 +453,14 @@ fun ConfirmedPassWordTextField(
                 onConfirmPasswordChange(it)
                 onErrorChange(false)
             },
-            placeholder = { Text("Enter Confirm Password",  color = Color.Gray) },
+            placeholder = { Text("Enter Confirm Password", color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = WineRed,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = WineRed,
-            ),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = WineRed,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = WineRed,
+                ),
             keyboardActions =
                 KeyboardActions(onDone = {
                     focusManager.clearFocus()
@@ -473,7 +477,7 @@ fun ConfirmedPassWordTextField(
                     imageVector = Icons.Filled.Lock,
                     contentDescription =
                         "Password Icon",
-                    tint = Color.Gray
+                    tint = Color.Gray,
                 )
             },
             trailingIcon = {
@@ -485,7 +489,7 @@ fun ConfirmedPassWordTextField(
                     Icon(
                         imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = if (isPasswordVisible) "Show Password" else "Hide Password",
-                        tint = Color.Gray
+                        tint = Color.Gray,
                     )
                 }
             },
