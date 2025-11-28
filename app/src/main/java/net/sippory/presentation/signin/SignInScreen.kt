@@ -181,7 +181,7 @@ fun UserEmailIdTextField(
         OutlinedTextField(
             value = userEmailId,
             onValueChange = { onUserEmailIdChange(it) },
-            placeholder = { Text("Enter your Email ID", color = Color.White) },
+            placeholder = { Text("Enter your Email ID", color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = WineRed,
@@ -245,7 +245,7 @@ fun UserPasswordTextField(
         OutlinedTextField(
             value = userPassword,
             onValueChange = { onUserPasswordChange(it) },
-            placeholder = { Text("Enter your Password", color = Color.White) },
+            placeholder = { Text("Enter your Password", color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = WineRed,

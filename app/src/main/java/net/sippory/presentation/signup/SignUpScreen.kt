@@ -255,7 +255,7 @@ fun UserEmailIdTextField(
                 onUserEmailIdChange(it)
                 onErrorChange(false)
             },
-            placeholder = { Text("Enter Email ID", color = Color.White) },
+            placeholder = { Text("Enter Email ID", color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = WineRed,
@@ -353,7 +353,7 @@ fun UserPassWordTextField(
                 onUserPasswordChange(it)
                 onErrorChange(false)
             },
-            placeholder = { Text("Enter new Password", color = Color.White) },
+            placeholder = { Text("Enter new Password", color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = WineRed,
@@ -450,7 +450,7 @@ fun ConfirmedPassWordTextField(
                 onConfirmPasswordChange(it)
                 onErrorChange(false)
             },
-            placeholder = { Text("Enter Confirm Password") },
+            placeholder = { Text("Enter Confirm Password",  color = Color.Gray) },
             textStyle = TextStyle(color = Color.White),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = WineRed,
