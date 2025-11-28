@@ -484,7 +484,7 @@ fun ShelfBottleTile(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "BASE",
+                    text = bottle.type.ifBlank { "Base" }.uppercase(),
                     style =
                         MaterialTheme.typography.labelLarge.copy(
                             color = Color(0xFFEDEDF5),
@@ -493,26 +493,6 @@ fun ShelfBottleTile(
                         ),
                 )
             }
-
-            // Shelf rail
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .height(12.dp)
-                        .clip(RoundedCornerShape(26.dp))
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                listOf(Color(0x22FFFFFF), Color(0x11FFFFFF)),
-                            ),
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = Color(0x18FFFFFF),
-                            shape = RoundedCornerShape(26.dp),
-                        ),
-            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
