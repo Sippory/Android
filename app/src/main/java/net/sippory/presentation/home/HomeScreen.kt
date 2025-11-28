@@ -3,6 +3,7 @@ package net.sippory.presentation.home
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
@@ -23,6 +25,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -30,11 +34,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
 import net.sippory.navigation.Screen
 import net.sippory.presentation.add.AddBottleSheet
+import net.sippory.ui.theme.SipporyTheme
 import net.sippory.utils.BottleTypes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -544,5 +551,156 @@ fun FABMenuItem(
     }
 }
 
+private data class ShelfAction(
+    val title: String,
+    val subtitle: String,
+    val icon: ImageVector,
+    val accent: Color,
+)
+
+@Preview(showBackground = true, backgroundColor = 0xFF0B0B0F)
 @Composable
-private fun rememberScrollState() = androidx.compose.foundation.rememberScrollState()
+private fun HomeShelfConceptPreview() {
+    val actions =
+        listOf(
+            ShelfAction("위스키 노트", "오늘의 위스키 기록하기", Icons.Default.LocalBar, Color(0xFFFFC857)),
+            ShelfAction("페어링", "안주 추천 받기", Icons.Default.Favorite, Color(0xFF80CBC4)),
+            ShelfAction("검색/탐색", "새 술 찾기", Icons.Default.Search, Color(0xFF90CAF9)),
+            ShelfAction("내 취향", "추천·랭킹 보기", Icons.Default.ThumbUp, Color(0xFFD7BDE2)),
+        )
+
+    SipporyTheme(darkTheme = true) {
+        HomeShelfConcept(actions = actions)
+    }
+}
+
+@Composable
+private fun HomeShelfConcept(
+    actions: List<ShelfAction>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0xFF0B0B0F), Color(0xFF12121A)),
+                    ),
+                )
+                .padding(horizontal = 20.dp, vertical = 28.dp),
+    ) {
+        Text(
+            text = "Sippory Home",
+            color = Color(0xFFEDEDF5),
+            style = MaterialTheme.typography.titleMedium,
+            letterSpacing = 0.5.sp,
+        )
+        Text(
+            text = "밤의 홈바 무드에 어울리는 블랙 톤 + 아이콘 선반 레이아웃",
+            color = Color(0xFFB8B8C6),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 4.dp, bottom = 20.dp),
+        )
+
+        actions.chunked(2).forEach { rowItems ->
+            ShelfRow(items = rowItems)
+        }
+    }
+}
+
+@Composable
+private fun ShelfRow(items: List<ShelfAction>) {
+    Box(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp),
+        contentAlignment = Alignment.BottomCenter,
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            listOf(Color(0x33FFFFFF), Color(0x11FFFFFF)),
+                        ),
+                        shape = RoundedCornerShape(24.dp),
+                    ),
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(18.dp, Alignment.CenterHorizontally),
+        ) {
+            items.forEach { action ->
+                ShelfTile(action = action, modifier = Modifier.weight(1f))
+            }
+
+            if (items.size == 1) {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShelfTile(
+    action: ShelfAction,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(action.accent.copy(alpha = 0.18f))
+                    .border(
+                        width = 1.dp,
+                        color = action.accent.copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(24.dp),
+                    )
+                    .padding(18.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(72.dp)
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(action.accent.copy(alpha = 0.6f), Color.Transparent),
+                            ),
+                            shape = RoundedCornerShape(18.dp),
+                        )
+                        .padding(12.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = action.icon,
+                    contentDescription = action.title,
+                    tint = Color.White,
+                    modifier = Modifier.size(32.dp),
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = action.title,
+            color = Color(0xFFEDEDF5),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+        )
+        Text(
+            text = action.subtitle,
+            color = Color(0xFFB8B8C6),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 4.dp),
+        )
+    }
+}
