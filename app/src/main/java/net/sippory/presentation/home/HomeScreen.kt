@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -275,7 +277,10 @@ fun ShelfBottleRow(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
         Box(
@@ -283,18 +288,27 @@ fun ShelfBottleRow(
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(10.dp)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(26.dp))
                     .background(
                         brush = Brush.horizontalGradient(
-                            listOf(Color(0x2AFFFFFF), Color(0x0DFFFFFF)),
+                            listOf(Color(0x33FFFFFF), Color(0x11FFFFFF)),
                         ),
-                        shape = RoundedCornerShape(24.dp),
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = Color(0x26FFFFFF),
+                        shape = RoundedCornerShape(26.dp),
                     ),
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.Bottom,
         ) {
             bottles.forEach { bottle ->
                 ShelfBottleTile(
@@ -325,32 +339,68 @@ fun ShelfBottleTile(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(210.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFF181824), Color(0xFF10101A)),
-                        ),
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = Color(0x22FFFFFF),
-                        shape = RoundedCornerShape(24.dp),
-                    )
-                    .clickable(onClick = onClick)
-                    .padding(16.dp),
+                    .height(220.dp)
+                    .padding(horizontal = 4.dp)
+                    .clickable(onClick = onClick),
         ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color(0xFF1A1A26), Color(0xFF11111C)),
+                            ),
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = Color(0x22FFFFFF),
+                            shape = RoundedCornerShape(24.dp),
+                        )
+                        .shadow(
+                            elevation = 12.dp,
+                            spotColor = Color(0x33000000),
+                            ambientColor = Color(0x22000000),
+                            shape = RoundedCornerShape(24.dp),
+                        )
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
             ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = bottle.name,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = Color(0xFFEDEDF5),
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 0.2.sp,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+
+                    RatingPill(rating = bottle.rating)
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                TypePill(type = bottle.type)
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Box(
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(Color(0xFF0D0D15))
-                            .border(1.dp, Color(0x1FFFFFFF), RoundedCornerShape(18.dp))
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFF0C0C14))
+                            .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(16.dp))
                             .padding(12.dp),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -368,40 +418,103 @@ fun ShelfBottleTile(
                         )
                     }
                 }
+            }
 
-                Spacer(modifier = Modifier.height(12.dp))
-
+            Box(
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = 18.dp)
+                        .width(94.dp)
+                        .height(28.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color(0xFF1F1F2C), Color(0x8011111C)),
+                            ),
+                        )
+                        .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(14.dp))
+                        .shadow(
+                            elevation = 16.dp,
+                            spotColor = Color(0x44000000),
+                            ambientColor = Color(0x22000000),
+                            shape = RoundedCornerShape(14.dp),
+                        ),
+                contentAlignment = Alignment.Center,
+            ) {
                 Text(
-                    text = bottle.name,
-                    style = MaterialTheme.typography.titleMedium.copy(
+                    text = "BASE",
+                    style = MaterialTheme.typography.labelMedium.copy(
                         color = Color(0xFFEDEDF5),
-                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.8.sp,
                     ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
                 )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = bottle.type,
-                        style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFFB8B8C6)),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    RatingStars(
-                        rating = bottle.rating,
-                        modifier = Modifier.height(16.dp),
-                    )
-                }
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+    }
+}
+
+@Composable
+private fun TypePill(type: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .size(18.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(Color(0x332E9AFE))
+                    .border(1.dp, Color(0x662E9AFE), RoundedCornerShape(6.dp)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = BottleTypes.getEmojiForType(type),
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+
+        Text(
+            text = type,
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = Color(0xFFB5B5C5),
+                fontWeight = FontWeight.Medium,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
+private fun RatingPill(rating: Float) {
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = Color(0xFF1F1F2C),
+        border = BorderStroke(1.dp, Color(0x33FFFFFF)),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                tint = Color(0xFFFFD166),
+                modifier = Modifier.size(16.dp),
+            )
+            Text(
+                text = String.format("%.1f", rating),
+                style = MaterialTheme.typography.labelLarge.copy(
+                    color = Color(0xFFEDEDF5),
+                    fontWeight = FontWeight.SemiBold,
+                ),
+            )
+        }
     }
 }
 
