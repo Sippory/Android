@@ -1,5 +1,6 @@
 package net.sippory.presentation.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.HighlightOff
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,15 +38,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 import net.sippory.data.entity.DrinkEntity
 
-const val BLUE_COLOR = "#2A6DFD"
+private val DeepBlack = Color(0xFF0D0D0D)
+private val WineRed = Color(0xFF8B1538)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +77,11 @@ fun DrinkSearchScreen(
                         )
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = DeepBlack,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                )
             )
         },
     ) { innerPadding ->
@@ -80,7 +89,9 @@ fun DrinkSearchScreen(
             modifier =
                 Modifier
                     .padding(innerPadding)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .background(color = DeepBlack)
+            ,
         ) {
             Spacer(modifier = Modifier.padding(top = 24.dp))
             Column(
@@ -91,18 +102,29 @@ fun DrinkSearchScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search Keyword") },
+                    placeholder = { Text("Search Keyword", color = Color.Gray) },
+                    textStyle = TextStyle(color = Color.White),
                     modifier = Modifier.fillMaxWidth(),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(BLUE_COLOR.toColorInt()),
-                            unfocusedBorderColor = Color(BLUE_COLOR.toColorInt()),
+                            focusedBorderColor = WineRed,
+                            unfocusedBorderColor = Color.Gray,
+                            cursorColor = Color.White
                         ),
                     shape = RoundedCornerShape(size = 12.dp),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search Icon",
+                            tint = Color.Gray
+                        )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.HighlightOff,
+                            contentDescription = "Clear Search",
+                            tint = Color.Gray,
+                            modifier = Modifier.clickable { searchQuery = "" }
                         )
                     },
                     keyboardOptions =
@@ -160,13 +182,14 @@ fun DrinkSearchScreen(
                                         fontSize = 14.sp,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
+                                        color = Color.White
                                     )
-                                    Text(drink.category, fontSize = 10.sp, color = Color.Gray)
+                                    Text(drink.category, fontSize = 12.sp, color = Color.White)
                                 }
                                 Icon(
                                     imageVector = Icons.Default.ChevronRight,
                                     contentDescription = "Go to Details",
-                                    tint = Color.Gray,
+                                    tint = Color.White,
                                 )
                             }
                         }
@@ -205,8 +228,9 @@ fun DrinkSearchScreen(
                                         fontSize = 14.sp,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
+                                        color = Color.White
                                     )
-                                    Text(drink.category, fontSize = 10.sp, color = Color.Gray)
+                                    Text(drink.category, fontSize = 12.sp, color = Color.White)
                                 }
                                 IconButton(
                                     onClick = {
@@ -216,7 +240,7 @@ fun DrinkSearchScreen(
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Remove from Recently Searched",
-                                        tint = Color.Gray,
+                                        tint = Color.White,
                                     )
                                 }
                             }
@@ -239,12 +263,13 @@ private fun TextAndCountContainer(
     ) {
         Text(
             text,
-            fontSize = 12.sp,
+            fontSize = 14.sp,
+            color = Color.White
         )
         Text(
             count.toString(),
-            fontSize = 12.sp,
-            color = Color(BLUE_COLOR.toColorInt()),
+            fontSize = 14.sp,
+            color = WineRed,
         )
     }
 }
