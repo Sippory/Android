@@ -4,10 +4,7 @@ package net.sippory.presentation.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -57,24 +54,26 @@ fun DashboardScreen(
                         "Dashboard",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color.White,
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DeepBlack
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = DeepBlack,
+                    ),
             )
         },
-        containerColor = DeepBlack
+        containerColor = DeepBlack,
     ) { padding ->
         LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(DeepBlack)
-                .padding(horizontal = 20.dp),
+            modifier =
+                Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .background(DeepBlack)
+                    .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(vertical = 20.dp)
+            contentPadding = PaddingValues(vertical = 20.dp),
         ) {
             // 헤더 텍스트
             item {
@@ -83,12 +82,12 @@ fun DashboardScreen(
                         "My Drinking Statistics",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color.White,
                     )
                     Text(
                         "Check your preferences at a glance",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = LightGray
+                        color = LightGray,
                     )
                 }
             }
@@ -97,14 +96,15 @@ fun DashboardScreen(
                 ImageRankingSection(
                     title = "Most Consumed Type",
                     subtitle = "TYPE RANKING",
-                    items = typeRanking.map { bottle ->
-                        ImageRankingItem(
-                            label = bottle.type,
-                            value = "${bottle.count} times",
-                            imageEmoji = getTypeEmoji(bottle.type)
-                        )
-                    },
-                    icon = "🍷"
+                    items =
+                        typeRanking.map { bottle ->
+                            ImageRankingItem(
+                                label = bottle.type,
+                                value = "${bottle.count} times",
+                                imageEmoji = getTypeEmoji(bottle.type),
+                            )
+                        },
+                    icon = "🍷",
                 )
             }
 
@@ -113,7 +113,7 @@ fun DashboardScreen(
                     title = "Frequently Consumed ABV",
                     subtitle = "ABV RANKING",
                     items = abvRanking.map { bottle -> RankingItem("${bottle.abv}%", "${bottle.count} times") },
-                    icon = "🔥"
+                    icon = "🔥",
                 )
             }
 
@@ -121,14 +121,15 @@ fun DashboardScreen(
                 ImageRankingSection(
                     title = "Average Rating by Type",
                     subtitle = "RATING BY TYPE",
-                    items = averageRatingPerType.map { bottle ->
-                        ImageRankingItem(
-                            label = bottle.type,
-                            value = String.format("%.1f pts", bottle.averageRating),
-                            imageEmoji = getTypeEmoji(bottle.type)
-                        )
-                    },
-                    icon = "⭐"
+                    items =
+                        averageRatingPerType.map { bottle ->
+                            ImageRankingItem(
+                                label = bottle.type,
+                                value = String.format("%.1f pts", bottle.averageRating),
+                                imageEmoji = getTypeEmoji(bottle.type),
+                            )
+                        },
+                    icon = "⭐",
                 )
             }
 
@@ -137,7 +138,7 @@ fun DashboardScreen(
                     title = "Most Consumed Drinks",
                     subtitle = "MOST CONSUMED",
                     items = mostConsumed.map { bottle -> RankingItem("${bottle.name}", "${bottle.count} times") },
-                    icon = "🏆"
+                    icon = "🏆",
                 )
             }
 
@@ -146,19 +147,21 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = onBack,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = WineRed.copy(alpha = 0.2f),
-                            contentColor = WineRed
-                        ),
-                        shape = RoundedCornerShape(8.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = WineRed.copy(alpha = 0.2f),
+                                contentColor = WineRed,
+                            ),
+                        shape = RoundedCornerShape(8.dp),
                     ) {
                         Text(
                             "Back",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
                         )
                     }
                 }
@@ -168,6 +171,7 @@ fun DashboardScreen(
 }
 
 data class RankingItem(val label: String, val value: String)
+
 data class ImageRankingItem(val label: String, val value: String, val imageEmoji: String)
 
 // 주종별 이모지 매핑
@@ -192,28 +196,28 @@ private fun ImageRankingSection(
     title: String,
     subtitle: String,
     items: List<ImageRankingItem>,
-    icon: String
+    icon: String,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // 섹션 헤더
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // 아이콘
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = RoundedCornerShape(8.dp),
-                color = WineRed.copy(alpha = 0.2f)
+                color = WineRed.copy(alpha = 0.2f),
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         icon,
-                        fontSize = 24.sp
+                        fontSize = 24.sp,
                     )
                 }
             }
@@ -223,13 +227,13 @@ private fun ImageRankingSection(
                     title,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = Color.White,
                 )
                 Text(
                     subtitle,
                     style = MaterialTheme.typography.labelSmall,
                     color = WineRed,
-                    letterSpacing = 1.2.sp
+                    letterSpacing = 1.2.sp,
                 )
             }
         }
@@ -237,50 +241,54 @@ private fun ImageRankingSection(
         // 이미지 랭킹 카드
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = SoftBlack
-            ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = SoftBlack,
+                ),
             shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 8.dp
-            )
+            elevation =
+                CardDefaults.cardElevation(
+                    defaultElevation = 8.dp,
+                ),
         ) {
             if (items.isEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 32.dp),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
                             "📊",
                             fontSize = 40.sp,
-                            color = LightGray.copy(alpha = 0.3f)
+                            color = LightGray.copy(alpha = 0.3f),
                         )
                         Text(
                             "No data yet",
                             color = LightGray.copy(alpha = 0.6f),
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
                         )
                     }
                 }
             } else {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.Bottom
+                    verticalAlignment = Alignment.Bottom,
                 ) {
                     items.take(5).forEachIndexed { idx, item ->
                         ImageRankingCard(
                             rank = idx + 1,
                             item = item,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
                         )
                     }
                 }
@@ -293,108 +301,117 @@ private fun ImageRankingSection(
 private fun ImageRankingCard(
     rank: Int,
     item: ImageRankingItem,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // 1위가 가장 크고, 순위가 내려갈수록 작아짐
-    val containerHeight = when (rank) {
-        1 -> 180.dp
-        2 -> 160.dp
-        3 -> 145.dp
-        4 -> 135.dp
-        else -> 125.dp
-    }
+    val containerHeight =
+        when (rank) {
+            1 -> 180.dp
+            2 -> 160.dp
+            3 -> 145.dp
+            4 -> 135.dp
+            else -> 125.dp
+        }
 
-    val circleSize = when (rank) {
-        1 -> 100.dp
-        2 -> 85.dp
-        3 -> 75.dp
-        4 -> 65.dp
-        else -> 60.dp
-    }
+    val circleSize =
+        when (rank) {
+            1 -> 100.dp
+            2 -> 85.dp
+            3 -> 75.dp
+            4 -> 65.dp
+            else -> 60.dp
+        }
 
-    val fontSize = when (rank) {
-        1 -> 48.sp
-        2 -> 40.sp
-        3 -> 35.sp
-        4 -> 30.sp
-        else -> 28.sp
-    }
+    val fontSize =
+        when (rank) {
+            1 -> 48.sp
+            2 -> 40.sp
+            3 -> 35.sp
+            4 -> 30.sp
+            else -> 28.sp
+        }
 
     val isTop3 = rank <= 3
 
     Column(
-        modifier = modifier
-            .height(containerHeight)
-            .fillMaxWidth(),
+        modifier =
+            modifier
+                .height(containerHeight)
+                .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         // 순위 뱃지 (각진 디자인)
         Box(
-            modifier = Modifier
-                .size(22.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(
-                    if (isTop3) {
-                        Brush.linearGradient(
-                            colors = listOf(WineRed, DarkWine)
-                        )
-                    } else {
-                        Brush.linearGradient(
-                            colors = listOf(
-                                SoftBlack.copy(alpha = 0.5f),
-                                SoftBlack
+            modifier =
+                Modifier
+                    .size(22.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(
+                        if (isTop3) {
+                            Brush.linearGradient(
+                                colors = listOf(WineRed, DarkWine),
                             )
-                        )
-                    }
-                ),
-            contentAlignment = Alignment.Center
+                        } else {
+                            Brush.linearGradient(
+                                colors =
+                                    listOf(
+                                        SoftBlack.copy(alpha = 0.5f),
+                                        SoftBlack,
+                                    ),
+                            )
+                        },
+                    ),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 "$rank",
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = if (isTop3) Color.White else LightGray,
-                fontSize = 10.sp
+                fontSize = 10.sp,
             )
         }
 
         // 이미지 사각형 배경 (각진 디자인)
         Box(
-            modifier = Modifier
-                .size(circleSize)
-                .clip(RoundedCornerShape(12.dp))
-                .background(
-                    if (isTop3) {
-                        Brush.linearGradient(
-                            colors = listOf(
-                                WineRed.copy(alpha = 0.25f),
-                                DarkWine.copy(alpha = 0.4f)
-                            ),
-                            start = androidx.compose.ui.geometry.Offset(0f, 0f),
-                            end = androidx.compose.ui.geometry.Offset(300f, 300f)
-                        )
-                    } else {
-                        Brush.linearGradient(
-                            colors = listOf(
-                                LightGray.copy(alpha = 0.08f),
-                                LightGray.copy(alpha = 0.15f)
+            modifier =
+                Modifier
+                    .size(circleSize)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        if (isTop3) {
+                            Brush.linearGradient(
+                                colors =
+                                    listOf(
+                                        WineRed.copy(alpha = 0.25f),
+                                        DarkWine.copy(alpha = 0.4f),
+                                    ),
+                                start = androidx.compose.ui.geometry.Offset(0f, 0f),
+                                end = androidx.compose.ui.geometry.Offset(300f, 300f),
                             )
-                        )
-                    }
-                ),
-            contentAlignment = Alignment.Center
+                        } else {
+                            Brush.linearGradient(
+                                colors =
+                                    listOf(
+                                        LightGray.copy(alpha = 0.08f),
+                                        LightGray.copy(alpha = 0.15f),
+                                    ),
+                            )
+                        },
+                    ),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 item.imageEmoji,
-                fontSize = fontSize
+                fontSize = fontSize,
             )
         }
 
         // 하단 텍스트 영역
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             // 라벨
             Text(
@@ -403,13 +420,13 @@ private fun ImageRankingCard(
                 fontWeight = if (isTop3) FontWeight.Bold else FontWeight.Medium,
                 color = if (isTop3) Color.White else LightGray,
                 maxLines = 1,
-                fontSize = if (isTop3) 12.sp else 11.sp
+                fontSize = if (isTop3) 12.sp else 11.sp,
             )
 
             // 값 (각진 디자인)
             Surface(
                 color = if (isTop3) WineRed.copy(alpha = 0.2f) else Color.Transparent,
-                shape = RoundedCornerShape(4.dp)
+                shape = RoundedCornerShape(4.dp),
             ) {
                 Text(
                     item.value,
@@ -417,7 +434,7 @@ private fun ImageRankingCard(
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = if (isTop3) WineRed else LightGray.copy(alpha = 0.7f),
-                    fontSize = if (isTop3) 11.sp else 10.sp
+                    fontSize = if (isTop3) 11.sp else 10.sp,
                 )
             }
         }
@@ -429,28 +446,28 @@ private fun RankingSection(
     title: String,
     subtitle: String,
     items: List<RankingItem>,
-    icon: String
+    icon: String,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // 섹션 헤더
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // 아이콘
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = RoundedCornerShape(8.dp),
-                color = WineRed.copy(alpha = 0.2f)
+                color = WineRed.copy(alpha = 0.2f),
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         icon,
-                        fontSize = 24.sp
+                        fontSize = 24.sp,
                     )
                 }
             }
@@ -460,13 +477,13 @@ private fun RankingSection(
                     title,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = Color.White,
                 )
                 Text(
                     subtitle,
                     style = MaterialTheme.typography.labelSmall,
                     color = WineRed,
-                    letterSpacing = 1.2.sp
+                    letterSpacing = 1.2.sp,
                 )
             }
         }
@@ -474,35 +491,38 @@ private fun RankingSection(
         // 랭킹 카드
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = SoftBlack
-            ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = SoftBlack,
+                ),
             shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 8.dp
-            )
+            elevation =
+                CardDefaults.cardElevation(
+                    defaultElevation = 8.dp,
+                ),
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 if (items.isEmpty()) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 32.dp),
-                        contentAlignment = Alignment.Center
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 32.dp),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Text(
                                 "📊",
                                 fontSize = 40.sp,
-                                color = LightGray.copy(alpha = 0.3f)
+                                color = LightGray.copy(alpha = 0.3f),
                             )
                             Text(
                                 "No data yet",
                                 color = LightGray.copy(alpha = 0.6f),
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
                             )
                         }
                     }
@@ -512,7 +532,7 @@ private fun RankingSection(
                             rank = idx + 1,
                             label = item.label,
                             value = item.value,
-                            isTop = idx < 3
+                            isTop = idx < 3,
                         )
                         if (idx < items.size - 1) {
                             Spacer(modifier = Modifier.height(12.dp))
@@ -529,50 +549,53 @@ private fun RankingRow(
     rank: Int,
     label: String,
     value: String,
-    isTop: Boolean
+    isTop: Boolean,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(
-                if (isTop) WineRed.copy(alpha = 0.1f) else Color.Transparent
-            )
-            .padding(horizontal = 12.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    if (isTop) WineRed.copy(alpha = 0.1f) else Color.Transparent,
+                )
+                .padding(horizontal = 12.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         ) {
             // 순위 뱃지 (각진 디자인)
             Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(
-                        if (isTop) {
-                            Brush.linearGradient(
-                                colors = listOf(WineRed, DarkWine)
-                            )
-                        } else {
-                            Brush.linearGradient(
-                                colors = listOf(
-                                    SoftBlack.copy(alpha = 0.5f),
-                                    SoftBlack
+                modifier =
+                    Modifier
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(
+                            if (isTop) {
+                                Brush.linearGradient(
+                                    colors = listOf(WineRed, DarkWine),
                                 )
-                            )
-                        }
-                    ),
-                contentAlignment = Alignment.Center
+                            } else {
+                                Brush.linearGradient(
+                                    colors =
+                                        listOf(
+                                            SoftBlack.copy(alpha = 0.5f),
+                                            SoftBlack,
+                                        ),
+                                )
+                            },
+                        ),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     "$rank",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = if (isTop) Color.White else LightGray
+                    color = if (isTop) Color.White else LightGray,
                 )
             }
 
@@ -582,21 +605,21 @@ private fun RankingRow(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = if (isTop) FontWeight.SemiBold else FontWeight.Normal,
                 color = if (isTop) Color.White else LightGray,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
 
         // 값 (각진 디자인)
         Surface(
             color = if (isTop) WineRed.copy(alpha = 0.2f) else Color.Transparent,
-            shape = RoundedCornerShape(4.dp)
+            shape = RoundedCornerShape(4.dp),
         ) {
             Text(
                 value,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
-                color = if (isTop) WineRed else LightGray
+                color = if (isTop) WineRed else LightGray,
             )
         }
     }
@@ -608,16 +631,18 @@ private fun RankingRow(
 fun DashboardScreenPreview() {
     MaterialTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DeepBlack)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(DeepBlack),
         ) {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
-                contentPadding = PaddingValues(vertical = 20.dp)
+                contentPadding = PaddingValues(vertical = 20.dp),
             ) {
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -625,12 +650,12 @@ fun DashboardScreenPreview() {
                             "My Drinking Statistics",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = Color.White,
                         )
                         Text(
                             "Check your preferences at a glance",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = LightGray
+                            color = LightGray,
                         )
                     }
                 }
@@ -639,14 +664,15 @@ fun DashboardScreenPreview() {
                     ImageRankingSection(
                         title = "Most Consumed Type",
                         subtitle = "TYPE RANKING",
-                        items = listOf(
-                            ImageRankingItem("Red Wine", "15 times", "🍷"),
-                            ImageRankingItem("Whisky", "12 times", "🥃"),
-                            ImageRankingItem("Gin", "8 times", "🍸"),
-                            ImageRankingItem("Beer", "5 times", "🍺"),
-                            ImageRankingItem("Sake", "3 times", "🍶")
-                        ),
-                        icon = "🍷"
+                        items =
+                            listOf(
+                                ImageRankingItem("Red Wine", "15 times", "🍷"),
+                                ImageRankingItem("Whisky", "12 times", "🥃"),
+                                ImageRankingItem("Gin", "8 times", "🍸"),
+                                ImageRankingItem("Beer", "5 times", "🍺"),
+                                ImageRankingItem("Sake", "3 times", "🍶"),
+                            ),
+                        icon = "🍷",
                     )
                 }
 
@@ -654,12 +680,13 @@ fun DashboardScreenPreview() {
                     RankingSection(
                         title = "Frequently Consumed ABV",
                         subtitle = "ABV RANKING",
-                        items = listOf(
-                            RankingItem("13.5%", "10 times"),
-                            RankingItem("40.0%", "8 times"),
-                            RankingItem("43.0%", "7 times")
-                        ),
-                        icon = "🔥"
+                        items =
+                            listOf(
+                                RankingItem("13.5%", "10 times"),
+                                RankingItem("40.0%", "8 times"),
+                                RankingItem("43.0%", "7 times"),
+                            ),
+                        icon = "🔥",
                     )
                 }
 
@@ -667,13 +694,14 @@ fun DashboardScreenPreview() {
                     ImageRankingSection(
                         title = "Average Rating by Type",
                         subtitle = "RATING BY TYPE",
-                        items = listOf(
-                            ImageRankingItem("Red Wine", "4.5 pts", "🍷"),
-                            ImageRankingItem("Whisky", "4.2 pts", "🥃"),
-                            ImageRankingItem("Gin", "3.8 pts", "🍸"),
-                            ImageRankingItem("Beer", "3.5 pts", "🍺")
-                        ),
-                        icon = "⭐"
+                        items =
+                            listOf(
+                                ImageRankingItem("Red Wine", "4.5 pts", "🍷"),
+                                ImageRankingItem("Whisky", "4.2 pts", "🥃"),
+                                ImageRankingItem("Gin", "3.8 pts", "🍸"),
+                                ImageRankingItem("Beer", "3.5 pts", "🍺"),
+                            ),
+                        icon = "⭐",
                     )
                 }
 
@@ -681,12 +709,13 @@ fun DashboardScreenPreview() {
                     RankingSection(
                         title = "Most Consumed Drinks",
                         subtitle = "MOST CONSUMED",
-                        items = listOf(
-                            RankingItem("Château Margaux 2015", "8 times"),
-                            RankingItem("Macallan 18", "6 times"),
-                            RankingItem("Hendrick's Gin", "5 times")
-                        ),
-                        icon = "🏆"
+                        items =
+                            listOf(
+                                RankingItem("Château Margaux 2015", "8 times"),
+                                RankingItem("Macallan 18", "6 times"),
+                                RankingItem("Hendrick's Gin", "5 times"),
+                            ),
+                        icon = "🏆",
                     )
                 }
             }
@@ -699,16 +728,17 @@ fun DashboardScreenPreview() {
 fun EmptyRankingSectionPreview() {
     MaterialTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DeepBlack)
-                .padding(20.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(DeepBlack)
+                    .padding(20.dp),
         ) {
             RankingSection(
                 title = "Most Consumed Type",
                 subtitle = "TYPE RANKING",
                 items = emptyList(),
-                icon = "🍷"
+                icon = "🍷",
             )
         }
     }
@@ -719,22 +749,24 @@ fun EmptyRankingSectionPreview() {
 fun ImageRankingSectionPreview() {
     MaterialTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DeepBlack)
-                .padding(20.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(DeepBlack)
+                    .padding(20.dp),
         ) {
             ImageRankingSection(
                 title = "Most Consumed Type",
                 subtitle = "TYPE RANKING",
-                items = listOf(
-                    ImageRankingItem("Red Wine", "15 times", "🍷"),
-                    ImageRankingItem("Whisky", "12 times", "🥃"),
-                    ImageRankingItem("Gin", "8 times", "🍸"),
-                    ImageRankingItem("Beer", "5 times", "🍺"),
-                    ImageRankingItem("Sake", "3 times", "🍶")
-                ),
-                icon = "🍷"
+                items =
+                    listOf(
+                        ImageRankingItem("Red Wine", "15 times", "🍷"),
+                        ImageRankingItem("Whisky", "12 times", "🥃"),
+                        ImageRankingItem("Gin", "8 times", "🍸"),
+                        ImageRankingItem("Beer", "5 times", "🍺"),
+                        ImageRankingItem("Sake", "3 times", "🍶"),
+                    ),
+                icon = "🍷",
             )
         }
     }

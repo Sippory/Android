@@ -45,7 +45,7 @@ fun AIRecommendScreen(
                         "AI Recommendations",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color.White,
                     )
                 },
                 navigationIcon = {
@@ -53,22 +53,24 @@ fun AIRecommendScreen(
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.White
+                            tint = Color.White,
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DeepBlack
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = DeepBlack,
+                    ),
             )
         },
-        containerColor = DeepBlack
+        containerColor = DeepBlack,
     ) { padding ->
         Box(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(DeepBlack),
+            modifier =
+                Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .background(DeepBlack),
             contentAlignment = Alignment.Center,
         ) {
             when {
@@ -78,7 +80,7 @@ fun AIRecommendScreen(
                     Text(
                         "Error: ${uiState.error}",
                         color = LightGray,
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
 
                 else -> {
@@ -108,40 +110,44 @@ fun RecommendCard(
     var isWish by remember { mutableStateOf(false) }
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(
-            containerColor = SoftBlack
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        )
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp)),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = SoftBlack,
+            ),
+        elevation =
+            CardDefaults.cardElevation(
+                defaultElevation = 8.dp,
+            ),
     ) {
         Box {
             // 그라데이션 배경 효과
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
-                    .background(
-                        Brush.horizontalGradient(
-                            colors = listOf(WineRed, DarkWine, WineRed)
-                        )
-                    )
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(WineRed, DarkWine, WineRed),
+                            ),
+                        ),
             )
 
             Column(
                 Modifier
                     .padding(24.dp)
-                    .padding(top = 4.dp)
+                    .padding(top = 4.dp),
             ) {
                 // 이름
                 Text(
                     item.name,
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = Color.White,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -149,7 +155,7 @@ fun RecommendCard(
                 // 정보 섹션
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
                     InfoChip(label = "Type", value = item.type)
                     InfoChip(label = "ABV", value = "${item.abv}%")
@@ -164,7 +170,7 @@ fun RecommendCard(
                 // 구분선
                 Divider(
                     color = WineRed.copy(alpha = 0.3f),
-                    thickness = 1.dp
+                    thickness = 1.dp,
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -175,14 +181,14 @@ fun RecommendCard(
                         "Why We Recommend",
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold,
-                        color = WineRed
+                        color = WineRed,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         item.reason,
                         style = MaterialTheme.typography.bodyMedium,
                         color = LightGray,
-                        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.4f)
+                        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.4f),
                     )
                 }
 
@@ -196,13 +202,13 @@ fun RecommendCard(
                             isWish = true
                         }
                     },
-                    modifier = Modifier.align(Alignment.End)
+                    modifier = Modifier.align(Alignment.End),
                 ) {
                     Icon(
                         imageVector = if (isWish) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Add to Wishlist",
                         tint = if (isWish) WineRed else LightGray,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(28.dp),
                     )
                 }
             }
@@ -211,28 +217,31 @@ fun RecommendCard(
 }
 
 @Composable
-fun InfoChip(label: String, value: String) {
+fun InfoChip(
+    label: String,
+    value: String,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Surface(
             color = WineRed.copy(alpha = 0.2f),
-            shape = RoundedCornerShape(6.dp)
+            shape = RoundedCornerShape(6.dp),
         ) {
             Text(
                 label,
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Medium,
-                color = WineRed
+                color = WineRed,
             )
         }
         Text(
             value,
             style = MaterialTheme.typography.bodyMedium,
             color = Color.White,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
     }
 }
@@ -243,20 +252,24 @@ fun InfoChip(label: String, value: String) {
 fun RecommendCardPreview() {
     MaterialTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DeepBlack)
-                .padding(20.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(DeepBlack)
+                    .padding(20.dp),
         ) {
             RecommendCard(
-                item = RecommendItem(
-                    name = "Château Margaux 2015",
-                    type = "Red Wine",
-                    abv = 13.5f,
-                    country = "France",
-                    reason = "An elegant full-bodied Bordeaux wine with smooth tannins and harmonious notes of blackberry and cassis. A premium wine that perfectly matches your taste."
-                ),
-                onHeartClick = {}
+                item =
+                    RecommendItem(
+                        name = "Château Margaux 2015",
+                        type = "Red Wine",
+                        abv = 13.5f,
+                        country = "France",
+                        reason =
+                            "An elegant full-bodied Bordeaux wine with smooth tannins and harmonious notes " +
+                                "of blackberry and cassis. A premium wine that perfectly matches your taste.",
+                    ),
+                onHeartClick = {},
             )
         }
     }
@@ -267,38 +280,49 @@ fun RecommendCardPreview() {
 fun RecommendCardListPreview() {
     MaterialTheme {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DeepBlack),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(DeepBlack),
             verticalArrangement = Arrangement.spacedBy(20.dp),
-            contentPadding = PaddingValues(20.dp)
+            contentPadding = PaddingValues(20.dp),
         ) {
             items(3) { index ->
                 RecommendCard(
-                    item = when(index) {
-                        0 -> RecommendItem(
-                            name = "Château Margaux 2015",
-                            type = "Red Wine",
-                            abv = 13.5f,
-                            country = "France",
-                            reason = "An elegant full-bodied Bordeaux wine with smooth tannins and harmonious notes of blackberry and cassis."
-                        )
-                        1 -> RecommendItem(
-                            name = "Macallan 18",
-                            type = "Whisky",
-                            abv = 43.0f,
-                            country = "Scotland",
-                            reason = "A premium single malt aged in sherry oak casks, featuring sweet vanilla and spicy oak notes."
-                        )
-                        else -> RecommendItem(
-                            name = "Hendrick's Gin",
-                            type = "Gin",
-                            abv = 41.4f,
-                            country = "Scotland",
-                            reason = "A premium gin with unique cucumber and rose notes, offering a refreshingly elegant taste."
-                        )
-                    },
-                    onHeartClick = {}
+                    item =
+                        when (index) {
+                            0 ->
+                                RecommendItem(
+                                    name = "Château Margaux 2015",
+                                    type = "Red Wine",
+                                    abv = 13.5f,
+                                    country = "France",
+                                    reason =
+                                        "An elegant full-bodied Bordeaux wine with smooth tannins " +
+                                            "and harmonious notes of blackberry and cassis.",
+                                )
+                            1 ->
+                                RecommendItem(
+                                    name = "Macallan 18",
+                                    type = "Whisky",
+                                    abv = 43.0f,
+                                    country = "Scotland",
+                                    reason =
+                                        "A premium single malt aged in sherry oak casks, " +
+                                            "featuring sweet vanilla and spicy oak notes.",
+                                )
+                            else ->
+                                RecommendItem(
+                                    name = "Hendrick's Gin",
+                                    type = "Gin",
+                                    abv = 41.4f,
+                                    country = "Scotland",
+                                    reason =
+                                        "A premium gin with unique cucumber and rose notes, " +
+                                            "offering a refreshingly elegant taste.",
+                                )
+                        },
+                    onHeartClick = {},
                 )
             }
         }
