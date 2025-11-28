@@ -54,7 +54,7 @@ fun DashboardScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "대시보드",
+                        "Dashboard",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -80,13 +80,13 @@ fun DashboardScreen(
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        "나의 음주 통계",
+                        "My Drinking Statistics",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                     Text(
-                        "당신의 취향을 한눈에 확인하세요",
+                        "Check your preferences at a glance",
                         style = MaterialTheme.typography.bodyMedium,
                         color = LightGray
                     )
@@ -95,12 +95,12 @@ fun DashboardScreen(
 
             item {
                 ImageRankingSection(
-                    title = "주로 마시는 주종",
+                    title = "Most Consumed Type",
                     subtitle = "TYPE RANKING",
                     items = typeRanking.map { bottle ->
                         ImageRankingItem(
                             label = bottle.type,
-                            value = "${bottle.count}회",
+                            value = "${bottle.count} times",
                             imageEmoji = getTypeEmoji(bottle.type)
                         )
                     },
@@ -110,21 +110,21 @@ fun DashboardScreen(
 
             item {
                 RankingSection(
-                    title = "자주 마신 도수",
+                    title = "Frequently Consumed ABV",
                     subtitle = "ABV RANKING",
-                    items = abvRanking.map { bottle -> RankingItem("${bottle.abv}%", "${bottle.count}회") },
+                    items = abvRanking.map { bottle -> RankingItem("${bottle.abv}%", "${bottle.count} times") },
                     icon = "🔥"
                 )
             }
 
             item {
                 ImageRankingSection(
-                    title = "주종별 평균 평점",
+                    title = "Average Rating by Type",
                     subtitle = "RATING BY TYPE",
                     items = averageRatingPerType.map { bottle ->
                         ImageRankingItem(
                             label = bottle.type,
-                            value = String.format("%.1f점", bottle.averageRating),
+                            value = String.format("%.1f pts", bottle.averageRating),
                             imageEmoji = getTypeEmoji(bottle.type)
                         )
                     },
@@ -134,9 +134,9 @@ fun DashboardScreen(
 
             item {
                 RankingSection(
-                    title = "가장 많이 마신 술",
+                    title = "Most Consumed Drinks",
                     subtitle = "MOST CONSUMED",
-                    items = mostConsumed.map { bottle -> RankingItem("${bottle.name}", "${bottle.count}회") },
+                    items = mostConsumed.map { bottle -> RankingItem("${bottle.name}", "${bottle.count} times") },
                     icon = "🏆"
                 )
             }
@@ -156,7 +156,7 @@ fun DashboardScreen(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            "뒤로가기",
+                            "Back",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -262,7 +262,7 @@ private fun ImageRankingSection(
                             color = LightGray.copy(alpha = 0.3f)
                         )
                         Text(
-                            "아직 데이터가 없습니다",
+                            "No data yet",
                             color = LightGray.copy(alpha = 0.6f),
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -500,7 +500,7 @@ private fun RankingSection(
                                 color = LightGray.copy(alpha = 0.3f)
                             )
                             Text(
-                                "아직 데이터가 없습니다",
+                                "No data yet",
                                 color = LightGray.copy(alpha = 0.6f),
                                 style = MaterialTheme.typography.bodyMedium
                             )
@@ -622,13 +622,13 @@ fun DashboardScreenPreview() {
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            "나의 음주 통계",
+                            "My Drinking Statistics",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
                         Text(
-                            "당신의 취향을 한눈에 확인하세요",
+                            "Check your preferences at a glance",
                             style = MaterialTheme.typography.bodyMedium,
                             color = LightGray
                         )
@@ -637,14 +637,14 @@ fun DashboardScreenPreview() {
 
                 item {
                     ImageRankingSection(
-                        title = "주로 마시는 주종",
+                        title = "Most Consumed Type",
                         subtitle = "TYPE RANKING",
                         items = listOf(
-                            ImageRankingItem("Red Wine", "15회", "🍷"),
-                            ImageRankingItem("Whisky", "12회", "🥃"),
-                            ImageRankingItem("Gin", "8회", "🍸"),
-                            ImageRankingItem("Beer", "5회", "🍺"),
-                            ImageRankingItem("Sake", "3회", "🍶")
+                            ImageRankingItem("Red Wine", "15 times", "🍷"),
+                            ImageRankingItem("Whisky", "12 times", "🥃"),
+                            ImageRankingItem("Gin", "8 times", "🍸"),
+                            ImageRankingItem("Beer", "5 times", "🍺"),
+                            ImageRankingItem("Sake", "3 times", "🍶")
                         ),
                         icon = "🍷"
                     )
@@ -652,12 +652,12 @@ fun DashboardScreenPreview() {
 
                 item {
                     RankingSection(
-                        title = "자주 마신 도수",
+                        title = "Frequently Consumed ABV",
                         subtitle = "ABV RANKING",
                         items = listOf(
-                            RankingItem("13.5%", "10회"),
-                            RankingItem("40.0%", "8회"),
-                            RankingItem("43.0%", "7회")
+                            RankingItem("13.5%", "10 times"),
+                            RankingItem("40.0%", "8 times"),
+                            RankingItem("43.0%", "7 times")
                         ),
                         icon = "🔥"
                     )
@@ -665,13 +665,13 @@ fun DashboardScreenPreview() {
 
                 item {
                     ImageRankingSection(
-                        title = "주종별 평균 평점",
+                        title = "Average Rating by Type",
                         subtitle = "RATING BY TYPE",
                         items = listOf(
-                            ImageRankingItem("Red Wine", "4.5점", "🍷"),
-                            ImageRankingItem("Whisky", "4.2점", "🥃"),
-                            ImageRankingItem("Gin", "3.8점", "🍸"),
-                            ImageRankingItem("Beer", "3.5점", "🍺")
+                            ImageRankingItem("Red Wine", "4.5 pts", "🍷"),
+                            ImageRankingItem("Whisky", "4.2 pts", "🥃"),
+                            ImageRankingItem("Gin", "3.8 pts", "🍸"),
+                            ImageRankingItem("Beer", "3.5 pts", "🍺")
                         ),
                         icon = "⭐"
                     )
@@ -679,12 +679,12 @@ fun DashboardScreenPreview() {
 
                 item {
                     RankingSection(
-                        title = "가장 많이 마신 술",
+                        title = "Most Consumed Drinks",
                         subtitle = "MOST CONSUMED",
                         items = listOf(
-                            RankingItem("Château Margaux 2015", "8회"),
-                            RankingItem("Macallan 18", "6회"),
-                            RankingItem("Hendrick's Gin", "5회")
+                            RankingItem("Château Margaux 2015", "8 times"),
+                            RankingItem("Macallan 18", "6 times"),
+                            RankingItem("Hendrick's Gin", "5 times")
                         ),
                         icon = "🏆"
                     )
@@ -705,7 +705,7 @@ fun EmptyRankingSectionPreview() {
                 .padding(20.dp)
         ) {
             RankingSection(
-                title = "주로 마시는 주종",
+                title = "Most Consumed Type",
                 subtitle = "TYPE RANKING",
                 items = emptyList(),
                 icon = "🍷"
@@ -725,14 +725,14 @@ fun ImageRankingSectionPreview() {
                 .padding(20.dp)
         ) {
             ImageRankingSection(
-                title = "주로 마시는 주종",
+                title = "Most Consumed Type",
                 subtitle = "TYPE RANKING",
                 items = listOf(
-                    ImageRankingItem("Red Wine", "15회", "🍷"),
-                    ImageRankingItem("Whisky", "12회", "🥃"),
-                    ImageRankingItem("Gin", "8회", "🍸"),
-                    ImageRankingItem("Beer", "5회", "🍺"),
-                    ImageRankingItem("Sake", "3회", "🍶")
+                    ImageRankingItem("Red Wine", "15 times", "🍷"),
+                    ImageRankingItem("Whisky", "12 times", "🥃"),
+                    ImageRankingItem("Gin", "8 times", "🍸"),
+                    ImageRankingItem("Beer", "5 times", "🍺"),
+                    ImageRankingItem("Sake", "3 times", "🍶")
                 ),
                 icon = "🍷"
             )

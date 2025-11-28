@@ -42,7 +42,7 @@ fun AIRecommendScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "AI 추천",
+                        "AI Recommendations",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -52,7 +52,7 @@ fun AIRecommendScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.Default.ArrowBack,
-                            contentDescription = "뒤로",
+                            contentDescription = "Back",
                             tint = Color.White
                         )
                     }
@@ -76,7 +76,7 @@ fun AIRecommendScreen(
 
                 uiState.error != null ->
                     Text(
-                        "오류 발생: ${uiState.error}",
+                        "Error: ${uiState.error}",
                         color = LightGray,
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -172,7 +172,7 @@ fun RecommendCard(
                 // 추천 이유
                 Column {
                     Text(
-                        "추천 이유",
+                        "Why We Recommend",
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = WineRed
@@ -200,7 +200,7 @@ fun RecommendCard(
                 ) {
                     Icon(
                         imageVector = if (isWish) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "위시리스트에 추가",
+                        contentDescription = "Add to Wishlist",
                         tint = if (isWish) WineRed else LightGray,
                         modifier = Modifier.size(28.dp)
                     )
@@ -254,7 +254,7 @@ fun RecommendCardPreview() {
                     type = "Red Wine",
                     abv = 13.5f,
                     country = "France",
-                    reason = "풀바디의 우아한 보르도 와인으로, 부드러운 탄닌과 블랙베리, 카시스 향이 조화롭게 어우러집니다. 당신의 취향에 완벽하게 맞는 프리미엄 와인입니다."
+                    reason = "An elegant full-bodied Bordeaux wine with smooth tannins and harmonious notes of blackberry and cassis. A premium wine that perfectly matches your taste."
                 ),
                 onHeartClick = {}
             )
@@ -281,21 +281,21 @@ fun RecommendCardListPreview() {
                             type = "Red Wine",
                             abv = 13.5f,
                             country = "France",
-                            reason = "풀바디의 우아한 보르도 와인으로, 부드러운 탄닌과 블랙베리, 카시스 향이 조화롭게 어우러집니다."
+                            reason = "An elegant full-bodied Bordeaux wine with smooth tannins and harmonious notes of blackberry and cassis."
                         )
                         1 -> RecommendItem(
                             name = "Macallan 18",
                             type = "Whisky",
                             abv = 43.0f,
                             country = "Scotland",
-                            reason = "세리 오크통에서 숙성된 프리미엄 싱글몰트로, 달콤한 바닐라와 스파이시한 오크 향이 특징입니다."
+                            reason = "A premium single malt aged in sherry oak casks, featuring sweet vanilla and spicy oak notes."
                         )
                         else -> RecommendItem(
                             name = "Hendrick's Gin",
                             type = "Gin",
                             abv = 41.4f,
                             country = "Scotland",
-                            reason = "오이와 장미 향이 독특하게 어우러진 프리미엄 진으로, 상쾌하고 우아한 맛이 일품입니다."
+                            reason = "A premium gin with unique cucumber and rose notes, offering a refreshingly elegant taste."
                         )
                     },
                     onHeartClick = {}
