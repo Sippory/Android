@@ -2,9 +2,9 @@ package net.sippory.presentation.home
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
@@ -637,7 +638,10 @@ fun ExpandableFAB(
         }
 
     Box(
-        modifier = Modifier.size(250.dp),
+        modifier =
+            Modifier
+                .size(250.dp)
+                .padding(8.dp),
         contentAlignment = Alignment.BottomEnd,
     ) {
         // 서브 메뉴 아이템들 - 아치형 배치 (오른쪽 아래에서 왼쪽 위로 펼치기)
@@ -660,15 +664,38 @@ fun ExpandableFAB(
         }
 
         // 메인 FAB
-        FloatingActionButton(
-            onClick = { expanded = !expanded },
-            containerColor = MaterialTheme.colorScheme.primary,
+        Box(
+            modifier =
+                Modifier
+                    .size(68.dp)
+                    .shadow(24.dp, CircleShape)
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(Color(0xFF3E3EFF), Color(0xFF1A1B2A)),
+                            radius = 140f,
+                        ),
+                        shape = CircleShape,
+                    )
+                    .border(1.2.dp, Color(0xFF7B7CFF), CircleShape)
+                    .clickable { expanded = !expanded },
+            contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "메뉴",
-                modifier = Modifier.rotate(rotation),
-            )
+            Box(
+                modifier =
+                    Modifier
+                        .size(48.dp)
+                        .background(Color(0xFF10111A), CircleShape)
+                        .border(BorderStroke(1.dp, Color(0xFF2D2E45)), CircleShape)
+                        .shadow(12.dp, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "메뉴",
+                    modifier = Modifier.rotate(rotation),
+                    tint = Color(0xFFE8E9FF),
+                )
+            }
         }
     }
 }
@@ -742,16 +769,36 @@ fun AnimatedFABMenuItem(
                 },
     ) {
         if (expanded) {
-            // 작은 FAB만 표시 (라벨 제거)
-            SmallFloatingActionButton(
-                onClick = onClick,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            Box(
+                modifier =
+                    Modifier
+                        .size(56.dp)
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(Color(0xFF2C2D44), Color(0xFF13131D)),
+                                radius = 120f,
+                            ),
+                            shape = CircleShape,
+                        )
+                        .border(1.dp, Color(0xFF484A7A), CircleShape)
+                        .shadow(10.dp, CircleShape)
+                        .clickable { onClick() },
+                contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = label,
-                )
+                Box(
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .background(Color(0xFF0E0F17), CircleShape)
+                            .border(BorderStroke(1.dp, Color(0xFF2D2E45)), CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = label,
+                        tint = Color(0xFFE6E7F7),
+                    )
+                }
             }
         }
     }
