@@ -62,9 +62,7 @@ fun SearchDetailScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = selectedDrink?.name ?: "",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        text = "",
                     )
                 },
                 navigationIcon = {
@@ -164,6 +162,13 @@ fun SearchDetailScreen(
                     drinkName = selectedDrink?.name ?: "",
                     drinkType = selectedDrink?.category ?: "",
                     drinkPhotoUri = selectedDrink?.image_url,
+                    onSaveBottle = {
+                        navController.navigate("home") {
+                            popUpTo("home") {
+                                inclusive = false
+                            }
+                        }
+                    }
                 )
             }
         }
