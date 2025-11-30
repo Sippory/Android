@@ -29,6 +29,9 @@ import net.sippory.utils.BottleViewModelFactory
 fun AddBottleSheet(
     onDismiss: () -> Unit,
     repository: BottleRepository,
+    drinkName: String = "",
+    drinkType: String = "Wine",
+    drinkPhotoUri: String? = null,
 ) {
     val viewModelFactory = BottleViewModelFactory(repository)
     val viewModel: AddBottleViewModel = viewModel(factory = viewModelFactory)
@@ -42,6 +45,11 @@ fun AddBottleSheet(
         ) { uri: Uri? ->
             uri?.let { viewModel.updatePhotoUri(it.toString()) }
         }
+    LaunchedEffect(Unit) {
+        viewModel.updateName(drinkName)
+        viewModel.updateType(drinkType)
+        viewModel.updatePhotoUri(drinkPhotoUri)
+    }
 
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {

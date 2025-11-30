@@ -161,6 +161,7 @@ fun NavGraph(
             SearchDetailScreen(
                 navController = navController,
                 viewModel = drinkSearchViewModel,
+                bottleRepository = repository,
             )
         }
 

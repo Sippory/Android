@@ -2,6 +2,7 @@ package net.sippory.presentation.signin
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,10 +27,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -53,6 +57,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 import net.sippory.R
+
+private val DeepBlack = Color(0xFF0D0D0D)
+private val WineRed = Color(0xFF8B1538)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,6 +85,7 @@ fun SignInScreen(navController: NavController) {
         topBar = {
             TopAppBar(
                 title = { Text("Sippory") },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlack, titleContentColor = Color.White),
             )
         },
     ) { padding ->
@@ -85,7 +93,8 @@ fun SignInScreen(navController: NavController) {
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(padding),
+                    .padding(padding)
+                    .background(DeepBlack),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -146,7 +155,7 @@ fun SignInScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("Don't have an account?")
+                Text("Don't have an account?", color = Color.Gray)
                 SignUpButton(navController = navController)
             }
         }
@@ -159,46 +168,62 @@ fun UserEmailIdTextField(
     onUserEmailIdChange: (String) -> Unit,
     onNext: () -> Unit,
 ) {
-    OutlinedTextField(
-        value = userEmailId,
-        onValueChange = { onUserEmailIdChange(it) },
-        label = { Text("Enter your Email ID") },
-        keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next,
-            ),
-        keyboardActions =
-            KeyboardActions(onNext = {
-                onNext()
-            }),
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Filled.AccountCircle,
-                contentDescription =
-                    "User ID Icon",
-            )
-        },
-        trailingIcon = {
-            if (userEmailId.isNotEmpty()) {
-                IconButton(
-                    onClick = {
-                        onUserEmailIdChange("")
-                    },
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.HighlightOff,
-                        contentDescription = "Clear ID",
-                    )
-                }
-            }
-        },
-        shape = RoundedCornerShape(12.dp),
+    Column(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-    )
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(text = "Email ID", color = Color.White)
+        OutlinedTextField(
+            value = userEmailId,
+            onValueChange = { onUserEmailIdChange(it) },
+            placeholder = { Text("Enter your Email ID", color = Color.Gray) },
+            textStyle = TextStyle(color = Color.White),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = WineRed,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = WineRed,
+                ),
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next,
+                ),
+            keyboardActions =
+                KeyboardActions(onNext = {
+                    onNext()
+                }),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.AccountCircle,
+                    contentDescription =
+                        "User ID Icon",
+                    tint = Color.Gray,
+                )
+            },
+            trailingIcon = {
+                if (userEmailId.isNotEmpty()) {
+                    IconButton(
+                        onClick = {
+                            onUserEmailIdChange("")
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.HighlightOff,
+                            contentDescription = "Clear ID",
+                            tint = Color.Gray,
+                        )
+                    }
+                }
+            },
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 }
 
 @Composable
@@ -210,46 +235,63 @@ fun UserPasswordTextField(
     passwordFocusRequester: FocusRequester,
     focusManager: FocusManager,
 ) {
-    OutlinedTextField(
-        value = userPassword,
-        onValueChange = { onUserPasswordChange(it) },
-        label = { Text("Enter your Password") },
-        keyboardActions =
-            KeyboardActions(onDone = {
-                focusManager.clearFocus()
-            }),
-        keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done,
-            ),
-        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Filled.Lock,
-                contentDescription =
-                    "Password Icon",
-            )
-        },
-        trailingIcon = {
-            IconButton(
-                onClick = {
-                    onUserPasswordVisibilityChange(!isPasswordVisible)
-                },
-            ) {
-                Icon(
-                    imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                    contentDescription = if (isPasswordVisible) "Show Password" else "Hide Password",
-                )
-            }
-        },
-        shape = RoundedCornerShape(12.dp),
+    Column(
         modifier =
             Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .focusRequester(passwordFocusRequester),
-    )
+                .padding(16.dp)
+                .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(text = "Password", color = Color.White)
+        OutlinedTextField(
+            value = userPassword,
+            onValueChange = { onUserPasswordChange(it) },
+            placeholder = { Text("Enter your Password", color = Color.Gray) },
+            textStyle = TextStyle(color = Color.White),
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = WineRed,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = WineRed,
+                ),
+            keyboardActions =
+                KeyboardActions(onDone = {
+                    focusManager.clearFocus()
+                }),
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done,
+                ),
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Lock,
+                    contentDescription =
+                        "Password Icon",
+                    tint = Color.Gray,
+                )
+            },
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        onUserPasswordVisibilityChange(!isPasswordVisible)
+                    },
+                ) {
+                    Icon(
+                        imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (isPasswordVisible) "Show Password" else "Hide Password",
+                        tint = Color.Gray,
+                    )
+                }
+            },
+            shape = RoundedCornerShape(12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(passwordFocusRequester),
+        )
+    }
 }
 
 @Composable
@@ -263,13 +305,13 @@ fun SignInButton(
         },
         enabled = isEnable,
         shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(Color.Black),
+        colors = ButtonDefaults.buttonColors(containerColor = WineRed, disabledContainerColor = Color.DarkGray),
         modifier =
             Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
     ) {
-        Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        Text("Sign In", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
     }
 }
 
@@ -278,7 +320,7 @@ fun SignUpButton(navController: NavController) {
     TextButton(
         onClick = { navController.navigate("sign-up") },
     ) {
-        Text("Sign Up", color = Color.Black)
+        Text("Sign Up", color = WineRed)
     }
 }
 
