@@ -387,7 +387,10 @@ fun AddBottleSheet(
 
             // Save button
             Button(
-                onClick = { viewModel.saveBottle(); onSaveBottle() },
+                onClick = {
+                    viewModel.saveBottle()
+                    onSaveBottle()
+                },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isSaving,
             ) {
