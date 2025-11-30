@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
@@ -49,7 +48,7 @@ fun DetailScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = androidx.compose.ui.graphics.Color.White
+                            tint = androidx.compose.ui.graphics.Color.White,
                         )
                     }
                 },
@@ -74,20 +73,21 @@ fun DetailScreen(
                         Icon(
                             if (uiState.isEditing) Icons.Default.Close else Icons.Default.Edit,
                             contentDescription = if (uiState.isEditing) "Cancel" else "Edit",
-                            tint = androidx.compose.ui.graphics.Color.White
+                            tint = androidx.compose.ui.graphics.Color.White,
                         )
                     }
                     IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(
                             Icons.Default.Delete,
                             contentDescription = "Delete",
-                            tint = androidx.compose.ui.graphics.Color.White
+                            tint = androidx.compose.ui.graphics.Color.White,
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = androidx.compose.ui.graphics.Color.Black
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = androidx.compose.ui.graphics.Color.Black,
+                    ),
             )
         },
     ) { padding ->
@@ -142,13 +142,13 @@ fun DetailScreen(
             title = {
                 Text(
                     "Delete Confirmation",
-                    color = androidx.compose.ui.graphics.Color.White
+                    color = androidx.compose.ui.graphics.Color.White,
                 )
             },
             text = {
                 Text(
                     "Are you sure you want to delete '${uiState.bottle!!.name}'?",
-                    color = androidx.compose.ui.graphics.Color.White
+                    color = androidx.compose.ui.graphics.Color.White,
                 )
             },
             confirmButton = {
@@ -223,13 +223,14 @@ fun BottleDetailContent(
                 onValueChange = { editedBottle = editedBottle.copy(name = it) },
                 label = { Text("Name", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
-                    cursorColor = MaterialTheme.colorScheme.primary,
-                ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = androidx.compose.ui.graphics.Color.White,
+                        unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                    ),
             )
         } else {
             Text(
@@ -290,11 +291,12 @@ fun BottleDetailContent(
                     Text(
                         text = if (isFilled) "⭐" else "☆",
                         style = MaterialTheme.typography.displaySmall,
-                        modifier = Modifier
-                            .clickable {
-                                editedBottle = editedBottle.copy(rating = starIndex.toFloat())
-                            }
-                            .padding(horizontal = 4.dp),
+                        modifier =
+                            Modifier
+                                .clickable {
+                                    editedBottle = editedBottle.copy(rating = starIndex.toFloat())
+                                }
+                                .padding(horizontal = 4.dp),
                     )
                 }
             }
@@ -361,9 +363,10 @@ fun BottleDetailContent(
                     Button(
                         onClick = onRecordDrink,
                         modifier = Modifier.height(48.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = androidx.compose.ui.graphics.Color(0xFF6B0000),
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = androidx.compose.ui.graphics.Color(0xFF6B0000),
+                            ),
                     ) {
                         Icon(
                             Icons.Default.Add,
@@ -398,13 +401,14 @@ fun BottleDetailContent(
                         .fillMaxWidth()
                         .height(150.dp),
                 maxLines = 8,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
-                    cursorColor = MaterialTheme.colorScheme.primary,
-                ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = androidx.compose.ui.graphics.Color.White,
+                        unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                    ),
             )
         } else {
             Text(
@@ -532,13 +536,14 @@ private fun LocationSection(
                 label = { Text("Location name", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
-                    cursorColor = MaterialTheme.colorScheme.primary,
-                ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = androidx.compose.ui.graphics.Color.White,
+                        unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                    ),
             )
         } else {
             val hasLocation = bottle.locationName != null

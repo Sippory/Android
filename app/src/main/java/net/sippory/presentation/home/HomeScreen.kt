@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
@@ -27,8 +27,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -36,10 +36,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
@@ -293,9 +293,10 @@ fun ShelfBottleRow(
                     .height(12.dp)
                     .clip(RoundedCornerShape(26.dp))
                     .background(
-                        brush = Brush.horizontalGradient(
-                            listOf(Color(0x33FFFFFF), Color(0x11FFFFFF)),
-                        ),
+                        brush =
+                            Brush.horizontalGradient(
+                                listOf(Color(0x33FFFFFF), Color(0x11FFFFFF)),
+                            ),
                     )
                     .border(
                         width = 1.dp,
@@ -351,13 +352,13 @@ fun ShelfBottleTile(
                     Modifier
                         .align(Alignment.Center)
                         .size(170.dp)
-                    .background(
-                        Brush.radialGradient(
-                            colors = listOf(Color(0x332E9AFE), Color.Transparent),
-                            radius = 220f,
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(Color(0x332E9AFE), Color.Transparent),
+                                radius = 220f,
+                            ),
+                            shape = RoundedCornerShape(40.dp),
                         ),
-                        shape = RoundedCornerShape(40.dp),
-                    ),
             )
 
             // Info plaque
@@ -383,11 +384,12 @@ fun ShelfBottleTile(
                 ) {
                     Text(
                         text = bottle.name,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            color = Color(0xFFEDEDF5),
-                            fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = 0.3.sp,
-                        ),
+                        style =
+                            MaterialTheme.typography.titleMedium.copy(
+                                color = Color(0xFFEDEDF5),
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 0.3.sp,
+                            ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -426,14 +428,14 @@ fun ShelfBottleTile(
                 Box(
                     modifier =
                         Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.radialGradient(
-                                colors = listOf(Color(0x332E9AFE), Color.Transparent),
-                                radius = 180f,
-                            ),
-                            shape = RoundedCornerShape(22.dp),
-                        )
+                            .fillMaxSize()
+                            .background(
+                                Brush.radialGradient(
+                                    colors = listOf(Color(0x332E9AFE), Color.Transparent),
+                                    radius = 180f,
+                                ),
+                                shape = RoundedCornerShape(22.dp),
+                            )
                             .padding(10.dp),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -523,10 +525,11 @@ private fun TypePill(type: String) {
 
         Text(
             text = type,
-            style = MaterialTheme.typography.bodySmall.copy(
-                color = Color(0xFFB5B5C5),
-                fontWeight = FontWeight.Medium,
-            ),
+            style =
+                MaterialTheme.typography.bodySmall.copy(
+                    color = Color(0xFFB5B5C5),
+                    fontWeight = FontWeight.Medium,
+                ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -553,10 +556,11 @@ private fun RatingPill(rating: Float) {
             )
             Text(
                 text = String.format("%.1f", rating),
-                style = MaterialTheme.typography.labelLarge.copy(
-                    color = Color(0xFFEDEDF5),
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                style =
+                    MaterialTheme.typography.labelLarge.copy(
+                        color = Color(0xFFEDEDF5),
+                        fontWeight = FontWeight.SemiBold,
+                    ),
             )
         }
     }
@@ -913,9 +917,10 @@ private fun ShelfRow(items: List<ShelfAction>) {
                     .fillMaxWidth()
                     .height(8.dp)
                     .background(
-                        brush = Brush.horizontalGradient(
-                            listOf(Color(0x33FFFFFF), Color(0x11FFFFFF)),
-                        ),
+                        brush =
+                            Brush.horizontalGradient(
+                                listOf(Color(0x33FFFFFF), Color(0x11FFFFFF)),
+                            ),
                         shape = RoundedCornerShape(24.dp),
                     ),
         )
