@@ -50,17 +50,23 @@ fun AddBottleSheet(
         }
     }
 
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+    val onSurfaceMuted = onSurfaceColor.copy(alpha = 0.7f)
+    val onSurfaceSubtle = onSurfaceColor.copy(alpha = 0.6f)
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        containerColor = androidx.compose.ui.graphics.Color.Black,
-        contentColor = androidx.compose.ui.graphics.Color.White,
+        containerColor = surfaceColor,
+        contentColor = onSurfaceColor,
     ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .background(androidx.compose.ui.graphics.Color.Black)
+                    .background(surfaceColor)
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 32.dp)
                     .verticalScroll(rememberScrollState()),
@@ -74,13 +80,13 @@ fun AddBottleSheet(
                 Text(
                     text = "Add New Drink",
                     style = MaterialTheme.typography.headlineSmall,
-                    color = androidx.compose.ui.graphics.Color.White,
+                    color = onSurfaceColor,
                 )
                 IconButton(onClick = onDismiss) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = "Close",
-                        tint = androidx.compose.ui.graphics.Color.White,
+                        tint = onSurfaceColor,
                     )
                 }
             }
@@ -91,7 +97,7 @@ fun AddBottleSheet(
             Text(
                 text = "📷 Photo",
                 style = MaterialTheme.typography.titleMedium,
-                color = androidx.compose.ui.graphics.Color.White,
+                color = onSurfaceColor,
                 modifier = Modifier.padding(bottom = 12.dp),
             )
 
@@ -101,7 +107,7 @@ fun AddBottleSheet(
                         .fillMaxWidth()
                         .height(200.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(androidx.compose.ui.graphics.Color(0xFF1C1C1E))
+                        .background(surfaceVariant)
                         .clickable { imagePickerLauncher.launch("image/*") },
                 contentAlignment = Alignment.Center,
             ) {
@@ -124,7 +130,7 @@ fun AddBottleSheet(
                         Text(
                             text = "Add Photo",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f),
+                            color = onSurfaceSubtle,
                         )
                     }
                 }
@@ -136,22 +142,22 @@ fun AddBottleSheet(
             Text(
                 text = "📝 Basic Information",
                 style = MaterialTheme.typography.titleMedium,
-                color = androidx.compose.ui.graphics.Color.White,
+                color = onSurfaceColor,
                 modifier = Modifier.padding(bottom = 12.dp),
             )
 
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
-                label = { Text("Name *", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
+                label = { Text("Name *", color = onSurfaceSubtle) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors =
                     OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                        unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                        focusedTextColor = onSurfaceColor,
+                        unfocusedTextColor = onSurfaceColor,
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                        unfocusedBorderColor = onSurfaceColor.copy(alpha = 0.3f),
                         cursorColor = MaterialTheme.colorScheme.primary,
                     ),
             )
@@ -166,7 +172,7 @@ fun AddBottleSheet(
                     value = "${BottleTypes.getEmojiForType(uiState.type)} ${uiState.type}",
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Type", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
+                    label = { Text("Type", color = onSurfaceSubtle) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showTypeDropdown) },
                     modifier =
                         Modifier
@@ -174,10 +180,10 @@ fun AddBottleSheet(
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                            unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                            focusedTextColor = onSurfaceColor,
+                            unfocusedTextColor = onSurfaceColor,
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                            unfocusedBorderColor = onSurfaceColor.copy(alpha = 0.3f),
                         ),
                 )
                 ExposedDropdownMenu(
@@ -205,15 +211,15 @@ fun AddBottleSheet(
                 OutlinedTextField(
                     value = uiState.abv,
                     onValueChange = viewModel::updateAbv,
-                    label = { Text("ABV (%)", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
+                    label = { Text("ABV (%)", color = onSurfaceSubtle) },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                            unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                            focusedTextColor = onSurfaceColor,
+                            unfocusedTextColor = onSurfaceColor,
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                            unfocusedBorderColor = onSurfaceColor.copy(alpha = 0.3f),
                             cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                 )
@@ -221,15 +227,15 @@ fun AddBottleSheet(
                 OutlinedTextField(
                     value = uiState.country,
                     onValueChange = viewModel::updateCountry,
-                    label = { Text("Country", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
+                    label = { Text("Country", color = onSurfaceSubtle) },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                            unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                            focusedTextColor = onSurfaceColor,
+                            unfocusedTextColor = onSurfaceColor,
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                            unfocusedBorderColor = onSurfaceColor.copy(alpha = 0.3f),
                             cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                 )
@@ -241,7 +247,7 @@ fun AddBottleSheet(
             Text(
                 text = "⭐ Rating",
                 style = MaterialTheme.typography.titleMedium,
-                color = androidx.compose.ui.graphics.Color.White,
+                color = onSurfaceColor,
                 modifier = Modifier.padding(bottom = 16.dp),
             )
 
@@ -276,7 +282,7 @@ fun AddBottleSheet(
                 Text(
                     text = "${uiState.rating.toInt()} / 5",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.7f),
+                    color = onSurfaceMuted,
                 )
             }
 
@@ -286,14 +292,14 @@ fun AddBottleSheet(
             Text(
                 text = "📝 Notes",
                 style = MaterialTheme.typography.titleMedium,
-                color = androidx.compose.ui.graphics.Color.White,
+                color = onSurfaceColor,
                 modifier = Modifier.padding(bottom = 12.dp),
             )
 
             OutlinedTextField(
                 value = uiState.note,
                 onValueChange = viewModel::updateNote,
-                label = { Text("Your notes", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
+                label = { Text("Your notes", color = onSurfaceSubtle) },
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -301,10 +307,10 @@ fun AddBottleSheet(
                 maxLines = 5,
                 colors =
                     OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                        unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                        focusedTextColor = onSurfaceColor,
+                        unfocusedTextColor = onSurfaceColor,
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                        unfocusedBorderColor = onSurfaceColor.copy(alpha = 0.3f),
                         cursorColor = MaterialTheme.colorScheme.primary,
                     ),
             )
@@ -315,22 +321,22 @@ fun AddBottleSheet(
             Text(
                 text = "📍 Location",
                 style = MaterialTheme.typography.titleMedium,
-                color = androidx.compose.ui.graphics.Color.White,
+                color = onSurfaceColor,
                 modifier = Modifier.padding(bottom = 12.dp),
             )
 
             OutlinedTextField(
                 value = uiState.locationName,
                 onValueChange = viewModel::updateLocationName,
-                label = { Text("Location name", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
+                label = { Text("Location name", color = onSurfaceSubtle) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors =
                     OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                        unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                        focusedTextColor = onSurfaceColor,
+                        unfocusedTextColor = onSurfaceColor,
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                        unfocusedBorderColor = onSurfaceColor.copy(alpha = 0.3f),
                         cursorColor = MaterialTheme.colorScheme.primary,
                     ),
             )
@@ -352,15 +358,15 @@ fun AddBottleSheet(
                     colors =
                         CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colorScheme.primary,
-                            uncheckedColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f),
-                            checkmarkColor = androidx.compose.ui.graphics.Color.White,
+                            uncheckedColor = onSurfaceSubtle,
+                            checkmarkColor = onSurfaceColor,
                         ),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Add to wishlist (Not purchased yet)",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = androidx.compose.ui.graphics.Color.White,
+                    color = onSurfaceColor,
                 )
             }
 

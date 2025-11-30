@@ -299,8 +299,7 @@ class TasteFinderRepository {
                 type = "Traditional",
                 subType = "Japanese Rice Wine",
                 description =
-                    "A Japanese traditional wine. " +
-                        "Features delicate flavors and can be enjoyed at various temperatures.",
+                    """A Japanese traditional wine. Features delicate flavors and can be enjoyed at various temperatures.""",
                 tags = listOf("low_abv", "clean", "subtle", "smooth", "light_body", "aromatic"),
                 abv = 15.0f,
                 country = "Japan",
@@ -310,8 +309,7 @@ class TasteFinderRepository {
                 type = "Traditional",
                 subType = "Korean Distilled Soju",
                 description =
-                    "A traditionally distilled Korean spirit. " +
-                        "Known for deep flavors and higher alcohol content.",
+                    """A traditionally distilled Korean spirit. Known for deep flavors and higher alcohol content.""",
                 tags = listOf("high_abv", "strong", "complex", "bold", "clean", "aged"),
                 abv = 25.0f,
                 country = "Korea",

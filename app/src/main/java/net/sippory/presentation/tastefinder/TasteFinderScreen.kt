@@ -36,6 +36,8 @@ fun TasteFinderScreen(
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
     val progress by animateFloatAsState(
         targetValue = viewModel.getProgress(),
         animationSpec = tween(durationMillis = 300),
@@ -46,7 +48,7 @@ fun TasteFinderScreen(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(androidx.compose.ui.graphics.Color.Black),
+                .background(backgroundColor),
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -71,7 +73,7 @@ fun TasteFinderScreen(
                         Icon(
                             Icons.Default.ChevronLeft,
                             contentDescription = "Back",
-                            tint = androidx.compose.ui.graphics.Color.White,
+                            tint = onBackgroundColor,
                         )
                     }
 
@@ -83,7 +85,7 @@ fun TasteFinderScreen(
                 Text(
                     text = "Question ${uiState.currentQuestionIndex + 1} of ${uiState.questions.size}",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = androidx.compose.ui.graphics.Color.White,
+                    color = onBackgroundColor,
                     modifier =
                         Modifier
                             .fillMaxWidth()
@@ -94,16 +96,16 @@ fun TasteFinderScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // 프로그레스 바
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp)
-                            .height(8.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    trackColor = androidx.compose.ui.graphics.Color.DarkGray,
-                )
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .height(8.dp),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            )
             } else {
                 // 결과 화면 상단바
                 TopAppBar(
@@ -164,11 +166,14 @@ private fun QuestionScreen(
     question: TasteQuestion,
     onSelectOption: (Boolean) -> Unit,
 ) {
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(androidx.compose.ui.graphics.Color.Black)
+                .background(backgroundColor)
                 .padding(24.dp)
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -180,7 +185,7 @@ private fun QuestionScreen(
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = onBackgroundColor,
             modifier = Modifier.padding(bottom = 32.dp),
         )
 
@@ -190,7 +195,7 @@ private fun QuestionScreen(
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = onBackgroundColor,
             modifier = Modifier.padding(bottom = 48.dp),
         )
 
@@ -317,7 +322,7 @@ private fun ModernOptionCard(
                 Surface(
                     modifier = Modifier.size(48.dp),
                     shape = androidx.compose.foundation.shape.CircleShape,
-                    color = androidx.compose.ui.graphics.Color(0xFF1C1C1E),
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                 ) {
                     Box(
                         contentAlignment = Alignment.Center,
@@ -326,7 +331,7 @@ private fun ModernOptionCard(
                             text = label,
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = androidx.compose.ui.graphics.Color.White,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
@@ -335,7 +340,7 @@ private fun ModernOptionCard(
                 Text(
                     text = text,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = androidx.compose.ui.graphics.Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
 
@@ -347,7 +352,7 @@ private fun ModernOptionCard(
                 border =
                     androidx.compose.foundation.BorderStroke(
                         2.dp,
-                        androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                     ),
             ) {
                 Box(modifier = Modifier.fillMaxSize())

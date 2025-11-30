@@ -35,21 +35,25 @@ fun DetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    val mutedOnBackground = onBackgroundColor.copy(alpha = 0.6f)
+
     LaunchedEffect(bottleId) {
         viewModel.loadBottle(bottleId)
     }
 
     Scaffold(
-        containerColor = androidx.compose.ui.graphics.Color.Black,
+        containerColor = backgroundColor,
         topBar = {
             TopAppBar(
-                title = { Text("Detail", color = androidx.compose.ui.graphics.Color.White) },
+                title = { Text("Detail", color = onBackgroundColor) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = androidx.compose.ui.graphics.Color.White
+                            tint = onBackgroundColor
                         )
                     }
                 },
@@ -66,7 +70,7 @@ fun DetailScreen(
                                 if (uiState.bottle?.isWishlist == true) {
                                     MaterialTheme.colorScheme.error
                                 } else {
-                                    androidx.compose.ui.graphics.Color.White
+                                    onBackgroundColor
                                 },
                         )
                     }
@@ -74,19 +78,19 @@ fun DetailScreen(
                         Icon(
                             if (uiState.isEditing) Icons.Default.Close else Icons.Default.Edit,
                             contentDescription = if (uiState.isEditing) "Cancel" else "Edit",
-                            tint = androidx.compose.ui.graphics.Color.White
+                            tint = onBackgroundColor
                         )
                     }
                     IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(
                             Icons.Default.Delete,
                             contentDescription = "Delete",
-                            tint = androidx.compose.ui.graphics.Color.White
+                            tint = onBackgroundColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = androidx.compose.ui.graphics.Color.Black
+                    containerColor = backgroundColor
                 )
             )
         },
@@ -97,11 +101,11 @@ fun DetailScreen(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .background(androidx.compose.ui.graphics.Color.Black)
+                            .background(backgroundColor)
                             .padding(padding),
                     contentAlignment = Alignment.Center,
                 ) {
-                    CircularProgressIndicator(color = androidx.compose.ui.graphics.Color.White)
+                    CircularProgressIndicator(color = onBackgroundColor)
                 }
             }
             uiState.bottle == null -> {
@@ -109,14 +113,14 @@ fun DetailScreen(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .background(androidx.compose.ui.graphics.Color.Black)
+                            .background(backgroundColor)
                             .padding(padding),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = "Bottle not found",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = androidx.compose.ui.graphics.Color.White,
+                        color = onBackgroundColor,
                     )
                 }
             }
@@ -142,13 +146,13 @@ fun DetailScreen(
             title = {
                 Text(
                     "Delete Confirmation",
-                    color = androidx.compose.ui.graphics.Color.White
+                    color = onBackgroundColor
                 )
             },
             text = {
                 Text(
                     "Are you sure you want to delete '${uiState.bottle!!.name}'?",
-                    color = androidx.compose.ui.graphics.Color.White
+                    color = onBackgroundColor
                 )
             },
             confirmButton = {
@@ -164,10 +168,10 @@ fun DetailScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel", color = androidx.compose.ui.graphics.Color.White)
+                    Text("Cancel", color = onBackgroundColor)
                 }
             },
-            containerColor = androidx.compose.ui.graphics.Color(0xFF1C1C1E),
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
         )
     }
 }
@@ -182,10 +186,14 @@ fun BottleDetailContent(
 ) {
     var editedBottle by remember(bottle) { mutableStateOf(bottle) }
 
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    val mutedOnBackground = onBackgroundColor.copy(alpha = 0.6f)
+
     Column(
         modifier =
             modifier
-                .background(androidx.compose.ui.graphics.Color.Black)
+                .background(backgroundColor)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
     ) {
@@ -196,7 +204,7 @@ fun BottleDetailContent(
                     .fillMaxWidth()
                     .height(300.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(androidx.compose.ui.graphics.Color(0xFF1C1C1E)),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center,
         ) {
             if (bottle.photoUri != null) {
@@ -221,13 +229,13 @@ fun BottleDetailContent(
             OutlinedTextField(
                 value = editedBottle.name,
                 onValueChange = { editedBottle = editedBottle.copy(name = it) },
-                label = { Text("Name", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
+                label = { Text("Name", color = mutedOnBackground) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    focusedTextColor = onBackgroundColor,
+                    unfocusedTextColor = onBackgroundColor,
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                    unfocusedBorderColor = onBackgroundColor.copy(alpha = 0.3f),
                     cursorColor = MaterialTheme.colorScheme.primary,
                 ),
             )
@@ -236,7 +244,7 @@ fun BottleDetailContent(
                 text = bottle.name,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = androidx.compose.ui.graphics.Color.White,
+                color = onBackgroundColor,
             )
         }
 
@@ -271,7 +279,7 @@ fun BottleDetailContent(
             text = "⭐ Rating",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = onBackgroundColor,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -299,13 +307,13 @@ fun BottleDetailContent(
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${editedBottle.rating.toInt()} / 5",
-                style = MaterialTheme.typography.bodyLarge,
-                color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.7f),
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-            )
-        } else {
+                Text(
+                    text = "${editedBottle.rating.toInt()} / 5",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = mutedOnBackground,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
+            } else {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
@@ -316,14 +324,14 @@ fun BottleDetailContent(
                     text = "${bottle.rating.toInt()} / 5",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    color = androidx.compose.ui.graphics.Color.White,
+                    color = onBackgroundColor,
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        HorizontalDivider(color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.2f))
+        HorizontalDivider(color = onBackgroundColor.copy(alpha = 0.2f))
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -332,7 +340,7 @@ fun BottleDetailContent(
             modifier = Modifier.fillMaxWidth(),
             colors =
                 CardDefaults.cardColors(
-                    containerColor = androidx.compose.ui.graphics.Color(0xFF2D0A0A),
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 ),
         ) {
             Row(
@@ -348,22 +356,19 @@ fun BottleDetailContent(
                         text = "Drink Count",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = androidx.compose.ui.graphics.Color.White,
+                        color = onBackgroundColor,
                     )
                     Text(
                         text = "${bottle.drinkCount} times",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = androidx.compose.ui.graphics.Color(0xFFB22222),
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
                     )
                 }
                 if (!isEditing) {
                     Button(
                         onClick = onRecordDrink,
                         modifier = Modifier.height(48.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = androidx.compose.ui.graphics.Color(0xFF6B0000),
-                        ),
                     ) {
                         Icon(
                             Icons.Default.Add,
@@ -384,7 +389,7 @@ fun BottleDetailContent(
             text = "📝 Notes",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = onBackgroundColor,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -399,10 +404,10 @@ fun BottleDetailContent(
                         .height(150.dp),
                 maxLines = 8,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    focusedTextColor = onBackgroundColor,
+                    unfocusedTextColor = onBackgroundColor,
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                    unfocusedBorderColor = onBackgroundColor.copy(alpha = 0.3f),
                     cursorColor = MaterialTheme.colorScheme.primary,
                 ),
             )
@@ -412,9 +417,9 @@ fun BottleDetailContent(
                 style = MaterialTheme.typography.bodyMedium,
                 color =
                     if (bottle.note.isBlank()) {
-                        androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)
+                        mutedOnBackground
                     } else {
-                        androidx.compose.ui.graphics.Color.White
+                        onBackgroundColor
                     },
             )
         }
@@ -435,13 +440,13 @@ fun BottleDetailContent(
         Text(
             text = "Created: ${dateFormat.format(Date(bottle.createdAt))}",
             style = MaterialTheme.typography.bodySmall,
-            color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f),
+            color = mutedOnBackground,
         )
         if (bottle.updatedAt != bottle.createdAt) {
             Text(
                 text = "Updated: ${dateFormat.format(Date(bottle.updatedAt))}",
                 style = MaterialTheme.typography.bodySmall,
-                color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f),
+                color = mutedOnBackground,
             )
         }
 
@@ -464,6 +469,9 @@ fun DetailRow(
     value: String,
     modifier: Modifier = Modifier,
 ) {
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    val mutedOnBackground = onBackgroundColor.copy(alpha = 0.7f)
+
     Row(
         modifier =
             modifier
@@ -474,13 +482,13 @@ fun DetailRow(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.7f),
+            color = mutedOnBackground,
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = onBackgroundColor,
         )
     }
 }
@@ -513,12 +521,15 @@ private fun LocationSection(
     editedBottle: BottleEntity,
     onBottleChange: (BottleEntity) -> Unit,
 ) {
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    val mutedOnBackground = onBackgroundColor.copy(alpha = 0.6f)
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "📍 Location",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = androidx.compose.ui.graphics.Color.White,
+            color = onBackgroundColor,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -529,14 +540,14 @@ private fun LocationSection(
                 onValueChange = {
                     onBottleChange(editedBottle.copy(locationName = it.ifBlank { null }))
                 },
-                label = { Text("Location name", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f)) },
+                label = { Text("Location name", color = mutedOnBackground) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = androidx.compose.ui.graphics.Color.White,
-                    unfocusedTextColor = androidx.compose.ui.graphics.Color.White,
+                    focusedTextColor = onBackgroundColor,
+                    unfocusedTextColor = onBackgroundColor,
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.3f),
+                    unfocusedBorderColor = onBackgroundColor.copy(alpha = 0.3f),
                     cursorColor = MaterialTheme.colorScheme.primary,
                 ),
             )
@@ -550,7 +561,7 @@ private fun LocationSection(
                 Text(
                     text = "No location recorded.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.6f),
+                    color = mutedOnBackground,
                 )
             }
         }
