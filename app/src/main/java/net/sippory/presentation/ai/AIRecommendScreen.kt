@@ -92,7 +92,7 @@ fun AIRecommendScreen(
                         items(uiState.recommendations.size) { index ->
                             RecommendCard(
                                 item = uiState.recommendations[index],
-                                onHeartClick = { viewModel.saveToWishlist(it) },
+                                onHeartClick = { viewModel.toggleWishlist(it) },
                             )
                         }
                     }
@@ -107,8 +107,6 @@ fun RecommendCard(
     item: RecommendItem,
     onHeartClick: (RecommendItem) -> Unit,
 ) {
-    var isWish by remember { mutableStateOf(false) }
-
     Card(
         modifier =
             Modifier
@@ -196,18 +194,13 @@ fun RecommendCard(
 
                 // 하트 버튼
                 IconButton(
-                    onClick = {
-                        if (!isWish) {
-                            onHeartClick(item)
-                            isWish = true
-                        }
-                    },
+                    onClick = { onHeartClick(item) },
                     modifier = Modifier.align(Alignment.End),
                 ) {
                     Icon(
-                        imageVector = if (isWish) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (item.isWished) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Add to Wishlist",
-                        tint = if (isWish) WineRed else LightGray,
+                        tint = if (item.isWished) WineRed else LightGray,
                         modifier = Modifier.size(28.dp),
                     )
                 }
@@ -268,6 +261,7 @@ fun RecommendCardPreview() {
                         reason =
                             "An elegant full-bodied Bordeaux wine with smooth tannins and harmonious notes " +
                                 "of blackberry and cassis. A premium wine that perfectly matches your taste.",
+                        isWished = false,
                     ),
                 onHeartClick = {},
             )
@@ -300,6 +294,7 @@ fun RecommendCardListPreview() {
                                     reason =
                                         "An elegant full-bodied Bordeaux wine with smooth tannins " +
                                             "and harmonious notes of blackberry and cassis.",
+                                    isWished = false,
                                 )
                             1 ->
                                 RecommendItem(
@@ -310,6 +305,7 @@ fun RecommendCardListPreview() {
                                     reason =
                                         "A premium single malt aged in sherry oak casks, " +
                                             "featuring sweet vanilla and spicy oak notes.",
+                                    isWished = true,
                                 )
                             else ->
                                 RecommendItem(
@@ -320,6 +316,7 @@ fun RecommendCardListPreview() {
                                     reason =
                                         "A premium gin with unique cucumber and rose notes, " +
                                             "offering a refreshingly elegant taste.",
+                                    isWished = false,
                                 )
                         },
                     onHeartClick = {},
