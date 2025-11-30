@@ -24,6 +24,7 @@ data class RecommendItem(
     val abv: Float?,
     val country: String?,
     val reason: String,
+    val isWished: Boolean = false,
 )
 
 class AIRecommendViewModel(
@@ -141,20 +142,6 @@ class AIRecommendViewModel(
         }
     }
 
-    fun saveToWishlist(item: RecommendItem) {
-        viewModelScope.launch {
-            repository.insertBottle(
-                BottleEntity(
-                    name = item.name,
-                    type = normalizeType(item.type),
-                    abv = item.abv,
-                    country = item.country,
-                    isWishlist = true,
-                ),
-            )
-        }
-    }
-
     private fun normalizeType(aiType: String): String {
         val normalized = aiType.lowercase()
 
@@ -170,6 +157,43 @@ class AIRecommendViewModel(
             "soju" in normalized -> "Soju"
             "champagne" in normalized -> "Champagne"
             else -> "Other"
+        }
+    }
+
+    fun toggleWishlist(item: RecommendItem) {
+        // 이미 위시된 아이템은 무시 (취소 불가)
+        if (item.isWished) {
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // DB에 바로 저장
+                Log.d("Wishlist", "${item.name} 위시리스트 추가 중...")
+                repository.insertBottle(
+                    BottleEntity(
+                        name = item.name,
+                        type = normalizeType(item.type),
+                        abv = item.abv,
+                        country = item.country,
+                        isWishlist = true,
+                    ),
+                )
+                Log.d("Wishlist", "${item.name} 위시리스트 추가 성공")
+
+                // UI 상태 업데이트 (Main 스레드에서)
+                val updatedList =
+                    _uiState.value.recommendations.map {
+                        if (it == item) {
+                            it.copy(isWished = true)
+                        } else {
+                            it
+                        }
+                    }
+                _uiState.value = _uiState.value.copy(recommendations = updatedList)
+            } catch (e: Exception) {
+                Log.e("Wishlist", "${item.name} 위시리스트 추가 실패: ${e.message}", e)
+            }
         }
     }
 }
