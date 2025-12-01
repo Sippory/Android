@@ -8,7 +8,7 @@ import net.sippory.utils.ImageFileManager
 
 class BottleRepository(
     private val bottleDao: BottleDao,
-    private val context: Context
+    private val context: Context,
 ) {
     fun getAllBottles(): Flow<List<BottleEntity>> = bottleDao.getAllBottles()
 

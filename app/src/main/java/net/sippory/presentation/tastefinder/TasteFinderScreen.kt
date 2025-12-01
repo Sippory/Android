@@ -108,21 +108,34 @@ fun TasteFinderScreen(
                 // 결과 화면 상단바
                 TopAppBar(
                     title = {
-                        Text("Your Results", fontWeight = FontWeight.Bold, color = androidx.compose.ui.graphics.Color.White)
+                        Text(
+                            "Your Results",
+                            fontWeight = FontWeight.Bold,
+                            color = androidx.compose.ui.graphics.Color.White,
+                        )
                     },
                     navigationIcon = {
                         IconButton(onClick = onBack) {
-                            Icon(Icons.Default.ChevronLeft, contentDescription = "Back", tint = androidx.compose.ui.graphics.Color.White)
+                            Icon(
+                                Icons.Default.ChevronLeft,
+                                contentDescription = "Back",
+                                tint = androidx.compose.ui.graphics.Color.White,
+                            )
                         }
                     },
                     actions = {
                         IconButton(onClick = { viewModel.restart() }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Restart", tint = androidx.compose.ui.graphics.Color.White)
+                            Icon(
+                                Icons.Default.Refresh,
+                                contentDescription = "Restart",
+                                tint = androidx.compose.ui.graphics.Color.White,
+                            )
                         }
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = androidx.compose.ui.graphics.Color.Black,
-                    ),
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = androidx.compose.ui.graphics.Color.Black,
+                        ),
                 )
             }
 
@@ -526,10 +539,11 @@ private fun AnimatedRecommendationCard(
                     onClick = onAddToWishlist,
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !isAdded && !isLoading,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = WineRed,
-                        contentColor = androidx.compose.ui.graphics.Color.White,
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = WineRed,
+                            contentColor = androidx.compose.ui.graphics.Color.White,
+                        ),
                 ) {
                     Icon(
                         imageVector = if (isAdded) Icons.Default.Check else Icons.Default.Add,

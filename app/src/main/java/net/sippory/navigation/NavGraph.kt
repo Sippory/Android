@@ -90,7 +90,7 @@ fun NavGraph(
                     navController.navigate(Screen.SignIn.route) {
                         popUpTo(Screen.Splash.route) { inclusive = true }
                     }
-                }
+                },
             )
         }
 

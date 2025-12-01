@@ -13,7 +13,10 @@ object ImageFileManager {
     /**
      * URI로부터 이미지를 앱 내부 저장소로 복사하고 파일 경로를 반환합니다.
      */
-    fun saveImageToInternalStorage(context: Context, uri: Uri): String? {
+    fun saveImageToInternalStorage(
+        context: Context,
+        uri: Uri,
+    ): String? {
         try {
             // 이미지 저장 디렉토리 생성
             val imageDir = File(context.filesDir, IMAGE_DIR)
@@ -43,7 +46,10 @@ object ImageFileManager {
     /**
      * 이미지 파일을 삭제합니다.
      */
-    fun deleteImage(context: Context, filePath: String?): Boolean {
+    fun deleteImage(
+        context: Context,
+        filePath: String?,
+    ): Boolean {
         if (filePath == null) return false
 
         return try {
@@ -62,7 +68,10 @@ object ImageFileManager {
     /**
      * 사용하지 않는 이미지 파일들을 정리합니다.
      */
-    fun cleanupUnusedImages(context: Context, usedPaths: List<String>) {
+    fun cleanupUnusedImages(
+        context: Context,
+        usedPaths: List<String>,
+    ) {
         try {
             val imageDir = File(context.filesDir, IMAGE_DIR)
             if (!imageDir.exists()) return

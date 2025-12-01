@@ -189,15 +189,16 @@ fun BottleDetailContent(
     val context = androidx.compose.ui.platform.LocalContext.current
 
     // 이미지 선택 런처
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            // 이미지를 앱 내부 저장소로 복사
-            val savedPath = net.sippory.utils.ImageFileManager.saveImageToInternalStorage(context, it)
-            editedBottle = editedBottle.copy(photoUri = savedPath)
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+        ) { uri: Uri? ->
+            uri?.let {
+                // 이미지를 앱 내부 저장소로 복사
+                val savedPath = net.sippory.utils.ImageFileManager.saveImageToInternalStorage(context, it)
+                editedBottle = editedBottle.copy(photoUri = savedPath)
+            }
         }
-    }
 
     Column(
         modifier =
@@ -220,12 +221,12 @@ fun BottleDetailContent(
                                 .border(
                                     width = 2.dp,
                                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                                    shape = RoundedCornerShape(16.dp)
+                                    shape = RoundedCornerShape(16.dp),
                                 )
                                 .clickable { imagePickerLauncher.launch("image/*") }
                         } else {
                             Modifier
-                        }
+                        },
                     ),
             contentAlignment = Alignment.Center,
         ) {
@@ -246,27 +247,28 @@ fun BottleDetailContent(
             // 편집 모드일 때 카메라 아이콘 오버레이 표시
             if (isEditing) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.3f)),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.3f)),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement.Center,
                     ) {
                         Icon(
                             imageVector = Icons.Default.AddAPhoto,
                             contentDescription = "Change Photo",
                             tint = androidx.compose.ui.graphics.Color.White,
-                            modifier = Modifier.size(48.dp)
+                            modifier = Modifier.size(48.dp),
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "Tap to change photo",
                             style = MaterialTheme.typography.bodyMedium,
                             color = androidx.compose.ui.graphics.Color.White,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                     }
                 }
@@ -514,10 +516,11 @@ fun BottleDetailContent(
             Button(
                 onClick = { onUpdate(editedBottle) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = androidx.compose.ui.graphics.Color(0xFF3D0A1A),
-                    contentColor = androidx.compose.ui.graphics.Color.White
-                )
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = androidx.compose.ui.graphics.Color(0xFF3D0A1A),
+                        contentColor = androidx.compose.ui.graphics.Color.White,
+                    ),
             ) {
                 Text("Save")
             }

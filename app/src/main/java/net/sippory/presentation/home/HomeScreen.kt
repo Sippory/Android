@@ -272,9 +272,10 @@ fun BottleGrid(
                     CocktailCard(
                         bottle = bottle,
                         onClick = { onBottleClick(bottle.id) },
-                        modifier = Modifier
-                            .weight(1f)
-                            .offset(y = if (index == 1) 24.dp else 0.dp),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .offset(y = if (index == 1) 24.dp else 0.dp),
                     )
                 }
                 if (rowBottles.size == 1) {
