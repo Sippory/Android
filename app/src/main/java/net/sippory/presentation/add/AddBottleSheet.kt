@@ -39,11 +39,17 @@ fun AddBottleSheet(
 
     var showTypeDropdown by remember { mutableStateOf(false) }
 
+    val context = androidx.compose.ui.platform.LocalContext.current
+
     val imagePickerLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
         ) { uri: Uri? ->
-            uri?.let { viewModel.updatePhotoUri(it.toString()) }
+            uri?.let {
+                // 이미지를 앱 내부 저장소로 복사
+                val savedPath = net.sippory.utils.ImageFileManager.saveImageToInternalStorage(context, it)
+                viewModel.updatePhotoUri(savedPath)
+            }
         }
     LaunchedEffect(Unit) {
         viewModel.updateName(drinkName)

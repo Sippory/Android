@@ -1,10 +1,15 @@
 package net.sippory.data.repository
 
+import android.content.Context
 import kotlinx.coroutines.flow.Flow
 import net.sippory.data.dao.BottleDao
 import net.sippory.data.entity.BottleEntity
+import net.sippory.utils.ImageFileManager
 
-class BottleRepository(private val bottleDao: BottleDao) {
+class BottleRepository(
+    private val bottleDao: BottleDao,
+    private val context: Context
+) {
     fun getAllBottles(): Flow<List<BottleEntity>> = bottleDao.getAllBottles()
 
     suspend fun getBottleById(id: Int): BottleEntity? = bottleDao.getBottleById(id)
@@ -31,7 +36,21 @@ class BottleRepository(private val bottleDao: BottleDao) {
 
     suspend fun updateBottle(bottle: BottleEntity) = bottleDao.updateBottle(bottle)
 
-    suspend fun deleteBottle(bottle: BottleEntity) = bottleDao.deleteBottle(bottle)
+    suspend fun deleteBottle(bottle: BottleEntity) {
+        // 이미지 파일 삭제
+        bottle.photoUri?.let {
+            ImageFileManager.deleteImage(context, it)
+        }
+        bottleDao.deleteBottle(bottle)
+    }
 
-    suspend fun deleteBottleById(id: Int) = bottleDao.deleteBottleById(id)
+    suspend fun deleteBottleById(id: Int) {
+        // 이미지 파일 삭제를 위해 먼저 병 정보를 가져옴
+        getBottleById(id)?.let { bottle ->
+            bottle.photoUri?.let {
+                ImageFileManager.deleteImage(context, it)
+            }
+        }
+        bottleDao.deleteBottleById(id)
+    }
 }

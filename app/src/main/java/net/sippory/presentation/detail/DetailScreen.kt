@@ -186,12 +186,16 @@ fun BottleDetailContent(
 ) {
     var editedBottle by remember(bottle) { mutableStateOf(bottle) }
 
+    val context = androidx.compose.ui.platform.LocalContext.current
+
     // 이미지 선택 런처
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            editedBottle = editedBottle.copy(photoUri = it.toString())
+            // 이미지를 앱 내부 저장소로 복사
+            val savedPath = net.sippory.utils.ImageFileManager.saveImageToInternalStorage(context, it)
+            editedBottle = editedBottle.copy(photoUri = savedPath)
         }
     }
 

@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
 
         // Repository 초기화
         val database = AppDatabase.getDatabase(applicationContext)
-        val repository = BottleRepository(database.bottleDao())
+        val repository = BottleRepository(database.bottleDao(), applicationContext)
 
         setContent {
             SipporyTheme {
