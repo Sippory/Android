@@ -204,21 +204,21 @@ fun FilterChips(
         FilterChip(
             selected = selectedFilter is BottleFilter.All,
             onClick = { onFilterChange(BottleFilter.All) },
-            label = { Text("전체") },
+            label = { Text("All") },
             colors = chipColors(selectedFilter is BottleFilter.All),
         )
 
         FilterChip(
             selected = selectedFilter is BottleFilter.Wishlist,
             onClick = { onFilterChange(BottleFilter.Wishlist) },
-            label = { Text("💝 위시리스트") },
+            label = { Text("💝 Wishlist") },
             colors = chipColors(selectedFilter is BottleFilter.Wishlist),
         )
 
         FilterChip(
             selected = selectedFilter is BottleFilter.Owned,
             onClick = { onFilterChange(BottleFilter.Owned) },
-            label = { Text("🍾 소유") },
+            label = { Text("🍾 Owned") },
             colors = chipColors(selectedFilter is BottleFilter.Owned),
         )
 
@@ -234,7 +234,7 @@ fun FilterChips(
         FilterChip(
             selected = selectedFilter is BottleFilter.ByRating,
             onClick = { onFilterChange(BottleFilter.ByRating(4f)) },
-            label = { Text("⭐ 4점 이상") },
+            label = { Text("⭐ 4+ Rating") },
             colors = chipColors(selectedFilter is BottleFilter.ByRating),
         )
     }
