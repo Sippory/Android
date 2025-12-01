@@ -37,6 +37,8 @@ import net.sippory.utils.BottleViewModelFactory
 import net.sippory.utils.DrinkViewModelFactory
 
 sealed class Screen(val route: String) {
+    object Splash : Screen("splash")
+
     object SignIn : Screen("sign-in")
 
     object SignUp : Screen("sign-up")
@@ -80,8 +82,18 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Splash.route,
     ) {
+        composable(Screen.Splash.route) {
+            net.sippory.presentation.splash.SplashScreen(
+                onNavigateToSignIn = {
+                    navController.navigate(Screen.SignIn.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(Screen.SignIn.route) {
             SignInScreen(
                 navController = navController,
