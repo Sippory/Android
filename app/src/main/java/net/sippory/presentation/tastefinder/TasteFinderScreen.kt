@@ -384,7 +384,6 @@ private fun ModernOptionCard(
     }
 }
 
-
 @Composable
 private fun RecommendationResultScreen(
     recommendations: List<RecommendedBottle>,

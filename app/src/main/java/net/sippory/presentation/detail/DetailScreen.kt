@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
 import net.sippory.ui.theme.SaveButtonRed
-import net.sippory.ui.theme.SaveButtonRed
 import net.sippory.utils.BottleTypes
 import java.text.SimpleDateFormat
 import java.util.*

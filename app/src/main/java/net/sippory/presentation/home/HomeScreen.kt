@@ -15,10 +15,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face4
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalBar
@@ -49,11 +47,8 @@ import net.sippory.data.entity.BottleEntity
 import net.sippory.navigation.Screen
 import net.sippory.presentation.add.AddBottleSheet
 import net.sippory.ui.theme.CardBackgroundEnd
-import net.sippory.ui.theme.CardBackgroundEnd
 import net.sippory.ui.theme.CardBackgroundStart
 import net.sippory.ui.theme.SipporyTheme
-import net.sippory.ui.theme.CardBackgroundEnd
-import net.sippory.ui.theme.CardBackgroundStart
 import net.sippory.utils.BottleTypes
 import net.sippory.utils.ImageManager
 

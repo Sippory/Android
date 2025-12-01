@@ -10,7 +10,7 @@ import java.io.IOException
 import java.util.UUID
 
 class ImageFileManager(
-    private val context: Context
+    private val context: Context,
 ) : ImageManager {
     private val imageDir: File by lazy {
         File(context.filesDir, IMAGE_DIR).apply {
