@@ -15,8 +15,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face4
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.Search
@@ -592,9 +595,9 @@ fun ExpandableFAB(
         remember {
             listOf(
                 Triple(Icons.Default.Add, "술 추가", onAddBottleClick),
-                Triple(Icons.Default.Favorite, "취향 찾기", onTasteFinderClick),
-                Triple(Icons.Default.ThumbUp, "대시보드", onDashboardClick),
-                Triple(Icons.Default.Email, "AI 추천", onAIRecommendClick),
+                Triple(Icons.Default.ThumbUp, "취향 찾기", onTasteFinderClick),
+                Triple(Icons.Default.Dashboard, "대시보드", onDashboardClick),
+                Triple(Icons.Default.Face4, "AI 추천", onAIRecommendClick),
             )
         }
 
