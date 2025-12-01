@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -18,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import net.sippory.R
+import net.sippory.ui.theme.SplashTextPrimary
+import net.sippory.ui.theme.SplashTextSecondary
 
 @Composable
 fun SplashScreen(onNavigateToSignIn: () -> Unit) {
@@ -72,7 +73,7 @@ fun SplashScreen(onNavigateToSignIn: () -> Unit) {
                     MaterialTheme.typography.displayLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 48.sp,
-                        color = Color(0xFFEDEDF5),
+                        color = SplashTextPrimary,
                     ),
             )
 
@@ -81,7 +82,7 @@ fun SplashScreen(onNavigateToSignIn: () -> Unit) {
                 text = "Your Personal Drink Collection",
                 style =
                     MaterialTheme.typography.bodyLarge.copy(
-                        color = Color(0xFFB8B8C6),
+                        color = SplashTextSecondary,
                         fontSize = 16.sp,
                     ),
             )

@@ -24,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
+import net.sippory.ui.theme.SaveButtonRed
+import net.sippory.ui.theme.SaveButtonRed
 import net.sippory.utils.BottleTypes
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,6 +35,7 @@ import java.util.*
 fun DetailScreen(
     bottleId: Int,
     viewModel: DetailViewModel,
+    imageManager: net.sippory.utils.ImageManager,
     onNavigateBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -128,6 +131,7 @@ fun DetailScreen(
                 BottleDetailContent(
                     bottle = uiState.bottle!!,
                     isEditing = uiState.isEditing,
+                    imageManager = imageManager,
                     onUpdate = viewModel::updateBottle,
                     onRecordDrink = viewModel::recordDrink,
                     modifier =
@@ -180,6 +184,7 @@ fun DetailScreen(
 fun BottleDetailContent(
     bottle: BottleEntity,
     isEditing: Boolean,
+    imageManager: net.sippory.utils.ImageManager,
     onUpdate: (BottleEntity) -> Unit,
     onRecordDrink: () -> Unit,
     modifier: Modifier = Modifier,
@@ -195,7 +200,7 @@ fun BottleDetailContent(
         ) { uri: Uri? ->
             uri?.let {
                 // 이미지를 앱 내부 저장소로 복사
-                val savedPath = net.sippory.utils.ImageFileManager.saveImageToInternalStorage(context, it)
+                val savedPath = imageManager.saveImage(it)
                 editedBottle = editedBottle.copy(photoUri = savedPath)
             }
         }
@@ -518,7 +523,7 @@ fun BottleDetailContent(
                 modifier = Modifier.fillMaxWidth(),
                 colors =
                     ButtonDefaults.buttonColors(
-                        containerColor = androidx.compose.ui.graphics.Color(0xFF3D0A1A),
+                        containerColor = SaveButtonRed,
                         contentColor = androidx.compose.ui.graphics.Color.White,
                     ),
             ) {

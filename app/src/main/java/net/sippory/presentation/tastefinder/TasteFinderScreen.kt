@@ -28,6 +28,11 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import net.sippory.data.model.RecommendedBottle
 import net.sippory.data.model.TasteQuestion
+import net.sippory.ui.theme.DarkWine
+import net.sippory.ui.theme.DeepBlack
+import net.sippory.ui.theme.LightGray
+import net.sippory.ui.theme.SoftBlack
+import net.sippory.ui.theme.WineRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +116,7 @@ fun TasteFinderScreen(
                         Text(
                             "Your Results",
                             fontWeight = FontWeight.Bold,
-                            color = androidx.compose.ui.graphics.Color.White,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     },
                     navigationIcon = {
@@ -119,7 +124,7 @@ fun TasteFinderScreen(
                             Icon(
                                 Icons.Default.ChevronLeft,
                                 contentDescription = "Back",
-                                tint = androidx.compose.ui.graphics.Color.White,
+                                tint = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     },
@@ -128,13 +133,13 @@ fun TasteFinderScreen(
                             Icon(
                                 Icons.Default.Refresh,
                                 contentDescription = "Restart",
-                                tint = androidx.compose.ui.graphics.Color.White,
+                                tint = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     },
                     colors =
                         TopAppBarDefaults.topAppBarColors(
-                            containerColor = androidx.compose.ui.graphics.Color.Black,
+                            containerColor = MaterialTheme.colorScheme.surface,
                         ),
                 )
             }
@@ -379,12 +384,6 @@ private fun ModernOptionCard(
     }
 }
 
-// 커스텀 컬러 (AIRecommendScreen과 동일)
-private val WineRed = androidx.compose.ui.graphics.Color(0xFF8B1538)
-private val DarkWine = androidx.compose.ui.graphics.Color(0xFF5D0E28)
-private val DeepBlack = androidx.compose.ui.graphics.Color(0xFF0D0D0D)
-private val SoftBlack = androidx.compose.ui.graphics.Color(0xFF1A1A1A)
-private val LightGray = androidx.compose.ui.graphics.Color(0xFFB0B0B0)
 
 @Composable
 private fun RecommendationResultScreen(

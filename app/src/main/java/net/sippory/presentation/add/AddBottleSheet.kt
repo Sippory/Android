@@ -23,12 +23,14 @@ import coil.compose.AsyncImage
 import net.sippory.data.repository.BottleRepository
 import net.sippory.utils.BottleTypes
 import net.sippory.utils.BottleViewModelFactory
+import net.sippory.utils.ImageManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBottleSheet(
     onDismiss: () -> Unit,
     repository: BottleRepository,
+    imageManager: ImageManager,
     drinkName: String = "",
     drinkType: String = "Wine",
     drinkPhotoUri: String? = null,
@@ -39,15 +41,13 @@ fun AddBottleSheet(
 
     var showTypeDropdown by remember { mutableStateOf(false) }
 
-    val context = androidx.compose.ui.platform.LocalContext.current
-
     val imagePickerLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
         ) { uri: Uri? ->
             uri?.let {
                 // 이미지를 앱 내부 저장소로 복사
-                val savedPath = net.sippory.utils.ImageFileManager.saveImageToInternalStorage(context, it)
+                val savedPath = imageManager.saveImage(it)
                 viewModel.updatePhotoUri(savedPath)
             }
         }

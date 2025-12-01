@@ -45,8 +45,14 @@ import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
 import net.sippory.navigation.Screen
 import net.sippory.presentation.add.AddBottleSheet
+import net.sippory.ui.theme.CardBackgroundEnd
+import net.sippory.ui.theme.CardBackgroundEnd
+import net.sippory.ui.theme.CardBackgroundStart
 import net.sippory.ui.theme.SipporyTheme
+import net.sippory.ui.theme.CardBackgroundEnd
+import net.sippory.ui.theme.CardBackgroundStart
 import net.sippory.utils.BottleTypes
+import net.sippory.utils.ImageManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +60,7 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onBottleClick: (Int) -> Unit,
     repository: net.sippory.data.repository.BottleRepository,
+    imageManager: ImageManager,
     onDashboardClick: () -> Unit,
     onSearchClick: () -> Unit,
     navController: NavHostController,
@@ -155,6 +162,7 @@ fun HomeScreen(
         AddBottleSheet(
             onDismiss = { showAddBottleSheet = false },
             repository = repository,
+            imageManager = imageManager,
         )
     }
 }
@@ -317,8 +325,8 @@ fun CocktailCard(
                             Brush.verticalGradient(
                                 colors =
                                     listOf(
-                                        Color(0xFF1A1A2E),
-                                        Color(0xFF0F0F1E),
+                                        CardBackgroundStart,
+                                        CardBackgroundEnd,
                                     ),
                             ),
                         ),
@@ -369,7 +377,7 @@ fun CocktailCard(
         if (bottle.isWishlist) {
             Icon(
                 imageVector = Icons.Default.Favorite,
-                contentDescription = "위시리스트",
+                contentDescription = "Wishlist",
                 tint = Color(0xFFFF6B9D),
                 modifier =
                     Modifier

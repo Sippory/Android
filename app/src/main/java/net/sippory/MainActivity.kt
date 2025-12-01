@@ -9,6 +9,7 @@ import net.sippory.data.AppDatabase
 import net.sippory.data.repository.BottleRepository
 import net.sippory.navigation.NavGraph
 import net.sippory.ui.theme.SipporyTheme
+import net.sippory.utils.ImageFileManager
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +18,8 @@ class MainActivity : ComponentActivity() {
 
         // Repository 초기화
         val database = AppDatabase.getDatabase(applicationContext)
-        val repository = BottleRepository(database.bottleDao(), applicationContext)
+        val imageManager = ImageFileManager(applicationContext)
+        val repository = BottleRepository(database.bottleDao(), imageManager)
 
         setContent {
             SipporyTheme {
@@ -25,6 +27,7 @@ class MainActivity : ComponentActivity() {
                 NavGraph(
                     navController = navController,
                     repository = repository,
+                    imageManager = imageManager,
                 )
             }
         }

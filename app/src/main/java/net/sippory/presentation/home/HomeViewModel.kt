@@ -145,19 +145,10 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
         filter: BottleFilter,
         searchQuery: String,
     ): List<BottleEntity> {
+        // DB에서 이미 필터링되어 온 데이터이므로, 검색 쿼리만 적용
         var filtered = bottles
 
-        // Apply filter (Wishlist와 Owned는 이미 repository에서 필터링됨)
-        filtered =
-            when (filter) {
-                is BottleFilter.All -> filtered
-                is BottleFilter.ByType -> filtered.filter { it.type == filter.type }
-                is BottleFilter.ByRating -> filtered.filter { it.rating >= filter.minRating }
-                is BottleFilter.Wishlist -> filtered // 이미 DB에서 필터링됨
-                is BottleFilter.Owned -> filtered // 이미 DB에서 필터링됨
-            }
-
-        // Apply search
+        // Apply search query only
         if (searchQuery.isNotBlank()) {
             filtered =
                 filtered.filter {
