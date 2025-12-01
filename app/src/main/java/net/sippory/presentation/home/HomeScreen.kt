@@ -425,7 +425,7 @@ fun CocktailCard(
                         modifier = Modifier.size(16.dp),
                     )
                     Text(
-                        text = "${bottle.drinkCount}회",
+                        text = "${bottle.drinkCount} times",
                         style =
                             MaterialTheme.typography.bodySmall.copy(
                                 color = Color.White,
