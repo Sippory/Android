@@ -108,18 +108,21 @@ fun TasteFinderScreen(
                 // 결과 화면 상단바
                 TopAppBar(
                     title = {
-                        Text("Your Results", fontWeight = FontWeight.Bold)
+                        Text("Your Results", fontWeight = FontWeight.Bold, color = androidx.compose.ui.graphics.Color.White)
                     },
                     navigationIcon = {
                         IconButton(onClick = onBack) {
-                            Icon(Icons.Default.ChevronLeft, contentDescription = "Back")
+                            Icon(Icons.Default.ChevronLeft, contentDescription = "Back", tint = androidx.compose.ui.graphics.Color.White)
                         }
                     },
                     actions = {
                         IconButton(onClick = { viewModel.restart() }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Restart")
+                            Icon(Icons.Default.Refresh, contentDescription = "Restart", tint = androidx.compose.ui.graphics.Color.White)
                         }
                     },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = androidx.compose.ui.graphics.Color.Black,
+                    ),
                 )
             }
 
@@ -363,6 +366,13 @@ private fun ModernOptionCard(
     }
 }
 
+// 커스텀 컬러 (AIRecommendScreen과 동일)
+private val WineRed = androidx.compose.ui.graphics.Color(0xFF8B1538)
+private val DarkWine = androidx.compose.ui.graphics.Color(0xFF5D0E28)
+private val DeepBlack = androidx.compose.ui.graphics.Color(0xFF0D0D0D)
+private val SoftBlack = androidx.compose.ui.graphics.Color(0xFF1A1A1A)
+private val LightGray = androidx.compose.ui.graphics.Color(0xFFB0B0B0)
+
 @Composable
 private fun RecommendationResultScreen(
     recommendations: List<RecommendedBottle>,
@@ -374,25 +384,10 @@ private fun RecommendationResultScreen(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+                .background(DeepBlack)
+                .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        item {
-            Text(
-                text = "🎉 Recommended for You",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp),
-            )
-
-            Text(
-                text = "Based on your preferences, here are some drinks we think you'll love!",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 16.dp),
-            )
-        }
-
         itemsIndexed(recommendations) { index, bottle ->
             AnimatedRecommendationCard(
                 bottle = bottle,
@@ -401,36 +396,6 @@ private fun RecommendationResultScreen(
                 isAdded = bottle.name in addedBottleNames,
                 index = index,
             )
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors =
-                    CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    ),
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                ) {
-                    Text(
-                        text = "💡 Like what you see?",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Add to your wishlist to purchase later,\nor try them and record your experience!",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
         }
     }
 }
@@ -447,11 +412,10 @@ private fun AnimatedRecommendationCard(
     var visible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        delay(index * 100L) // 각 카드마다 100ms 지연
+        delay(index * 100L)
         visible = true
     }
 
-    // 스케일 + 회전 애니메이션
     val scale by animateFloatAsState(
         targetValue = if (visible) 1f else 0.8f,
         animationSpec =
@@ -462,51 +426,11 @@ private fun AnimatedRecommendationCard(
         label = "scale",
     )
 
-    val rotation by animateFloatAsState(
-        targetValue = if (visible) 0f else -5f,
-        animationSpec =
-            spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow,
-            ),
-        label = "rotation",
-    )
-
-    // 슬라이드 + 페이드 효과
-    val offsetX by animateDpAsState(
-        targetValue = if (visible) 0.dp else 50.dp,
-        animationSpec =
-            spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow,
-            ),
-        label = "offsetX",
-    )
-
     val alpha by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
         animationSpec = tween(durationMillis = 400),
         label = "alpha",
     )
-
-    // 버튼 클릭 시 펄스 애니메이션
-    var buttonPressed by remember { mutableStateOf(false) }
-    val buttonScale by animateFloatAsState(
-        targetValue = if (buttonPressed) 0.95f else 1f,
-        animationSpec =
-            spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessHigh,
-            ),
-        label = "buttonScale",
-    )
-
-    LaunchedEffect(buttonPressed) {
-        if (buttonPressed) {
-            delay(150)
-            buttonPressed = false
-        }
-    }
 
     Card(
         modifier =
@@ -515,95 +439,141 @@ private fun AnimatedRecommendationCard(
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
-                    rotationZ = rotation
-                    translationX = offsetX.toPx()
                     this.alpha = alpha
                 },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = SoftBlack,
+            ),
+        elevation =
+            CardDefaults.cardElevation(
+                defaultElevation = 8.dp,
+            ),
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = bottle.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = bottle.subType,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
-
-                // ABV 표시
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = RoundedCornerShape(8.dp),
-                ) {
-                    Text(
-                        text = "${bottle.abv}%",
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // 원산지
-            Text(
-                text = "🌍 ${bottle.country}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 설명
-            Text(
-                text = bottle.description,
-                style = MaterialTheme.typography.bodyMedium,
-                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 위시리스트 추가 버튼
-            Button(
-                onClick = {
-                    buttonPressed = true
-                    onAddToWishlist()
-                },
+        Box {
+            // 그라데이션 배경 효과 (상단)
+            Box(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .scale(buttonScale),
-                enabled = !isAdded && !isLoading,
+                        .height(4.dp)
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(WineRed, DarkWine, WineRed),
+                            ),
+                        ),
+            )
+
+            Column(
+                Modifier
+                    .padding(24.dp)
+                    .padding(top = 4.dp),
             ) {
-                Icon(
-                    imageVector = if (isAdded) Icons.Default.Check else Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
+                // 이름
                 Text(
-                    text = if (isAdded) "Added to Wishlist" else "Add to Wishlist",
+                    bottle.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = androidx.compose.ui.graphics.Color.White,
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 정보 섹션
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    InfoChip(label = "Type", value = bottle.subType)
+                    InfoChip(label = "ABV", value = "${bottle.abv}%")
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                InfoChip(label = "Origin", value = bottle.country)
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 구분선
+                HorizontalDivider(
+                    color = WineRed.copy(alpha = 0.3f),
+                    thickness = 1.dp,
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 설명
+                Column {
+                    Text(
+                        "Why We Recommend",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        color = WineRed,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        bottle.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = LightGray,
+                        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.4f),
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // 위시리스트 추가 버튼
+                Button(
+                    onClick = onAddToWishlist,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !isAdded && !isLoading,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = WineRed,
+                        contentColor = androidx.compose.ui.graphics.Color.White,
+                    ),
+                ) {
+                    Icon(
+                        imageVector = if (isAdded) Icons.Default.Check else Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = if (isAdded) "Added to Wishlist" else "Add to Wishlist",
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun InfoChip(
+    label: String,
+    value: String,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Surface(
+            color = WineRed.copy(alpha = 0.2f),
+            shape = RoundedCornerShape(6.dp),
+        ) {
+            Text(
+                label,
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Medium,
+                color = WineRed,
+            )
+        }
+        Text(
+            value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = androidx.compose.ui.graphics.Color.White,
+            fontWeight = FontWeight.Medium,
+        )
     }
 }
