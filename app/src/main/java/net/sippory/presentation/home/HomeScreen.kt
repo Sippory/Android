@@ -598,7 +598,7 @@ fun ExpandableFAB(
     ) {
         // 서브 메뉴 아이템들 - 아치형 배치 (오른쪽 아래에서 왼쪽 위로 펼치기)
         menuItems.forEachIndexed { index, (icon, label, onClick) ->
-            val targetAngle = 90f - (index * 30f)
+            val targetAngle = 96f - (index * 36f)
             val radius = 100.dp
 
             AnimatedFABMenuItem(
