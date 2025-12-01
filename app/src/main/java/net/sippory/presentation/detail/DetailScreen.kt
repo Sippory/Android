@@ -1,7 +1,11 @@
 package net.sippory.presentation.detail
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -182,6 +186,15 @@ fun BottleDetailContent(
 ) {
     var editedBottle by remember(bottle) { mutableStateOf(bottle) }
 
+    // 이미지 선택 런처
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            editedBottle = editedBottle.copy(photoUri = it.toString())
+        }
+    }
+
     Column(
         modifier =
             modifier
@@ -196,21 +209,63 @@ fun BottleDetailContent(
                     .fillMaxWidth()
                     .height(300.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(androidx.compose.ui.graphics.Color(0xFF1C1C1E)),
+                    .background(androidx.compose.ui.graphics.Color(0xFF1C1C1E))
+                    .then(
+                        if (isEditing) {
+                            Modifier
+                                .border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .clickable { imagePickerLauncher.launch("image/*") }
+                        } else {
+                            Modifier
+                        }
+                    ),
             contentAlignment = Alignment.Center,
         ) {
-            if (bottle.photoUri != null) {
+            if (editedBottle.photoUri != null) {
                 AsyncImage(
-                    model = bottle.photoUri,
-                    contentDescription = bottle.name,
+                    model = editedBottle.photoUri,
+                    contentDescription = editedBottle.name,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                 )
             } else {
                 Text(
-                    text = BottleTypes.getEmojiForType(bottle.type),
+                    text = BottleTypes.getEmojiForType(editedBottle.type),
                     style = MaterialTheme.typography.displayLarge,
                 )
+            }
+
+            // 편집 모드일 때 카메라 아이콘 오버레이 표시
+            if (isEditing) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.3f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AddAPhoto,
+                            contentDescription = "Change Photo",
+                            tint = androidx.compose.ui.graphics.Color.White,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Tap to change photo",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = androidx.compose.ui.graphics.Color.White,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
             }
         }
 
@@ -455,6 +510,10 @@ fun BottleDetailContent(
             Button(
                 onClick = { onUpdate(editedBottle) },
                 modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = androidx.compose.ui.graphics.Color(0xFF3D0A1A),
+                    contentColor = androidx.compose.ui.graphics.Color.White
+                )
             ) {
                 Text("Save")
             }
