@@ -34,6 +34,7 @@ fun AddBottleSheet(
     drinkName: String = "",
     drinkType: String = "Wine",
     drinkPhotoUri: String? = null,
+    onSaveBottle: () -> Unit = {},
 ) {
     val viewModelFactory = BottleViewModelFactory(repository)
     val viewModel: AddBottleViewModel = viewModel(factory = viewModelFactory)
@@ -392,7 +393,10 @@ fun AddBottleSheet(
 
             // Save button
             Button(
-                onClick = { viewModel.saveBottle() },
+                onClick = {
+                    viewModel.saveBottle()
+                    onSaveBottle()
+                },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isSaving,
             ) {

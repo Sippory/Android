@@ -84,7 +84,7 @@ fun SignInScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Sippory") },
+                title = { Text("Sippory", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = DeepBlack, titleContentColor = Color.White),
             )
         },

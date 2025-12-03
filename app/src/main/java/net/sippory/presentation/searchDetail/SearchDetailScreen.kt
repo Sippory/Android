@@ -34,7 +34,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -63,9 +62,7 @@ fun SearchDetailScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = selectedDrink?.name ?: "",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        text = "",
                     )
                 },
                 navigationIcon = {
@@ -166,6 +163,13 @@ fun SearchDetailScreen(
                     drinkName = selectedDrink?.name ?: "",
                     drinkType = selectedDrink?.category ?: "",
                     drinkPhotoUri = selectedDrink?.image_url,
+                    onSaveBottle = {
+                        navController.navigate("home") {
+                            popUpTo("home") {
+                                inclusive = false
+                            }
+                        }
+                    },
                 )
             }
         }
