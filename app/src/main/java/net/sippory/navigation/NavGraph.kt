@@ -35,8 +35,11 @@ import net.sippory.presentation.tastefinder.TasteFinderViewModel
 import net.sippory.presentation.tastefinder.TasteFinderViewModelFactory
 import net.sippory.utils.BottleViewModelFactory
 import net.sippory.utils.DrinkViewModelFactory
+import net.sippory.utils.ImageManager
 
 sealed class Screen(val route: String) {
+    object Splash : Screen("splash")
+
     object SignIn : Screen("sign-in")
 
     object SignUp : Screen("sign-up")
@@ -64,6 +67,7 @@ sealed class Screen(val route: String) {
 fun NavGraph(
     navController: NavHostController,
     repository: BottleRepository,
+    imageManager: ImageManager,
 ) {
     val viewModelFactory = BottleViewModelFactory(repository)
 
@@ -80,8 +84,18 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Splash.route,
     ) {
+        composable(Screen.Splash.route) {
+            net.sippory.presentation.splash.SplashScreen(
+                onNavigateToSignIn = {
+                    navController.navigate(Screen.SignIn.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                },
+            )
+        }
+
         composable(Screen.SignIn.route) {
             SignInScreen(
                 navController = navController,
@@ -102,6 +116,7 @@ fun NavGraph(
                     navController.navigate(Screen.Detail.createRoute(bottleId))
                 },
                 repository = repository,
+                imageManager = imageManager,
                 onDashboardClick = {
                     navController.navigate(Screen.Dashboard.route)
                 },
@@ -124,6 +139,7 @@ fun NavGraph(
             DetailScreen(
                 bottleId = bottleId,
                 viewModel = detailViewModel,
+                imageManager = imageManager,
                 onNavigateBack = { navController.popBackStack() },
             )
         }
@@ -162,6 +178,7 @@ fun NavGraph(
                 navController = navController,
                 viewModel = drinkSearchViewModel,
                 bottleRepository = repository,
+                imageManager = imageManager,
             )
         }
 

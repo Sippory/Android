@@ -34,6 +34,9 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
+    // 원본 데이터를 저장 (필터링되지 않은 전체 데이터)
+    private var allBottles: List<BottleEntity> = emptyList()
+
     init {
         loadBottles()
     }
@@ -43,9 +46,10 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
             _uiState.update { it.copy(isLoading = true) }
             try {
                 repository.getAllBottles().collect { bottles ->
+                    allBottles = bottles
                     _uiState.update {
                         it.copy(
-                            bottles = filterBottles(bottles, it.selectedFilter, it.searchQuery),
+                            bottles = filterBottles(allBottles, it.selectedFilter, it.searchQuery),
                             isLoading = false,
                             error = null,
                         )
@@ -64,10 +68,9 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
 
     fun onSearchQueryChange(query: String) {
         _uiState.update {
-            val currentBottles = it.bottles
             it.copy(
                 searchQuery = query,
-                bottles = filterBottles(currentBottles, it.selectedFilter, query),
+                bottles = filterBottles(allBottles, it.selectedFilter, query),
             )
         }
     }
@@ -85,9 +88,10 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
                         is BottleFilter.Owned -> repository.getOwnedBottles()
                     }
                 flow.collect { bottles ->
+                    allBottles = bottles
                     _uiState.update {
                         it.copy(
-                            bottles = filterBottles(bottles, filter, it.searchQuery),
+                            bottles = filterBottles(allBottles, filter, it.searchQuery),
                             isLoading = false,
                         )
                     }
@@ -141,19 +145,10 @@ class HomeViewModel(private val repository: BottleRepository) : ViewModel() {
         filter: BottleFilter,
         searchQuery: String,
     ): List<BottleEntity> {
+        // DB에서 이미 필터링되어 온 데이터이므로, 검색 쿼리만 적용
         var filtered = bottles
 
-        // Apply filter (Wishlist와 Owned는 이미 repository에서 필터링됨)
-        filtered =
-            when (filter) {
-                is BottleFilter.All -> filtered
-                is BottleFilter.ByType -> filtered.filter { it.type == filter.type }
-                is BottleFilter.ByRating -> filtered.filter { it.rating >= filter.minRating }
-                is BottleFilter.Wishlist -> filtered // 이미 DB에서 필터링됨
-                is BottleFilter.Owned -> filtered // 이미 DB에서 필터링됨
-            }
-
-        // Apply search
+        // Apply search query only
         if (searchQuery.isNotBlank()) {
             filtered =
                 filtered.filter {
