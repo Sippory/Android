@@ -51,6 +51,7 @@ fun SearchDetailScreen(
     navController: NavController,
     viewModel: DrinkSearchViewModel,
     bottleRepository: BottleRepository,
+    imageManager: net.sippory.utils.ImageManager,
 ) {
     val selectedDrink by viewModel.selectedDrink.collectAsState()
 
@@ -157,6 +158,7 @@ fun SearchDetailScreen(
             if (showAddBottleSheet) {
                 AddBottleSheet(
                     onDismiss = { showAddBottleSheet = false },
+                    imageManager = imageManager,
                     repository = bottleRepository,
                     drinkName = selectedDrink?.name ?: "",
                     drinkType = selectedDrink?.category ?: "",

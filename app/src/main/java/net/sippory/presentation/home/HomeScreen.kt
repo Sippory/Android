@@ -16,7 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Face4
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.Search
@@ -45,8 +46,11 @@ import coil.compose.AsyncImage
 import net.sippory.data.entity.BottleEntity
 import net.sippory.navigation.Screen
 import net.sippory.presentation.add.AddBottleSheet
+import net.sippory.ui.theme.CardBackgroundEnd
+import net.sippory.ui.theme.CardBackgroundStart
 import net.sippory.ui.theme.SipporyTheme
 import net.sippory.utils.BottleTypes
+import net.sippory.utils.ImageManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +58,7 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onBottleClick: (Int) -> Unit,
     repository: net.sippory.data.repository.BottleRepository,
+    imageManager: ImageManager,
     onDashboardClick: () -> Unit,
     onSearchClick: () -> Unit,
     navController: NavHostController,
@@ -155,6 +160,7 @@ fun HomeScreen(
         AddBottleSheet(
             onDismiss = { showAddBottleSheet = false },
             repository = repository,
+            imageManager = imageManager,
         )
     }
 }
@@ -204,21 +210,21 @@ fun FilterChips(
         FilterChip(
             selected = selectedFilter is BottleFilter.All,
             onClick = { onFilterChange(BottleFilter.All) },
-            label = { Text("전체") },
+            label = { Text("All") },
             colors = chipColors(selectedFilter is BottleFilter.All),
         )
 
         FilterChip(
             selected = selectedFilter is BottleFilter.Wishlist,
             onClick = { onFilterChange(BottleFilter.Wishlist) },
-            label = { Text("💝 위시리스트") },
+            label = { Text("💝 Wishlist") },
             colors = chipColors(selectedFilter is BottleFilter.Wishlist),
         )
 
         FilterChip(
             selected = selectedFilter is BottleFilter.Owned,
             onClick = { onFilterChange(BottleFilter.Owned) },
-            label = { Text("🍾 소유") },
+            label = { Text("🍾 Owned") },
             colors = chipColors(selectedFilter is BottleFilter.Owned),
         )
 
@@ -234,7 +240,7 @@ fun FilterChips(
         FilterChip(
             selected = selectedFilter is BottleFilter.ByRating,
             onClick = { onFilterChange(BottleFilter.ByRating(4f)) },
-            label = { Text("⭐ 4점 이상") },
+            label = { Text("⭐ 4+ Rating") },
             colors = chipColors(selectedFilter is BottleFilter.ByRating),
         )
     }
@@ -261,244 +267,193 @@ fun BottleGrid(
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(rows, key = { row -> row.joinToString { it.id.toString() } }) { rowBottles ->
-            ShelfBottleRow(
-                bottles = rowBottles,
-                onBottleClick = onBottleClick,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                rowBottles.forEachIndexed { index, bottle ->
+                    CocktailCard(
+                        bottle = bottle,
+                        onClick = { onBottleClick(bottle.id) },
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .offset(y = if (index == 1) 24.dp else 0.dp),
+                    )
+                }
+                if (rowBottles.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
         }
     }
 }
 
 @Composable
-fun ShelfBottleRow(
-    bottles: List<BottleEntity>,
-    onBottleClick: (Int) -> Unit,
+fun CocktailCard(
+    bottle: BottleEntity,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier =
             modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-        contentAlignment = Alignment.BottomCenter,
+                .aspectRatio(0.75f)
+                .clip(RoundedCornerShape(16.dp))
+                .clickable(onClick = onClick),
     ) {
-        Box(
-            modifier =
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .height(12.dp)
-                    .clip(RoundedCornerShape(26.dp))
-                    .background(
-                        brush =
-                            Brush.horizontalGradient(
-                                listOf(Color(0x33FFFFFF), Color(0x11FFFFFF)),
-                            ),
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = Color(0x26FFFFFF),
-                        shape = RoundedCornerShape(26.dp),
-                    ),
-        )
-
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            bottles.forEach { bottle ->
-                ShelfBottleTile(
-                    bottle = bottle,
-                    onClick = { onBottleClick(bottle.id) },
-                    modifier = Modifier.weight(1f),
-                )
-            }
-
-            if (bottles.size == 1) {
-                Spacer(modifier = Modifier.weight(1f))
-            }
-        }
-    }
-}
-
-@Composable
-fun ShelfBottleTile(
-    bottle: BottleEntity,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(240.dp)
-                    .padding(horizontal = 4.dp)
-                    .clickable(onClick = onClick),
-        ) {
-            // Back glow behind the glass case
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .size(170.dp)
-                        .background(
-                            Brush.radialGradient(
-                                colors = listOf(Color(0x332E9AFE), Color.Transparent),
-                                radius = 220f,
-                            ),
-                            shape = RoundedCornerShape(40.dp),
-                        ),
+        // 배경 이미지
+        if (bottle.photoUri != null) {
+            AsyncImage(
+                model = bottle.photoUri,
+                contentDescription = bottle.name,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
             )
-
-            // Info plaque
-            Column(
-                modifier =
-                    Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(horizontal = 6.dp, vertical = 6.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(22.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(Color(0xFF1B1B27), Color(0xFF12121A)),
-                            ),
-                        )
-                        .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(22.dp))
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = bottle.name,
-                        style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                color = Color(0xFFEDEDF5),
-                                fontWeight = FontWeight.ExtraBold,
-                                letterSpacing = 0.3.sp,
-                            ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    RatingPill(rating = bottle.rating)
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                TypePill(type = bottle.type)
-            }
-
-            // Glass case for the icon/photo
+        } else {
+            // 이미지가 없을 경우 그라데이션 배경
             Box(
                 modifier =
                     Modifier
-                        .align(Alignment.Center)
-                        .offset(y = 10.dp)
-                        .size(width = 148.dp, height = 150.dp)
-                        .clip(RoundedCornerShape(28.dp))
+                        .fillMaxSize()
                         .background(
                             Brush.verticalGradient(
-                                listOf(Color(0xFF181824), Color(0xFF0F0F18)),
-                            ),
-                        )
-                        .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(28.dp))
-                        .shadow(
-                            elevation = 18.dp,
-                            spotColor = Color(0x33000000),
-                            ambientColor = Color(0x22000000),
-                            shape = RoundedCornerShape(28.dp),
-                        )
-                        .padding(14.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.radialGradient(
-                                    colors = listOf(Color(0x332E9AFE), Color.Transparent),
-                                    radius = 180f,
-                                ),
-                                shape = RoundedCornerShape(22.dp),
-                            )
-                            .padding(10.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    if (bottle.photoUri != null) {
-                        AsyncImage(
-                            model = bottle.photoUri,
-                            contentDescription = bottle.name,
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(18.dp))
-                                    .border(
-                                        1.dp,
-                                        Color(0x22FFFFFF),
-                                        RoundedCornerShape(18.dp),
+                                colors =
+                                    listOf(
+                                        CardBackgroundStart,
+                                        CardBackgroundEnd,
                                     ),
-                            contentScale = ContentScale.Crop,
-                        )
-                    } else {
-                        Text(
-                            text = BottleTypes.getEmojiForType(bottle.type),
-                            style = MaterialTheme.typography.headlineLarge.copy(fontSize = 42.sp),
-                        )
-                    }
-                }
-            }
-
-            // Pedestal the icon stands on
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomCenter)
-                        .offset(y = 12.dp)
-                        .width(128.dp)
-                        .height(44.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(Color(0xFF262633), Color(0xFF15151E)),
                             ),
-                        )
-                        .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(18.dp))
-                        .shadow(
-                            elevation = 20.dp,
-                            spotColor = Color(0x44000000),
-                            ambientColor = Color(0x22000000),
-                            shape = RoundedCornerShape(18.dp),
                         ),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = bottle.type.ifBlank { "Base" }.uppercase(),
-                    style =
-                        MaterialTheme.typography.labelLarge.copy(
-                            color = Color(0xFFEDEDF5),
-                            letterSpacing = 1.sp,
-                            fontWeight = FontWeight.Bold,
-                        ),
+                    text = BottleTypes.getEmojiForType(bottle.type),
+                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 80.sp),
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        // 어두운 오버레이
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors =
+                                listOf(
+                                    Color(0x80000000),
+                                    Color(0x40000000),
+                                    Color(0xB0000000),
+                                ),
+                        ),
+                    ),
+        )
+
+        // 칵테일 이름 (상단)
+        Text(
+            text = bottle.name,
+            style =
+                MaterialTheme.typography.titleMedium.copy(
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier =
+                Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp),
+        )
+
+        // 위시리스트 아이콘 (우측 상단)
+        if (bottle.isWishlist) {
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Wishlist",
+                tint = Color(0xFFFF6B9D),
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                        .size(24.dp),
+            )
+        }
+
+        // 하단 정보
+        Column(
+            modifier =
+                Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            // 별점 표시
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = null,
+                    tint = Color(0xFFFFD166),
+                    modifier = Modifier.size(16.dp),
+                )
+                Text(
+                    text = String.format("%.1f", bottle.rating),
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // 마신 횟수
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocalBar,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Text(
+                        text = "${bottle.drinkCount} times",
+                        style =
+                            MaterialTheme.typography.bodySmall.copy(
+                                color = Color.White,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                    )
+                }
+
+                // ABV 정보
+                bottle.abv?.let { abv ->
+                    Text(
+                        text = "${abv.toInt()}%",
+                        style =
+                            MaterialTheme.typography.bodySmall.copy(
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                            ),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -635,9 +590,9 @@ fun ExpandableFAB(
         remember {
             listOf(
                 Triple(Icons.Default.Add, "술 추가", onAddBottleClick),
-                Triple(Icons.Default.Favorite, "취향 찾기", onTasteFinderClick),
-                Triple(Icons.Default.ThumbUp, "대시보드", onDashboardClick),
-                Triple(Icons.Default.Email, "AI 추천", onAIRecommendClick),
+                Triple(Icons.Default.ThumbUp, "취향 찾기", onTasteFinderClick),
+                Triple(Icons.Default.Dashboard, "대시보드", onDashboardClick),
+                Triple(Icons.Default.Face4, "AI 추천", onAIRecommendClick),
             )
         }
 
@@ -650,7 +605,7 @@ fun ExpandableFAB(
     ) {
         // 서브 메뉴 아이템들 - 아치형 배치 (오른쪽 아래에서 왼쪽 위로 펼치기)
         menuItems.forEachIndexed { index, (icon, label, onClick) ->
-            val targetAngle = 90f - (index * 30f)
+            val targetAngle = 96f - (index * 36f)
             val radius = 100.dp
 
             AnimatedFABMenuItem(

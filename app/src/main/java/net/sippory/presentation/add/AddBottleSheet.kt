@@ -23,12 +23,14 @@ import coil.compose.AsyncImage
 import net.sippory.data.repository.BottleRepository
 import net.sippory.utils.BottleTypes
 import net.sippory.utils.BottleViewModelFactory
+import net.sippory.utils.ImageManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBottleSheet(
     onDismiss: () -> Unit,
     repository: BottleRepository,
+    imageManager: ImageManager,
     drinkName: String = "",
     drinkType: String = "Wine",
     drinkPhotoUri: String? = null,
@@ -44,7 +46,11 @@ fun AddBottleSheet(
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
         ) { uri: Uri? ->
-            uri?.let { viewModel.updatePhotoUri(it.toString()) }
+            uri?.let {
+                // 이미지를 앱 내부 저장소로 복사
+                val savedPath = imageManager.saveImage(it)
+                viewModel.updatePhotoUri(savedPath)
+            }
         }
     LaunchedEffect(Unit) {
         viewModel.updateName(drinkName)
