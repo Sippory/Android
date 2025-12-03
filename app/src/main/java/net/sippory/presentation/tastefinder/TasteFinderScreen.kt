@@ -116,7 +116,7 @@ fun TasteFinderScreen(
                         Text(
                             "Your Results",
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = androidx.compose.ui.graphics.Color.White,
                         )
                     },
                     navigationIcon = {
@@ -124,7 +124,7 @@ fun TasteFinderScreen(
                             Icon(
                                 Icons.Default.ChevronLeft,
                                 contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onSurface,
+                                tint = androidx.compose.ui.graphics.Color.White,
                             )
                         }
                     },
@@ -133,13 +133,13 @@ fun TasteFinderScreen(
                             Icon(
                                 Icons.Default.Refresh,
                                 contentDescription = "Restart",
-                                tint = MaterialTheme.colorScheme.onSurface,
+                                tint = androidx.compose.ui.graphics.Color.White,
                             )
                         }
                     },
                     colors =
                         TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
+                            containerColor = androidx.compose.ui.graphics.Color.Black,
                         ),
                 )
             }
