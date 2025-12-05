@@ -124,7 +124,12 @@ fun DashboardScreen(
                 RankingSection(
                     title = "Frequently Consumed ABV",
                     subtitle = "ABV RANKING",
-                    items = abvRanking.map { bottle -> RankingItem("${bottle.abv}%", "${bottle.count} times") },
+                    items =
+                        abvRanking.map { bottle ->
+                            val start = bottle.abv.toInt()
+                            val end = start + 9
+                            RankingItem("$start% ~ $end%", "${bottle.count} times")
+                        },
                     icon = "🔥",
                 )
             }
