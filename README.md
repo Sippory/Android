@@ -115,24 +115,6 @@ app/src/main/java/net/sippory/
 ./gradlew installDebug
 ```
 
-## 향후 계획 🎯
-
-### Phase 2
-- [ ] 사용자 인증 (Firebase Authentication)
-- [ ] 클라우드 동기화 (Firebase Firestore)
-- [ ] 소셜 기능 (친구와 공유)
-
-### Phase 3
-- [ ] 외부 API 연동 (TheCocktailDB 등)
-- [ ] 바코드 스캔 자동 입력
-- [ ] 통계 및 분석 (마신 술 통계)
-- [ ] 추천 시스템
-
-### Phase 4
-- [ ] 위치 기반 주점 추천
-- [ ] 커뮤니티 기능
-- [ ] 다국어 지원
-
 ## 라이선스 📄
 
 이 프로젝트는 학습 및 포트폴리오 목적으로 제작되었습니다.
